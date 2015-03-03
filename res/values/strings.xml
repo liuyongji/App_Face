@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">人脸检测</string>
+    <string name="app_name2">人脸检测</string>
+    <string name="action_settings">人脸检测</string>
+    
+    <string name="download_url">http://pan.baidu.com/s/1kT0vM0R</string>
+    
+    <string name="costomview">im custom view</string>
+
+</resources>
