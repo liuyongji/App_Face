@@ -1,31 +1,37 @@
 package com.face.test.fragment;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
+
 import com.face.test.R;
 import com.face.test.ReportTask;
 import com.face.test.Result;
+import com.face.test.Utils.Http;
+import com.face.test.Utils.Util;
 import com.face.test.bean.ClientError;
 import com.face.test.bean.Person;
-import com.face.test.tools.Http;
-import com.face.test.tools.Tool;
 import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
 import com.gitonway.niftydialogeffects.widget.niftydialogeffects.NiftyDialogBuilder;
+
 import android.support.v4.app.Fragment;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -61,6 +67,7 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 	public static final int COMPARE_SUCCESS = 1;
 	public static final int COMPARE_FAIL = 2;
 	public static final int DECTOR_FAIL = 3;
+	public static final int NOT_FOUND = 4;
 
 	private Timer timer;
 
@@ -69,6 +76,8 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 	private BmobFile bmobFile;
 
 	private HttpRequests request = null;// 在线api
+
+	private SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");// 设置日期格式
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,16 +91,32 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 		detectHandler = new Handler() {
 			@SuppressWarnings("unchecked")
 			public void handleMessage(Message msg) {
+
 				switch (msg.what) {
 				case DECTOR_SUCCESS:
+					Bitmap bitmap = Util.watermarkBitmap(curBitmap[n],
+							(List<String>) msg.obj);
+					if (n == 0) {
+						imageView1.setImageBitmap(bitmap);
+					} else if (n == 1) {
+						imageView2.setImageBitmap(bitmap);
+					}
+					File f = Util.saveBitmap(bitmap, df.format(new Date()));
+					bmobFile = new BmobFile(f);
+					bmobFile.upload(getActivity(), uploadFileListener);
 					if (progressBar != null) {
 						progressBar.dismiss();
 					}
-					NiftyDialogBuilder niftyDialogBuilder = NiftyDialogBuilder
-							.getInstance(getActivity());
-					niftyDialogBuilder.getWindow().setGravity(Gravity.BOTTOM);
-					niftyDialogBuilder.withTitle("检测结果：")
-							.withMessage((String) msg.obj).show();
+
+					Toast.makeText(getActivity(),
+							getResources().getString(R.string.save),
+							Toast.LENGTH_LONG).show();
+					// NiftyDialogBuilder niftyDialogBuilder =
+					// NiftyDialogBuilder
+					// .getInstance(getActivity());
+					// niftyDialogBuilder.getWindow().setGravity(Gravity.BOTTOM);
+					// niftyDialogBuilder.withTitle("检测结果：")
+					// .withMessage((String) msg.obj).show();
 					break;
 				case DECTOR_FAIL:
 					if (progressBar != null) {
@@ -150,7 +175,7 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 				String str = localCursor.getString(localCursor
 						.getColumnIndex(arrayOfString[0]));
 				localCursor.close();
-                getData(str);
+				getData(str);
 
 			}
 			break;
@@ -162,16 +187,14 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 	private void getData(String str) {
 		if ((curBitmap[n] != null) && (!curBitmap[n].isRecycled()))
 			curBitmap[n].recycle();
-		curBitmap[n] = Tool.getScaledBitmap(str, 700);
+		curBitmap[n] = Util.getScaledBitmap(str, 700);
 		if (n == 0) {
 			imageView1.setImageBitmap(curBitmap[n]);
 		} else if (n == 1) {
 			imageView2.setImageBitmap(curBitmap[n]);
 		}
-		File f = Tool.saveBitmap(curBitmap[n]);
-		bmobFile = new BmobFile(f);
-		bmobFile.upload(getActivity(), uploadFileListener);
-		progressBar = Tool.getProgressDialog(getActivity());
+
+		progressBar = Util.getProgressDialog(getActivity());
 
 		timer = new Timer();
 		timer.schedule(new TimerTask() {
@@ -183,7 +206,7 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 				detectHandler.sendMessage(message);
 				this.cancel();
 			}
-		}, 25000);
+		}, 15000);
 		new Thread(dector).start();
 
 	}
@@ -203,6 +226,39 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 				.setContent(R.id.imageview2));
 		tabHost.setOnTabChangedListener(this);
 		n = tabHost.getCurrentTab();
+		imageView1.setOnLongClickListener(new ImageView.OnLongClickListener() {
+			NiftyDialogBuilder niftyDialogBuilder;
+
+			@Override
+			public boolean onLongClick(View v) {
+				// TODO Auto-generated method stub
+				niftyDialogBuilder = NiftyDialogBuilder
+						.getInstance(getActivity());
+				niftyDialogBuilder.getWindow().setGravity(Gravity.CENTER);
+				niftyDialogBuilder.withTitle("提示").withButton1Text("SAVE")
+						// def gone
+						.withButton2Text("CANCEL")
+						.setButton1Click(new View.OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+
+								Util.saveBitmap(((BitmapDrawable) (imageView1
+										.getDrawable())).getBitmap(), df
+										.format(new Date()));
+								niftyDialogBuilder.dismiss();
+							}
+						}).setButton2Click(new View.OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								niftyDialogBuilder.dismiss();
+							}
+						}).show();
+
+				return true;
+			}
+		});
 	}
 
 	@Override
@@ -213,7 +269,7 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 					MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 1001);
 			break;
 		case R.id.detect:
-			progressBar = Tool.getProgressDialog(getActivity());
+			progressBar = Util.getProgressDialog(getActivity());
 			new Thread(compare).start();
 			break;
 		}
@@ -239,8 +295,8 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 
 				jsonObject = request.recognitionCompare(new PostParameters()
 						.setFaceId1(face[0]).setFaceId2(face[1]));
-				resultcompare = Tool.CompareResult(jsonObject);
-				similarityresult = Tool.Similarity(jsonObject);
+				resultcompare = Util.CompareResult(jsonObject);
+				similarityresult = Util.Similarity(jsonObject);
 			} catch (FaceppParseException e1) {
 				e1.printStackTrace();
 				new ReportTask(getActivity()).execute(Http.getError(e1));
@@ -266,18 +322,20 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 
 		@Override
 		public void run() {
-			byte[] bytes = Tool.getBitmapByte(getActivity(), curBitmap[n]);
+			byte[] bytes = Util.getBitmapByte(getActivity(), curBitmap[n]);
 			JSONObject jsonObject = null;
-			String resultsingle = null;
+			List<String> list = null;
 
 			try {
 				jsonObject = request.detectionDetect(new PostParameters()
 						.setImg(bytes).setMode("oneface"));
-				resultsingle = Tool.Jsonn(jsonObject);
-				if (resultsingle == null || resultsingle == "") {
-					resultsingle = "没检测到人脸";
+				list = Util.Jsonn(jsonObject);
+				if (list == null) {
+					// resultsingle = "没检测到人脸";
+					list = new ArrayList<String>();
+					list.add("没检测到人脸");
 				} else {
-					face[n] = Tool.face.getFaceId();
+					face[n] = Util.face.getFaceId();
 				}
 			} catch (FaceppParseException e) {
 				e.printStackTrace();
@@ -291,15 +349,14 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 			timer.cancel();
 			Message message = new Message();
 			message.what = DECTOR_SUCCESS;
-			message.obj = resultsingle;
+			message.obj = list;
 			detectHandler.sendMessage(message);
 		}
 	};
 
 	@Override
 	public void onTabChanged(String arg0) {
-		// TODO 自动生成的方法存根
-
+		n = tabHost.getCurrentTab();
 	}
 
 	private UploadFileListener uploadFileListener = new UploadFileListener() {
@@ -311,7 +368,7 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 			person.setUser("user");
 			person.setFile(bmobFile);
 			person.save(getActivity());
-			Tool.deletefile();
+			// Util.deletefile();
 		}
 
 		@Override

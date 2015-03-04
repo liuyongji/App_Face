@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ripple="http://schemas.android.com/apk/res/com.face.test"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    xmlns:app="http://schemas.android.com/apk/res/com.face.test">
-    
+    android:orientation="vertical" >
 
     <TabHost
         android:id="@android:id/tabhost"
-        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,51 +33,68 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical" >
 
-                  <ImageView
-                      android:id="@+id/imageview1"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:scaleType="fitCenter"
-                      android:src="@drawable/demo" />
-
+                    <ImageView
+                        android:id="@+id/imageview1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/demo" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/tab2"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" 
-                    android:orientation="vertical">
-                  <ImageView
-                      android:id="@+id/imageview2"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:scaleType="fitCenter"
-                      android:src="@drawable/demo" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+
+                    <ImageView
+                        android:id="@+id/imageview2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/demo" />
                 </LinearLayout>
             </FrameLayout>
         </LinearLayout>
     </TabHost>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal" >
 
-        <Button
-            android:id="@+id/pick"
-            android:layout_width="0dp"
+        <com.andexert.library.RippleView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:onClick="onClick"
-            android:text="选择图片" />
-        <Button
-            android:id="@+id/detect"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onClick"
-            android:text="对比" />
+            ripple:rv_centered="true" >
 
+            <Button
+                android:id="@+id/pick"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/blue"
+                android:onClick="onClick"
+                android:text="选择图片" />
+        </com.andexert.library.RippleView>
+
+        <com.andexert.library.RippleView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="5dp"
+            ripple:rv_centered="true" >
+
+            <Button
+                android:id="@+id/detect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/blue"
+                android:onClick="onClick"
+                android:text="对比" />
+        </com.andexert.library.RippleView>
     </LinearLayout>
 
 </LinearLayout>

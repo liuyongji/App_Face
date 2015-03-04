@@ -1,7 +1,7 @@
 package com.face.test;
 
+import com.face.test.Utils.Http;
 import com.face.test.bean.ClientError;
-import com.face.test.tools.Http;
 
 import android.content.Context;
 import android.os.AsyncTask;

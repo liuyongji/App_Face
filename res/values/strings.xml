@@ -8,5 +8,9 @@
     <string name="download_url">http://pan.baidu.com/s/1kT0vM0R</string>
     
     <string name="costomview">im custom view</string>
+    
+    <string name="save">长按可保存</string>
+    
+    <string name="viewpager_indicator">%1$d/%2$d</string>
 
 </resources>

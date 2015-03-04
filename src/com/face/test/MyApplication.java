@@ -4,8 +4,9 @@ package com.face.test;
 import net.youmi.android.AdManager;
 import cn.bmob.v3.Bmob;
 
-import com.face.test.tools.CrashHandler;
+import com.face.test.Utils.CrashHandler;
 import com.myface.JMSManager;
+
 
 
 import android.app.Application;

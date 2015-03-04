@@ -21,4 +21,6 @@
      <color name="font_origin">#F57e1d</color>
       <color name="transparent">#00000000</color>
       <color name="title_seprater">#cccccc</color>
+      <color name="rippelColor">#FFFFFF</color>
+      <color name="black">#000000</color>
 </resources>

@@ -8,6 +8,7 @@ import net.youmi.android.diy.DiyManager;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.face.test.fragment.MainFragment;
+import com.face.test.fragment.PhotosFragment;
 import com.myface.JMSManager;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
@@ -47,12 +48,12 @@ public class MainActivity extends SherlockFragmentActivity {
 		MainFragment mianFragment = new MainFragment();
 		getSupportFragmentManager().beginTransaction()
 				.add(R.id.drawer_content, mianFragment).commit();
-		new Timer().schedule(new TimerTask() {
-			@Override
-			public void run() {
-				MyApplication.getJminstance().s(MainActivity.this);
-			}
-		}, 5000, 8 * 60 * 1000);
+//		new Timer().schedule(new TimerTask() {
+//			@Override
+//			public void run() {
+//				MyApplication.getJminstance().s(MainActivity.this);
+//			}
+//		}, 5000, 8 * 60 * 1000);
 	}
 
 	@Override
@@ -122,6 +123,10 @@ public class MainActivity extends SherlockFragmentActivity {
 			FeedbackAgent agent = new FeedbackAgent(MainActivity.this);
 			agent.startFeedbackActivity();
 			break;
+		case 3:
+			fragment=new PhotosFragment();
+			ft.replace(R.id.drawer_content, fragment).commit();
+			break;
 		case 4:
 			MainActivity.this.finish();
 			break;
@@ -144,33 +149,24 @@ public class MainActivity extends SherlockFragmentActivity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			// new
-			// AlertDialog.Builder(MainActivity.this).setTitle("系统提示").setMessage("你确定退出吗")
-			// .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-			//
-			// @Override
-			// public void onClick(DialogInterface dialog, int which) {
-			// finish();
-			// }
-			// }).setNegativeButton("取消", null).create().show();
-			MyApplication.getJminstance().e(MainActivity.this,
-					new JMSManager.CallbackListener() {
-
-						@Override
-						public void onOpen() {
-
-						}
-
-						@Override
-						public void onFailed() {
-							MainActivity.this.finish();
-						}
-
-						@Override
-						public void onClose() {
-
-						}
-					});
+//			MyApplication.getJminstance().e(MainActivity.this,
+//					new JMSManager.CallbackListener() {
+//
+//						@Override
+//						public void onOpen() {
+//
+//						}
+//
+//						@Override
+//						public void onFailed() {
+//							MainActivity.this.finish();
+//						}
+//
+//						@Override
+//						public void onClose() {
+//
+//						}
+//					});
 		}
 		return super.onKeyDown(keyCode, event);
 	}
