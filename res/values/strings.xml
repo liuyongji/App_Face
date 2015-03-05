@@ -2,15 +2,17 @@
 <resources>
 
     <string name="app_name">人脸检测</string>
+    <!--
     <string name="app_name2">人脸检测</string>
     <string name="action_settings">人脸检测</string>
-    
+    -->
+
     <string name="download_url">http://pan.baidu.com/s/1kT0vM0R</string>
-    
     <string name="costomview">im custom view</string>
-    
     <string name="save">长按可保存</string>
-    
+    <string name="save_success">保存成功，右滑菜单可查看</string>
     <string name="viewpager_indicator">%1$d/%2$d</string>
+    <string name="no_net_state">网络不给力哦</string>
+    <string name="choose_two">请选择两张清晰的人脸图片</string>
 
 </resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="right_menu">
+        <item>首页</item>
+        <item>发现</item>
+        <item>建议</item>
+        <item>历史</item>
+        <item>退出</item>
+    </string-array>
+
+</resources>

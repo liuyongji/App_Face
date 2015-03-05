@@ -8,10 +8,12 @@ import com.face.test.ImageAdapter;
 import com.face.test.ImagePagerActivity;
 import com.face.test.R;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +22,7 @@ import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class PhotosFragment extends Fragment {
-	private String path = Environment.getExternalStorageDirectory().getPath()
+	private String path =Environment.getExternalStorageDirectory().getPath()
 			+ "/facetest/";
 	private List<String> list = new ArrayList<String>();
 	private GridView mGridView;
@@ -29,11 +31,9 @@ public class PhotosFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		File file = new File(path);
-		File[] files = file.listFiles();
+		File[] files =new File(path).listFiles();
 		for (int i = 0; i < files.length; i++) {
-			list.add(path + files[i].getName());
+			list.add("file:///"+ files[i].getAbsolutePath());
 		}
 		imageAdapter = new ImageAdapter(getActivity(), list);
 		View view = inflater.inflate(R.layout.gridview_photo, container, false);
@@ -56,6 +56,7 @@ public class PhotosFragment extends Fragment {
 				(ArrayList<String>) list);
 		intent.putExtra(ImagePagerActivity.EXTRA_IMAGE_INDEX, position);
 		startActivity(intent);
+		
 	}
 
 }

@@ -5,6 +5,6 @@
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
         android:icon="@drawable/settings_48"
-        android:title="@string/action_settings"/>
+        android:title="@string/app_name"/>
 
 </menu>

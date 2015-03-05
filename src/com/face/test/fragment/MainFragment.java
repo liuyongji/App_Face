@@ -42,15 +42,21 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.animation.AnimationUtils;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.Toast;
 import android.widget.TabHost.OnTabChangeListener;
 
 public class MainFragment extends Fragment implements OnTabChangeListener,
 		OnClickListener {
+	private PopupWindow mpopupWindow;
 	public static Bitmap curBitmap[] = new Bitmap[2];
 	private final static String TAG = "facetest";
 	private ImageView imageView1 = null;
@@ -124,14 +130,16 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 					}
 					timer.cancel();
 					Thread.currentThread().interrupt();
-					Toast.makeText(getActivity(), "网络不给力哦", Toast.LENGTH_LONG)
-							.show();
+					Toast.makeText(getActivity(),
+							getResources().getString(R.string.no_net_state),
+							Toast.LENGTH_LONG).show();
 					break;
 				case COMPARE_FAIL:
 					if (progressBar != null) {
 						progressBar.dismiss();
 					}
-					Toast.makeText(getActivity(), "请选择两张清晰的人脸图片",
+					Toast.makeText(getActivity(),
+							getResources().getString(R.string.choose_two),
 							Toast.LENGTH_LONG).show();
 					break;
 				case COMPARE_SUCCESS:
@@ -235,9 +243,9 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 				niftyDialogBuilder = NiftyDialogBuilder
 						.getInstance(getActivity());
 				niftyDialogBuilder.getWindow().setGravity(Gravity.CENTER);
-				niftyDialogBuilder.withTitle("提示").withButton1Text("SAVE")
+				niftyDialogBuilder.withTitle("提示").withButton1Text("保存")
 						// def gone
-						.withButton2Text("CANCEL")
+						.withButton2Text("取消")
 						.setButton1Click(new View.OnClickListener() {
 
 							@Override
@@ -246,6 +254,12 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 								Util.saveBitmap(((BitmapDrawable) (imageView1
 										.getDrawable())).getBitmap(), df
 										.format(new Date()));
+								Toast.makeText(
+										getActivity(),
+										getResources().getString(
+												R.string.save_success),
+										Toast.LENGTH_LONG).show();
+								;
 								niftyDialogBuilder.dismiss();
 							}
 						}).setButton2Click(new View.OnClickListener() {
@@ -265,8 +279,8 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 	public void onClick(View view) {
 		switch (view.getId()) {
 		case R.id.pick:
-			startActivityForResult(new Intent("android.intent.action.PICK",
-					MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 1001);
+//			startActivityForResult(new Intent("android.intent.action.PICK",
+//					MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 1001);
 			break;
 		case R.id.detect:
 			progressBar = Util.getProgressDialog(getActivity());
@@ -357,6 +371,44 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 	@Override
 	public void onTabChanged(String arg0) {
 		n = tabHost.getCurrentTab();
+	}
+	
+	private void showPopMenu() {
+		View view = View.inflate(getActivity(), R.layout.share_popup_menu, null);
+		RelativeLayout rl_camera = (RelativeLayout) view.findViewById(R.id.rl_camera);
+		RelativeLayout rl_tuku = (RelativeLayout) view.findViewById(R.id.rl_tuku);
+		Button bt_cancle = (Button) view.findViewById(R.id.bt_cancle);
+
+		rl_camera.setOnClickListener(this);
+		rl_tuku.setOnClickListener(this);
+		bt_cancle.setOnClickListener(this);
+	
+		view.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				mpopupWindow.dismiss();
+			}
+		});
+		
+		view.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in));
+		LinearLayout ll_popup = (LinearLayout) view.findViewById(R.id.ll_popup);
+		ll_popup.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.push_bottom_in));
+		
+		if(mpopupWindow==null){
+			mpopupWindow = new PopupWindow(getActivity());
+			mpopupWindow.setWidth(LayoutParams.MATCH_PARENT);
+			mpopupWindow.setHeight(LayoutParams.MATCH_PARENT);
+			mpopupWindow.setBackgroundDrawable(new BitmapDrawable());
+
+			mpopupWindow.setFocusable(true);
+			mpopupWindow.setOutsideTouchable(true);
+		}
+		
+		mpopupWindow.setContentView(view);
+		mpopupWindow.showAtLocation(seletcButton, Gravity.BOTTOM, 0, 0);
+		mpopupWindow.update();
 	}
 
 	private UploadFileListener uploadFileListener = new UploadFileListener() {

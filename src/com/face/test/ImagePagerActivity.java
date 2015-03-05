@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.widget.TextView;
 
 public class ImagePagerActivity extends FragmentActivity {
@@ -29,8 +30,8 @@ public class ImagePagerActivity extends FragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.i("ImagePagerActivity", "onCreate");
 		setContentView(R.layout.image_detail_pager);
-
 		pagerPosition = getIntent().getIntExtra(EXTRA_IMAGE_INDEX, 0);
 		ArrayList<String> urls = getIntent().getStringArrayListExtra(EXTRA_IMAGE_URLS);
 

@@ -15,6 +15,7 @@ import com.umeng.fb.FeedbackAgent;
 import com.umeng.update.UmengUpdateAgent;
 
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -33,7 +34,7 @@ public class MainActivity extends SherlockFragmentActivity {
 	public static Bitmap curBitmap[] = new Bitmap[2];
 	private DrawerLayout mDrawer_layout;// DrawerLayout容器
 	private ListView menulist;
-	public static final String[] TITLES = { "首页", "发现", "建议", "关于", "退出" };
+	public static  String[] TITLES;
 	private boolean isopen = false;
 	private ActionBarDrawerToggle mDrawerToggle;
 
@@ -80,6 +81,7 @@ public class MainActivity extends SherlockFragmentActivity {
 	}
 
 	private void initdraw() {
+		TITLES=getResources().getStringArray(R.array.right_menu);
 		mDrawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		menulist = (ListView) findViewById(R.id.drawer_right);
 		menulist.setAdapter(new ArrayAdapter<String>(this,

@@ -2,7 +2,6 @@ package com.face.test;
 
 import java.util.List;
 
-import uk.co.senab.photoview.PhotoViewAttacher;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -54,7 +53,7 @@ public class ImageAdapter extends BaseAdapter {
 		
 		imageView.setLayoutParams(new LinearLayout.LayoutParams(width / 3,
 				width / 3));
-//		FaceApplication.displayImage(list.get(position), imageView);
+		MyApplication.displayImage(list.get(position), imageView);
 		
 		return convertView;
 	}
