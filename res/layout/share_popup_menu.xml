@@ -26,8 +26,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:src="@drawable/icon_wechat" 
-                android:layout_toLeftOf="@+id/tv_weixin"
+                android:src="@android:drawable/ic_menu_camera" 
+                android:layout_toLeftOf="@+id/tv_camera"
                 android:contentDescription="@string/app_name"/>
 
             <TextView
@@ -54,12 +54,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:src="@drawable/icon_weibo" 
-                android:layout_toLeftOf="@+id/tv_weibo"
+                android:src="@android:drawable/ic_menu_gallery" 
+                android:layout_toLeftOf="@+id/tv_tuku"
                 android:contentDescription="@string/app_name"/>
 
             <TextView
-                android:id="@+id/tv_weibo"
+                android:id="@+id/tv_tuku"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"

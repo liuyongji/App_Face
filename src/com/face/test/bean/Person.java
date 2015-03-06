@@ -13,6 +13,7 @@ public class Person extends BmobObject{
 	private BmobFile file;
 	private String location;
 	private String date;
+	private String sex;
 	public String getDate() {
 		return date;
 	}
@@ -36,6 +37,12 @@ public class Person extends BmobObject{
 	}
 	public void setFile(BmobFile file) {
 		this.file = file;
+	}
+	public String getSex() {
+		return sex;
+	}
+	public void setSex(String sex) {
+		this.sex = sex;
 	}
 	
 

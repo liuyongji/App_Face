@@ -22,7 +22,7 @@ import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class PhotosFragment extends Fragment {
-	private String path =Environment.getExternalStorageDirectory().getPath()
+	public static  String path =Environment.getExternalStorageDirectory().getPath()
 			+ "/facetest/";
 	private List<String> list = new ArrayList<String>();
 	private GridView mGridView;

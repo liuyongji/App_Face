@@ -303,14 +303,14 @@ public class Util {
 			TextPaint textPaint = new TextPaint();
 			textPaint.setColor(Color.RED);
 			textPaint.setTypeface(font);
-			textPaint.setTextSize(30);
+			textPaint.setTextSize(27);
 			// 这里是自动换行的
 			// StaticLayout layout = new
 			// StaticLayout(title,textPaint,w,Alignment.ALIGN_OPPOSITE,1.0F,0.0F,true);
 			// layout.draw(cv);
 			// 文字就加左上角算了
 			for (int i = 0; i < title.size(); i++) {
-				cv.drawText(title.get(i), 0, h - 30 * (title.size() - i),
+				cv.drawText(title.get(i), 0, h - 27 * (title.size() - i),
 						textPaint);
 			}
 		}

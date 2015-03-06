@@ -27,13 +27,16 @@ import com.facepp.http.PostParameters;
 import com.gitonway.niftydialogeffects.widget.niftydialogeffects.NiftyDialogBuilder;
 
 import android.support.v4.app.Fragment;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -73,13 +76,15 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 	public static final int COMPARE_SUCCESS = 1;
 	public static final int COMPARE_FAIL = 2;
 	public static final int DECTOR_FAIL = 3;
-	public static final int NOT_FOUND = 4;
 
 	private Timer timer;
 
 	private Person person;
 
 	private BmobFile bmobFile;
+
+	private String sdcard_temp = Environment.getExternalStorageDirectory()
+			+ File.separator + "tmps.jpg";
 
 	private HttpRequests request = null;// 在线api
 
@@ -117,12 +122,6 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 					Toast.makeText(getActivity(),
 							getResources().getString(R.string.save),
 							Toast.LENGTH_LONG).show();
-					// NiftyDialogBuilder niftyDialogBuilder =
-					// NiftyDialogBuilder
-					// .getInstance(getActivity());
-					// niftyDialogBuilder.getWindow().setGravity(Gravity.BOTTOM);
-					// niftyDialogBuilder.withTitle("检测结果：")
-					// .withMessage((String) msg.obj).show();
 					break;
 				case DECTOR_FAIL:
 					if (progressBar != null) {
@@ -166,7 +165,6 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO 自动生成的方法存根
 
 		switch (requestCode) {
 		case 1001: {
@@ -183,23 +181,39 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 				String str = localCursor.getString(localCursor
 						.getColumnIndex(arrayOfString[0]));
 				localCursor.close();
-				getData(str);
+				if ((curBitmap[n] != null) && (!curBitmap[n].isRecycled()))
+					curBitmap[n].recycle();
+				curBitmap[n] = Util.getScaledBitmap(str, 700);
+				setBitmap(curBitmap[n]);
 
 			}
 			break;
 		}
+		case 1002:
+			if (resultCode == Activity.RESULT_CANCELED) {
+				break;
+			}
+			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+			bitmapOptions.inSampleSize = 8;
+			File file = new File(sdcard_temp);
+			if ((curBitmap[n] != null) && (!curBitmap[n].isRecycled()))
+				curBitmap[n].recycle();
+			if (file.exists()) {
+				curBitmap[n] = BitmapFactory.decodeFile(sdcard_temp,
+						bitmapOptions);
+			}
+			setBitmap(curBitmap[n]);
+			break;
 		}
 
 	}
 
-	private void getData(String str) {
-		if ((curBitmap[n] != null) && (!curBitmap[n].isRecycled()))
-			curBitmap[n].recycle();
-		curBitmap[n] = Util.getScaledBitmap(str, 700);
+	private void setBitmap(Bitmap bitmap) {
+
 		if (n == 0) {
-			imageView1.setImageBitmap(curBitmap[n]);
+			imageView1.setImageBitmap(bitmap);
 		} else if (n == 1) {
-			imageView2.setImageBitmap(curBitmap[n]);
+			imageView2.setImageBitmap(bitmap);
 		}
 
 		progressBar = Util.getProgressDialog(getActivity());
@@ -216,7 +230,6 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 			}
 		}, 15000);
 		new Thread(dector).start();
-
 	}
 
 	private void initview(View view) {
@@ -279,8 +292,26 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 	public void onClick(View view) {
 		switch (view.getId()) {
 		case R.id.pick:
-//			startActivityForResult(new Intent("android.intent.action.PICK",
-//					MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 1001);
+			showPopMenu();
+			break;
+		case R.id.bt_cancle:
+			mpopupWindow.dismiss();
+			break;
+		case R.id.rl_camera:
+			mpopupWindow.dismiss();
+			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			intent.addCategory(Intent.CATEGORY_DEFAULT);
+			File file = new File(sdcard_temp);
+			if (file.exists()) {
+				file.delete();
+			}
+			intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+			startActivityForResult(intent, 1002);
+			break;
+		case R.id.rl_tuku:
+			mpopupWindow.dismiss();
+			startActivityForResult(new Intent("android.intent.action.PICK",
+					MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 1001);
 			break;
 		case R.id.detect:
 			progressBar = Util.getProgressDialog(getActivity());
@@ -372,31 +403,27 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 	public void onTabChanged(String arg0) {
 		n = tabHost.getCurrentTab();
 	}
-	
+
 	private void showPopMenu() {
-		View view = View.inflate(getActivity(), R.layout.share_popup_menu, null);
-		RelativeLayout rl_camera = (RelativeLayout) view.findViewById(R.id.rl_camera);
-		RelativeLayout rl_tuku = (RelativeLayout) view.findViewById(R.id.rl_tuku);
+		View view = View
+				.inflate(getActivity(), R.layout.share_popup_menu, null);
+		RelativeLayout rl_camera = (RelativeLayout) view
+				.findViewById(R.id.rl_camera);
+		RelativeLayout rl_tuku = (RelativeLayout) view
+				.findViewById(R.id.rl_tuku);
 		Button bt_cancle = (Button) view.findViewById(R.id.bt_cancle);
 
 		rl_camera.setOnClickListener(this);
 		rl_tuku.setOnClickListener(this);
 		bt_cancle.setOnClickListener(this);
-	
-		view.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-				mpopupWindow.dismiss();
-			}
-		});
-		
-		view.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in));
+
+		view.startAnimation(AnimationUtils.loadAnimation(getActivity(),
+				R.anim.fade_in));
 		LinearLayout ll_popup = (LinearLayout) view.findViewById(R.id.ll_popup);
-		ll_popup.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.push_bottom_in));
-		
-		if(mpopupWindow==null){
+		ll_popup.startAnimation(AnimationUtils.loadAnimation(getActivity(),
+				R.anim.push_bottom_in));
+
+		if (mpopupWindow == null) {
 			mpopupWindow = new PopupWindow(getActivity());
 			mpopupWindow.setWidth(LayoutParams.MATCH_PARENT);
 			mpopupWindow.setHeight(LayoutParams.MATCH_PARENT);
@@ -405,7 +432,7 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 			mpopupWindow.setFocusable(true);
 			mpopupWindow.setOutsideTouchable(true);
 		}
-		
+
 		mpopupWindow.setContentView(view);
 		mpopupWindow.showAtLocation(seletcButton, Gravity.BOTTOM, 0, 0);
 		mpopupWindow.update();
