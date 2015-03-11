@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import com.face.test.R;
 import com.face.test.ReportTask;
@@ -112,7 +113,7 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 					} else if (n == 1) {
 						imageView2.setImageBitmap(bitmap);
 					}
-					File f = Util.saveBitmap(bitmap, df.format(new Date()));
+					File f = Util.saveBitmap(bitmap);
 					bmobFile = new BmobFile(f);
 					bmobFile.upload(getActivity(), uploadFileListener);
 					if (progressBar != null) {
@@ -248,40 +249,31 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 		tabHost.setOnTabChangedListener(this);
 		n = tabHost.getCurrentTab();
 		imageView1.setOnLongClickListener(new ImageView.OnLongClickListener() {
-			NiftyDialogBuilder niftyDialogBuilder;
+			SweetAlertDialog sDialog;
 
 			@Override
 			public boolean onLongClick(View v) {
-				// TODO Auto-generated method stub
-				niftyDialogBuilder = NiftyDialogBuilder
-						.getInstance(getActivity());
-				niftyDialogBuilder.getWindow().setGravity(Gravity.CENTER);
-				niftyDialogBuilder.withTitle("提示").withButton1Text("保存")
-						// def gone
-						.withButton2Text("取消")
-						.setButton1Click(new View.OnClickListener() {
+				sDialog=new SweetAlertDialog(getActivity(),
+						SweetAlertDialog.NORMAL_TYPE)
+						.setTitleText("保存图片")
+						.setConfirmText("save")
+						.showCancelButton(true)
+						.setConfirmClickListener(
+								new SweetAlertDialog.OnSweetClickListener() {
+									@Override
+									public void onClick(SweetAlertDialog sDialog) {
+										Util.saveBitmap(((BitmapDrawable) (imageView1.getDrawable()))
+												.getBitmap(), df.format(new Date()));
+										sDialog
+						                .setTitleText("Save Success")
+						                .setContentText(getResources().getString(R.string.save_success))
+						                .setConfirmText("OK")
+						                .setConfirmClickListener(null)
+						                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+									}
+								});
+				sDialog.show();
 
-							@Override
-							public void onClick(View v) {
-
-								Util.saveBitmap(((BitmapDrawable) (imageView1
-										.getDrawable())).getBitmap(), df
-										.format(new Date()));
-								Toast.makeText(
-										getActivity(),
-										getResources().getString(
-												R.string.save_success),
-										Toast.LENGTH_LONG).show();
-								;
-								niftyDialogBuilder.dismiss();
-							}
-						}).setButton2Click(new View.OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								niftyDialogBuilder.dismiss();
-							}
-						}).show();
 
 				return true;
 			}
@@ -447,7 +439,7 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 			person.setUser("user");
 			person.setFile(bmobFile);
 			person.save(getActivity());
-			// Util.deletefile();
+			Util.deletefile();
 		}
 
 		@Override

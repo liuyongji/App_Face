@@ -55,7 +55,7 @@ public class Result extends Activity implements OnClickListener{
 	private CircleShareContent circleMedia;
 	private String ShareContent;
 	
-	private final String url="http://myfacetest.bmob.cn/";
+	public static final String url="http://myfacetest.bmob.cn/";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO 自动生成的方法存根

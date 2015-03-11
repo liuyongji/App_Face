@@ -10,9 +10,16 @@
     <string name="download_url">http://pan.baidu.com/s/1kT0vM0R</string>
     <string name="costomview">im custom view</string>
     <string name="save">长按可保存</string>
+    <string name="edit">编辑</string>
+    <string name="share">分享</string>
     <string name="save_success">保存成功，右滑菜单可查看</string>
     <string name="viewpager_indicator">%1$d/%2$d</string>
     <string name="no_net_state">网络不给力哦</string>
     <string name="choose_two">请选择两张清晰的人脸图片</string>
+    <string name="dialog_default_title">Here\'s a message!</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="LOADING">Loading...</string>
+    <string name="default_progressbar">Default Progressbar:</string>
 
 </resources>

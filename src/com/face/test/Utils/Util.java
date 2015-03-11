@@ -36,6 +36,7 @@ import android.util.Log;
 public class Util {
 	public static Face face;
 	private static File root;
+	private static File tmpfile;
 
 	/**
 	 * 
@@ -271,9 +272,27 @@ public class Util {
 		}
 		return file;
 	}
+	public static File saveBitmap(Bitmap bitmap) {
+		// f.createTempFile("prefix", "suffix");
+		try {
+		    tmpfile = new File(Environment.getExternalStorageDirectory().getPath()+"test.png");
+			FileOutputStream out = new FileOutputStream(tmpfile);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+			out.flush();
+			out.close();
+			Log.i("facetest", "create success");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return tmpfile;
+	}
 
 	public static void deletefile() {
-//		root.delete();
+		tmpfile.delete();
 		Log.i("facetest", "delete success");
 	}
 

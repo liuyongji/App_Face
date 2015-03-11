@@ -1,5 +1,7 @@
 package com.loveplusplus.demo.image;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 import com.face.test.MyApplication;
 import com.face.test.R;
 
@@ -18,6 +20,7 @@ public class ImageDetailFragment extends Fragment {
 	private String mImageUrl;
 	private PhotoView mImageView;
 	private PhotoViewAttacher mAttacher;
+	private SweetAlertDialog sDialog;
 
 	public static ImageDetailFragment newInstance(String imageUrl) {
 		final ImageDetailFragment f = new ImageDetailFragment();
@@ -25,6 +28,7 @@ public class ImageDetailFragment extends Fragment {
 		final Bundle args = new Bundle();
 		args.putString("url", imageUrl);
 		f.setArguments(args);
+		
 
 		return f;
 	}
@@ -51,6 +55,7 @@ public class ImageDetailFragment extends Fragment {
 				getActivity().finish();
 			}
 		});
+		
 		return v;
 	}
 

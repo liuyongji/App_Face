@@ -10,5 +10,9 @@
     <dimen name="detail_menu_item_height">40dp</dimen>
     <dimen name="detail_menu_margin_top_up">15dp</dimen>
     <dimen name="detail_menu_margin_top">15dp</dimen>
+    
+    <dimen name="alert_width">290dp</dimen>
+    <dimen name="common_circle_width">3dp</dimen>
+    <dimen name="progress_circle_radius">34dp</dimen>
 
 </resources>

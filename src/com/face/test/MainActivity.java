@@ -1,21 +1,17 @@
 package com.face.test;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import net.youmi.android.diy.DiyManager;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.face.test.fragment.MainFragment;
 import com.face.test.fragment.PhotosFragment;
-import com.myface.JMSManager;
+import com.face.test.fragment.TestFragment;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
 import com.umeng.update.UmengUpdateAgent;
 
 import android.annotation.SuppressLint;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -34,7 +30,7 @@ public class MainActivity extends SherlockFragmentActivity {
 	public static Bitmap curBitmap[] = new Bitmap[2];
 	private DrawerLayout mDrawer_layout;// DrawerLayout容器
 	private ListView menulist;
-	public static  String[] TITLES;
+	public static String[] TITLES;
 	private boolean isopen = false;
 	private ActionBarDrawerToggle mDrawerToggle;
 
@@ -49,12 +45,12 @@ public class MainActivity extends SherlockFragmentActivity {
 		MainFragment mianFragment = new MainFragment();
 		getSupportFragmentManager().beginTransaction()
 				.add(R.id.drawer_content, mianFragment).commit();
-//		new Timer().schedule(new TimerTask() {
-//			@Override
-//			public void run() {
-//				MyApplication.getJminstance().s(MainActivity.this);
-//			}
-//		}, 5000, 8 * 60 * 1000);
+		// new Timer().schedule(new TimerTask() {
+		// @Override
+		// public void run() {
+		// MyApplication.getJminstance().s(MainActivity.this);
+		// }
+		// }, 5000, 8 * 60 * 1000);
 	}
 
 	@Override
@@ -73,6 +69,12 @@ public class MainActivity extends SherlockFragmentActivity {
 				mDrawer_layout.openDrawer(menulist);
 			}
 			break;
+		case R.id.nemu_edit:
+
+			break;
+		case R.id.nemu_share:
+			
+			break;
 
 		default:
 			break;
@@ -81,7 +83,7 @@ public class MainActivity extends SherlockFragmentActivity {
 	}
 
 	private void initdraw() {
-		TITLES=getResources().getStringArray(R.array.right_menu);
+		TITLES = getResources().getStringArray(R.array.right_menu);
 		mDrawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		menulist = (ListView) findViewById(R.id.drawer_right);
 		menulist.setAdapter(new ArrayAdapter<String>(this,
@@ -115,8 +117,10 @@ public class MainActivity extends SherlockFragmentActivity {
 		Fragment fragment = null;
 		switch (position) {
 		case 0:
-			fragment = new MainFragment();
-			ft.replace(R.id.drawer_content, fragment).commit();
+			fragment = new TestFragment();
+			ft.replace(R.id.drawer_content, fragment);
+			ft.addToBackStack(null);
+			ft.commit();
 			break;
 		case 1:
 			DiyManager.showRecommendWall(MainActivity.this);
@@ -126,8 +130,10 @@ public class MainActivity extends SherlockFragmentActivity {
 			agent.startFeedbackActivity();
 			break;
 		case 3:
-			fragment=new PhotosFragment();
-			ft.replace(R.id.drawer_content, fragment).commit();
+			fragment = new PhotosFragment();
+			ft.replace(R.id.drawer_content, fragment);
+			ft.addToBackStack(null);
+			ft.commit();
 			break;
 		case 4:
 			MainActivity.this.finish();
@@ -151,24 +157,24 @@ public class MainActivity extends SherlockFragmentActivity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-//			MyApplication.getJminstance().e(MainActivity.this,
-//					new JMSManager.CallbackListener() {
-//
-//						@Override
-//						public void onOpen() {
-//
-//						}
-//
-//						@Override
-//						public void onFailed() {
-//							MainActivity.this.finish();
-//						}
-//
-//						@Override
-//						public void onClose() {
-//
-//						}
-//					});
+//			 MyApplication.getJminstance().e(MainActivity.this,
+//			 new JMSManager.CallbackListener() {
+//			
+//			 @Override
+//			 public void onOpen() {
+//			
+//			 }
+//			
+//			 @Override
+//			 public void onFailed() {
+//			 MainActivity.this.finish();
+//			 }
+//			
+//			 @Override
+//			 public void onClose() {
+//			
+//			 }
+//			 });
 		}
 		return super.onKeyDown(keyCode, event);
 	}
