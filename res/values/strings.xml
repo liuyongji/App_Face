@@ -12,7 +12,9 @@
     <string name="save">长按可保存</string>
     <string name="edit">编辑</string>
     <string name="share">分享</string>
+    <string name="sharecontent">我正在使用一个很有趣的人脸检测应用 </string>
     <string name="save_success">保存成功，右滑菜单可查看</string>
+    <string name="save_fail">保存出错了，可能是因为内存不足</string>
     <string name="viewpager_indicator">%1$d/%2$d</string>
     <string name="no_net_state">网络不给力哦</string>
     <string name="choose_two">请选择两张清晰的人脸图片</string>

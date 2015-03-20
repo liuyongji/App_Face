@@ -6,14 +6,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <com.example.demo_zhy_mms_miui.ViewPagerIndicator
+    <com.andexert.library.ViewPagerIndicator
         android:id="@+id/id_indicator"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="@drawable/title_bar_bg_one_row"
         android:orientation="horizontal"
         zhy:item_count="2" >
-    </com.example.demo_zhy_mms_miui.ViewPagerIndicator>
+    </com.andexert.library.ViewPagerIndicator>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
@@ -38,7 +38,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/blue"
-                
                 android:text="选择图片" />
         </com.andexert.library.RippleView>
 
@@ -54,7 +53,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/blue"
-                
                 android:text="对比" />
         </com.andexert.library.RippleView>
     </LinearLayout>

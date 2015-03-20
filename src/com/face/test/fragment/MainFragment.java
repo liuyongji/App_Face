@@ -1,9 +1,10 @@
 package com.face.test.fragment;
 
 import java.io.File;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -13,21 +14,23 @@ import org.json.JSONObject;
 
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
+import com.andexert.library.ViewPagerIndicator;
+import com.face.test.MyApplication;
 import com.face.test.R;
 import com.face.test.ReportTask;
 import com.face.test.Result;
 import com.face.test.Utils.Http;
 import com.face.test.Utils.Util;
+import com.face.test.adapter.MyViewAdapter;
 import com.face.test.bean.ClientError;
 import com.face.test.bean.Person;
 import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
-import com.gitonway.niftydialogeffects.widget.niftydialogeffects.NiftyDialogBuilder;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -40,6 +43,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -54,25 +58,23 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.TabHost;
 import android.widget.Toast;
-import android.widget.TabHost.OnTabChangeListener;
 
-public class MainFragment extends Fragment implements OnTabChangeListener,
-		OnClickListener {
+public class MainFragment extends Fragment implements OnClickListener {
 	private PopupWindow mpopupWindow;
-	public static Bitmap curBitmap[] = new Bitmap[2];
+	private ViewPager mViewPager;
+	private ViewPagerIndicator mIndicator;
+	private MyViewAdapter mAdapter;
+	private List<Bitmap> bitmaps = new ArrayList<Bitmap>();
+	private List<String> mDatas = Arrays.asList("照片1", "照片2");
+	// public static Bitmap curBitmap[] = new Bitmap[2];
 	private final static String TAG = "facetest";
-	private ImageView imageView1 = null;
-	private ImageView imageView2 = null;
 	private Button seletcButton, duibiButton;
 	// private HandlerThread detectThread = null;
 	private Handler detectHandler = null;
 	private String face[] = new String[2];
-	public int n = 0;
 	private ProgressDialog progressBar;
 
-	private TabHost tabHost;
 	public static final int DECTOR_SUCCESS = 0;
 	public static final int COMPARE_SUCCESS = 1;
 	public static final int COMPARE_FAIL = 2;
@@ -89,13 +91,12 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 
 	private HttpRequests request = null;// 在线api
 
-	private SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");// 设置日期格式
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO 自动生成的方法存根
-		View view = inflater.inflate(R.layout.main3, container, false);
+		View view = inflater.inflate(R.layout.main4, container, false);
 		request = new HttpRequests("99a9423512d4f19c17bd8d6b526e554c",
 				"z8stpP3-HMdYhg6kAK73A2nBFwZg4Thl");
 		initview(view);
@@ -103,31 +104,27 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 		detectHandler = new Handler() {
 			@SuppressWarnings("unchecked")
 			public void handleMessage(Message msg) {
+				if (progressBar != null) {
+					progressBar.dismiss();
+				}
 
 				switch (msg.what) {
+				
 				case DECTOR_SUCCESS:
-					Bitmap bitmap = Util.watermarkBitmap(curBitmap[n],
+					ImageView imageView = (ImageView) mViewPager
+							.findViewWithTag(mViewPager.getCurrentItem());					
+					Bitmap bitmap = Util.watermarkBitmap(
+							bitmaps.get(mViewPager.getCurrentItem()),
 							(List<String>) msg.obj);
-					if (n == 0) {
-						imageView1.setImageBitmap(bitmap);
-					} else if (n == 1) {
-						imageView2.setImageBitmap(bitmap);
-					}
+					imageView.setImageBitmap(bitmap);
 					File f = Util.saveBitmap(bitmap);
 					bmobFile = new BmobFile(f);
 					bmobFile.upload(getActivity(), uploadFileListener);
-					if (progressBar != null) {
-						progressBar.dismiss();
-					}
-
 					Toast.makeText(getActivity(),
 							getResources().getString(R.string.save),
 							Toast.LENGTH_LONG).show();
 					break;
 				case DECTOR_FAIL:
-					if (progressBar != null) {
-						progressBar.dismiss();
-					}
 					timer.cancel();
 					Thread.currentThread().interrupt();
 					Toast.makeText(getActivity(),
@@ -135,17 +132,12 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 							Toast.LENGTH_LONG).show();
 					break;
 				case COMPARE_FAIL:
-					if (progressBar != null) {
-						progressBar.dismiss();
-					}
 					Toast.makeText(getActivity(),
 							getResources().getString(R.string.choose_two),
 							Toast.LENGTH_LONG).show();
 					break;
 				case COMPARE_SUCCESS:
-					if (progressBar != null) {
-						progressBar.dismiss();
-					}
+					MyApplication.setBitmaps(bitmaps);
 					Intent intent = new Intent(getActivity(), Result.class);
 					Bundle bundle = new Bundle();
 					bundle.putString("Compare",
@@ -164,8 +156,24 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 		return view;
 	}
 
+	private void initview(View view) {
+		seletcButton = (Button) view.findViewById(R.id.pick);
+		duibiButton = (Button) view.findViewById(R.id.detect);
+		seletcButton.setOnClickListener(this);
+		duibiButton.setOnClickListener(this);
+		mViewPager = (ViewPager) view.findViewById(R.id.pager);
+		mIndicator = (ViewPagerIndicator) view.findViewById(R.id.id_indicator);
+		mIndicator.setTabItemTitles(mDatas);
+		mAdapter = new MyViewAdapter(getActivity());
+		mViewPager.setAdapter(mAdapter);
+		mIndicator.setViewPager(mViewPager, 0);
+		bitmaps.add(null);
+		bitmaps.add(null);
+	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Bitmap bitmap;
 
 		switch (requestCode) {
 		case 1001: {
@@ -182,11 +190,8 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 				String str = localCursor.getString(localCursor
 						.getColumnIndex(arrayOfString[0]));
 				localCursor.close();
-				if ((curBitmap[n] != null) && (!curBitmap[n].isRecycled()))
-					curBitmap[n].recycle();
-				curBitmap[n] = Util.getScaledBitmap(str, 700);
-				setBitmap(curBitmap[n]);
-
+				bitmap = Util.getScaledBitmap(str, 700);
+				setBitmap(bitmap);
 			}
 			break;
 		}
@@ -196,26 +201,20 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 			}
 			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
 			bitmapOptions.inSampleSize = 8;
-			File file = new File(sdcard_temp);
-			if ((curBitmap[n] != null) && (!curBitmap[n].isRecycled()))
-				curBitmap[n].recycle();
-			if (file.exists()) {
-				curBitmap[n] = BitmapFactory.decodeFile(sdcard_temp,
-						bitmapOptions);
-			}
-			setBitmap(curBitmap[n]);
+			
+			bitmap = BitmapFactory.decodeFile(sdcard_temp, bitmapOptions);
+			setBitmap(bitmap);
+			//
 			break;
 		}
 
 	}
 
 	private void setBitmap(Bitmap bitmap) {
-
-		if (n == 0) {
-			imageView1.setImageBitmap(bitmap);
-		} else if (n == 1) {
-			imageView2.setImageBitmap(bitmap);
-		}
+		bitmaps.set(mViewPager.getCurrentItem(), bitmap);
+		ImageView imageView = (ImageView) mViewPager.findViewWithTag(mViewPager
+				.getCurrentItem());
+		imageView.setImageBitmap(bitmap);
 
 		progressBar = Util.getProgressDialog(getActivity());
 
@@ -231,53 +230,6 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 			}
 		}, 15000);
 		new Thread(dector).start();
-	}
-
-	private void initview(View view) {
-		seletcButton = (Button) view.findViewById(R.id.pick);
-		duibiButton = (Button) view.findViewById(R.id.detect);
-		seletcButton.setOnClickListener(this);
-		duibiButton.setOnClickListener(this);
-		imageView1 = (ImageView) view.findViewById(R.id.imageview1);
-		imageView2 = (ImageView) view.findViewById(R.id.imageview2);
-		tabHost = (TabHost) view.findViewById(android.R.id.tabhost);
-		tabHost.setup();
-		tabHost.addTab(tabHost.newTabSpec("tab1").setIndicator("照片1")
-				.setContent(R.id.imageview1));
-		tabHost.addTab(tabHost.newTabSpec("tab2").setIndicator("照片2")
-				.setContent(R.id.imageview2));
-		tabHost.setOnTabChangedListener(this);
-		n = tabHost.getCurrentTab();
-		imageView1.setOnLongClickListener(new ImageView.OnLongClickListener() {
-			SweetAlertDialog sDialog;
-
-			@Override
-			public boolean onLongClick(View v) {
-				sDialog=new SweetAlertDialog(getActivity(),
-						SweetAlertDialog.NORMAL_TYPE)
-						.setTitleText("保存图片")
-						.setConfirmText("save")
-						.showCancelButton(true)
-						.setConfirmClickListener(
-								new SweetAlertDialog.OnSweetClickListener() {
-									@Override
-									public void onClick(SweetAlertDialog sDialog) {
-										Util.saveBitmap(((BitmapDrawable) (imageView1.getDrawable()))
-												.getBitmap(), df.format(new Date()));
-										sDialog
-						                .setTitleText("Save Success")
-						                .setContentText(getResources().getString(R.string.save_success))
-						                .setConfirmText("OK")
-						                .setConfirmClickListener(null)
-						                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-									}
-								});
-				sDialog.show();
-
-
-				return true;
-			}
-		});
 	}
 
 	@Override
@@ -359,7 +311,8 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 
 		@Override
 		public void run() {
-			byte[] bytes = Util.getBitmapByte(getActivity(), curBitmap[n]);
+			
+			byte[] bytes = Util.getBitmapByte(getActivity(), bitmaps.get(mViewPager.getCurrentItem()));
 			JSONObject jsonObject = null;
 			List<String> list = null;
 
@@ -368,11 +321,10 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 						.setImg(bytes).setMode("oneface"));
 				list = Util.Jsonn(jsonObject);
 				if (list == null) {
-					// resultsingle = "没检测到人脸";
 					list = new ArrayList<String>();
 					list.add("没检测到人脸");
 				} else {
-					face[n] = Util.face.getFaceId();
+					face[mViewPager.getCurrentItem()] = Util.face.getFaceId();
 				}
 			} catch (FaceppParseException e) {
 				e.printStackTrace();
@@ -390,11 +342,6 @@ public class MainFragment extends Fragment implements OnTabChangeListener,
 			detectHandler.sendMessage(message);
 		}
 	};
-
-	@Override
-	public void onTabChanged(String arg0) {
-		n = tabHost.getCurrentTab();
-	}
 
 	private void showPopMenu() {
 		View view = View

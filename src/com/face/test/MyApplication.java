@@ -1,16 +1,23 @@
 package com.face.test;
 
+import java.util.List;
+
 import net.youmi.android.AdManager;
 import cn.bmob.v3.Bmob;
 
 import com.face.test.Utils.CrashHandler;
 import com.myface.JMSManager;
+import com.myface.net.u;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.bean.SocializeEntity;
 import com.umeng.socialize.controller.UMServiceFactory;
 import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.controller.listener.SocializeListeners.SnsPostListener;
+import com.umeng.socialize.media.QQShareContent;
+import com.umeng.socialize.media.QZoneShareContent;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.sensor.controller.impl.UMShakeServiceFactory;
 import com.umeng.socialize.sso.QZoneSsoHandler;
@@ -19,18 +26,20 @@ import com.umeng.socialize.sso.TencentWBSsoHandler;
 import com.umeng.socialize.sso.UMQQSsoHandler;
 import com.umeng.socialize.weixin.controller.UMWXHandler;
 import com.umeng.socialize.weixin.media.CircleShareContent;
+import com.umeng.socialize.weixin.media.WeiXinShareContent;
 
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class MyApplication extends Application {
 	private ImageLoaderConfiguration configuration;
 	private static ImageLoader imageLoader = ImageLoader.getInstance();
 	private static DisplayImageOptions options;
-
+	private static List<Bitmap> bitmaps;
 	private static JMSManager jmInstance;
 
 	@Override
@@ -65,44 +74,94 @@ public class MyApplication extends Application {
 		imageLoader.displayImage(url, imageView, options);
 	}
 
-	public static UMSocialService setShare(Activity context,
-			UMSocialService mController,String shareContent,Bitmap shareImage) {
+	public static void setShare(final Activity context, UMSocialService mController,
+			String shareContent, Bitmap shareImage) {
 		mController = UMServiceFactory.getUMSocialService("com.face.test");
-		if (shareContent!=null) {
+		if (shareContent != null) {
 			mController.setShareContent(shareContent);
 		}
-		
+
 		mController.setShareMedia(new UMImage(context, shareImage));
+
 		
-		// 注册微博一键登录
 		mController.getConfig().setSsoHandler(new TencentWBSsoHandler());
 		mController.getConfig().setSsoHandler(new SinaSsoHandler());
-		// 微信
-		UMWXHandler wxHandler = new UMWXHandler(context, "wxd0792b8632aa595b");
+		
+		UMWXHandler wxHandler = new UMWXHandler(context, "wxd0792b8632aa595b",
+				"93f25458b2909f967e6ba19d089f14d7");
 		wxHandler.addToSocialSDK();
 		UMWXHandler wxCircleHandler = new UMWXHandler(context,
-				"wxd0792b8632aa595b");
+				"wxd0792b8632aa595b", "93f25458b2909f967e6ba19d089f14d7");
 		wxCircleHandler.setToCircle(true);
 		wxCircleHandler.addToSocialSDK();
+		WeiXinShareContent weixinContent = new WeiXinShareContent();
+		weixinContent.setTitle(context.getResources().getString(R.string.app_name));
+		weixinContent.setShareContent("shareContent");
+//		weixinContent.setShareImage(new UMImage(context, shareImage));
+		weixinContent.setTargetUrl(Result.url);
+		mController.setShareMedia(weixinContent);
+		
 		CircleShareContent circleMedia = new CircleShareContent();
-		circleMedia.setShareContent(shareContent);
-		circleMedia.setTitle(shareContent);
-		circleMedia.setShareImage(new UMImage(context,shareImage));
+//		circleMedia.setShareImage(new UMImage(context, shareImage));
 		circleMedia.setTargetUrl(Result.url);
 		mController.setShareMedia(circleMedia);
-
-		// 腾讯
+		
+		
 		UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(context, "1101987894",
 				"McgaoeK2xHK8T0qm");
 		qqSsoHandler.addToSocialSDK();
 		QZoneSsoHandler qZoneSsoHandler = new QZoneSsoHandler(context,
 				"1101987894", "McgaoeK2xHK8T0qm");
 		qZoneSsoHandler.addToSocialSDK();
-
+		
+		QQShareContent qqShareContent = new QQShareContent();
+//		qqShareContent.setShareContent(shareContent);
+		qqShareContent.setTitle(context.getResources().getString(R.string.app_name));
+		qqShareContent.setShareImage(new UMImage(context, shareImage));
+		qqShareContent.setTargetUrl(Result.url);
+		
+		mController.setShareMedia(qqShareContent);
+		
+		QZoneShareContent qzone = new QZoneShareContent();
+		qzone.setShareContent(shareContent);
+		qzone.setTargetUrl(Result.url);
+		qzone.setTitle(context.getResources().getString(R.string.app_name));
+		qzone.setShareImage(new UMImage(context, shareImage));
+		mController.setShareMedia(qzone);
+		
 		mController.getConfig().setSinaCallbackUrl("http://www.sina.com");
 		mController.getConfig().removePlatform(SHARE_MEDIA.DOUBAN);
-		return mController;
+		mController.openShare(context, false);
 
+	}
+	
+	SnsPostListener mSnsPostListener = new SnsPostListener() {
+
+		@Override
+		public void onStart() {
+
+		}
+
+		@Override
+		public void onComplete(SHARE_MEDIA platform, int stCode,
+				SocializeEntity entity) {
+			if (stCode == 200) {
+				Toast.makeText(getApplicationContext(), "分享成功",
+						Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(getApplicationContext(),
+						"分享失败 : error code : " + stCode, Toast.LENGTH_SHORT)
+						.show();
+			}
+		}
+	};
+
+	public static List<Bitmap> getBitmaps() {
+		return bitmaps;
+	}
+
+	public static void setBitmaps(List<Bitmap> bitmaps) {
+		MyApplication.bitmaps = bitmaps;
 	}
 
 }

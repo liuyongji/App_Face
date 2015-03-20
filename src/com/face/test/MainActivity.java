@@ -6,7 +6,6 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.face.test.fragment.MainFragment;
 import com.face.test.fragment.PhotosFragment;
-import com.face.test.fragment.TestFragment;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
 import com.umeng.update.UmengUpdateAgent;
@@ -69,12 +68,6 @@ public class MainActivity extends SherlockFragmentActivity {
 				mDrawer_layout.openDrawer(menulist);
 			}
 			break;
-		case R.id.nemu_edit:
-
-			break;
-		case R.id.nemu_share:
-			
-			break;
 
 		default:
 			break;
@@ -117,7 +110,7 @@ public class MainActivity extends SherlockFragmentActivity {
 		Fragment fragment = null;
 		switch (position) {
 		case 0:
-			fragment = new TestFragment();
+			fragment = new MainFragment();
 			ft.replace(R.id.drawer_content, fragment);
 			ft.addToBackStack(null);
 			ft.commit();

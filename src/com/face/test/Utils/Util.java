@@ -247,7 +247,7 @@ public class Util {
 		return null;
 	}
 
-	public static File saveBitmap(Bitmap bitmap, String name) {
+	public static  boolean  saveBitmap(Bitmap bitmap, String name) {
 		// f.createTempFile("prefix", "suffix");
 		File file = null;
 		try {
@@ -264,27 +264,30 @@ public class Util {
 			out.close();
 			Log.i("facetest", "create success");
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
-		return file;
+		return true;
 	}
 	public static File saveBitmap(Bitmap bitmap) {
 		// f.createTempFile("prefix", "suffix");
 		try {
-		    tmpfile = new File(Environment.getExternalStorageDirectory().getPath()+"test.png");
+		    tmpfile = new File(Environment.getExternalStorageDirectory().getPath()+"/test.png");
 			FileOutputStream out = new FileOutputStream(tmpfile);
 			bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
 			out.flush();
 			out.close();
 			Log.i("facetest", "create success");
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			Log.i("facetest", "FileNotFoundException");
 			e.printStackTrace();
 		} catch (IOException e) {
+			Log.i("facetest", "create fail");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

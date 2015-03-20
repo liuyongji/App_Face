@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ripple="http://schemas.android.com/apk/res/com.face.test"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -39,19 +40,35 @@
             android:layout_alignParentBottom="true"
             android:orientation="horizontal" >
 
-            <Button
-                android:id="@+id/button1"
+            <com.andexert.library.RippleView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:text="重测" />
+                ripple:rv_centered="true" >
 
-            <Button
-                android:id="@+id/button2"
+                <Button
+                    android:id="@+id/button1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/blue"
+                    android:text="重测" />
+            </com.andexert.library.RippleView>
+
+            <com.andexert.library.RippleView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:text="分享" />
+                ripple:rv_centered="true" >
+
+                <Button
+                    android:id="@+id/button2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/blue"
+                    android:text="分享" />
+            </com.andexert.library.RippleView>
         </LinearLayout>
 
         <LinearLayout
@@ -93,7 +110,6 @@
             android:layout_alignParentLeft="true"
             android:text="赶紧摇一摇分享震惊你的小伙伴吧！"
             android:textSize="20dp" />
-
     </RelativeLayout>
 
 </LinearLayout>
