@@ -11,17 +11,7 @@ import com.face.test.MyApplication;
 import com.face.test.R;
 import com.face.test.Result;
 import com.face.test.adapter.ImageAdapter;
-import com.umeng.socialize.bean.SHARE_MEDIA;
-import com.umeng.socialize.controller.UMServiceFactory;
 import com.umeng.socialize.controller.UMSocialService;
-import com.umeng.socialize.media.UMImage;
-import com.umeng.socialize.sso.QZoneSsoHandler;
-import com.umeng.socialize.sso.SinaSsoHandler;
-import com.umeng.socialize.sso.TencentWBSsoHandler;
-import com.umeng.socialize.sso.UMQQSsoHandler;
-import com.umeng.socialize.weixin.controller.UMWXHandler;
-import com.umeng.socialize.weixin.media.CircleShareContent;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -32,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -45,8 +36,6 @@ public class PhotosFragment extends Fragment {
 	private ImageAdapter imageAdapter;
 
 	private UMSocialService mController;
-	private CircleShareContent circleMedia;
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -54,6 +43,7 @@ public class PhotosFragment extends Fragment {
 		for (int i = 0; i < files.length; i++) {
 			list.add("file:///" + files[i].getAbsolutePath());
 		}
+		Toast.makeText(getActivity(), "长按更多操作", Toast.LENGTH_SHORT).show();
 		imageAdapter = new ImageAdapter(getActivity(), list);
 		View view = inflater.inflate(R.layout.gridview_photo, container, false);
 		mGridView = (GridView) view.findViewById(R.id.gv_photos);
@@ -75,24 +65,34 @@ public class PhotosFragment extends Fragment {
 				sDialog = new SweetAlertDialog(getActivity(),
 						SweetAlertDialog.NORMAL_TYPE);
 				sDialog.setTitleText("what are you going to do");
-				sDialog.setConfirmText("delete!");
+				sDialog.setConfirmText("删除!");
 				sDialog.showCancelButton(true);
 				sDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
 					@Override
 					public void onClick(SweetAlertDialog sDialog) {
 						File file = new File(list.get(position));
-						list.remove(position);
-						file.delete();
+//						list.remove(position);
+						if (file.delete()) {
+							sDialog.setTitleText("已删除!")
+							.setContentText(
+									"Your imaginary file has been deleted!")
+							.setConfirmText("OK")
+							.setConfirmClickListener(null)
+							.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+						}else {
+							sDialog.setTitleText("删除失败")
+							.setContentText(
+									" deleted failed!")
+							.setConfirmText("OK")
+							.setConfirmClickListener(null)
+							.changeAlertType(SweetAlertDialog.ERROR_TYPE);
+						}
 						imageAdapter.notifyDataSetChanged();
-						sDialog.setTitleText("Deleted!")
-								.setContentText(
-										"Your imaginary file has been deleted!")
-								.setConfirmText("OK")
-								.setConfirmClickListener(null)
-								.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+						
+						
 					}
 				});
-				sDialog.setCancelText("share!");
+				sDialog.setCancelText("分享!");
 				sDialog.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
 					@Override
 					public void onClick(SweetAlertDialog sDialog) {
@@ -119,40 +119,6 @@ public class PhotosFragment extends Fragment {
 		return view;
 	}
 
-	private void initshare() {
-		// TODO 自动生成的方法存根
-		mController = UMServiceFactory.getUMSocialService("com.face.test");
-		mController.setShareMedia(new UMImage(getActivity(), R.drawable.icon3));
-		// 注册微博一键登录
-		mController.getConfig().setSsoHandler(new TencentWBSsoHandler());
-		mController.getConfig().setSsoHandler(new SinaSsoHandler());
-
-		// 微信
-		UMWXHandler wxHandler = new UMWXHandler(getActivity(),
-				"wxd0792b8632aa595b");
-		wxHandler.addToSocialSDK();
-
-		UMWXHandler wxCircleHandler = new UMWXHandler(getActivity(),
-				"wxd0792b8632aa595b");
-		wxCircleHandler.setToCircle(true);
-		wxCircleHandler.addToSocialSDK();
-		circleMedia = new CircleShareContent();
-		circleMedia.setShareImage(new UMImage(getActivity(), R.drawable.icon3));
-
-		mController.setShareMedia(circleMedia);
-
-		// 腾讯
-		UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(getActivity(),
-				"1101987894", "McgaoeK2xHK8T0qm");
-		qqSsoHandler.addToSocialSDK();
-		QZoneSsoHandler qZoneSsoHandler = new QZoneSsoHandler(getActivity(),
-				"1101987894", "McgaoeK2xHK8T0qm");
-		qZoneSsoHandler.addToSocialSDK();
-
-		mController.getConfig().setSinaCallbackUrl("http://www.sina.com");
-		mController.getConfig().removePlatform(SHARE_MEDIA.DOUBAN);
-		mController.openShare(getActivity(), false);
-	}
 
 	private void imageBrower(int position, List<String> list) {
 		Intent intent = new Intent(getActivity(), ImagePagerActivity.class);

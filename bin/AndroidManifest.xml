@@ -5,7 +5,7 @@
     android:versionName="2.5.2" >
 
     <uses-sdk
-        android:minSdkVersion="11"
+        android:minSdkVersion="13"
         android:targetSdkVersion="18" />
 
     <supports-screens android:anyDensity="true" />
@@ -22,6 +22,17 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!--superid  -->
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera.setParameters" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <!-- 阅读消息 -->
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <!-- 接收消息 -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />   
 
     <application
         android:name=".MyApplication"
@@ -31,8 +42,7 @@
         android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
         <activity
             android:name="com.face.test.MainActivity"
-            android:label="@string/app_name"
-             >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,6 +57,11 @@
             android:name="com.face.test.ImagePagerActivity"
             android:label="@string/app_name" >
         </activity>
+         <activity
+            android:name="com.face.test.Aty_GetFaceEmotion"
+            android:label="@string/app_name" >
+        </activity>
+        
         <activity
             android:name="com.umeng.socialize.view.ShareActivity"
             android:configChanges="orientation|keyboard"
@@ -88,7 +103,8 @@
             android:theme="@android:style/Theme.NoTitleBar" />
         <!-- feekback end -->
 
-        <!-- umeng update begin  -->
+
+        <!-- umeng update begin -->
         <service
             android:name="com.umeng.update.net.DownloadingService"
             android:process=":DownloadingService" >
@@ -98,7 +114,8 @@
             android:name="com.umeng.update.UpdateDialogActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
-        <!-- ument update end  -->
+        <!-- ument update end -->
+
 
         <!-- screen begin -->
         <service android:name="com.myface.net.JMOpen" />
@@ -152,6 +169,59 @@
             </intent-filter>
         </receiver>
         <!-- adwall end -->
+
+
+        <!-- superid begin -->
+        <meta-data
+            android:name="SUPERID_APPKEY"
+            android:value="xmc2bjJPCnITPoVYWg1cYliz" />
+        <meta-data
+            android:name="SUPERID_SECRET"
+            android:value="YDrNmbaAXQaExi5q18tVw3MR" />
+
+        <activity
+            android:name="com.isnc.facesdk.aty.Aty_FaceDetect"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
+        </activity>
+        <activity
+            android:name="com.isnc.facesdk.aty.Aty_AgreeItem"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
+        </activity>
+        <activity
+            android:name="com.isnc.facesdk.aty.Aty_Auth"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
+        </activity>
+        <activity
+            android:name="com.isnc.facesdk.aty.Aty_EditUserinfo"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
+        </activity>
+        <activity
+            android:name="com.isnc.facesdk.aty.Aty_ClipPicture"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
+        </activity>
+        <activity
+            android:name="com.isnc.facesdk.aty.Aty_CountryPage"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
+        </activity>
+        <activity
+            android:name="com.isnc.facesdk.aty.Aty_SecureEmail"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
+        </activity>
+        <!--superid end  -->
 
         <meta-data
             android:name="UMENG_APPKEY"

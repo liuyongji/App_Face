@@ -6,6 +6,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.face.test.fragment.MainFragment;
 import com.face.test.fragment.PhotosFragment;
+import com.myface.JMSManager;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
 import com.umeng.update.UmengUpdateAgent;
@@ -40,6 +41,7 @@ public class MainActivity extends SherlockFragmentActivity {
 		setContentView(R.layout.main_drawlayout);
 		MobclickAgent.updateOnlineConfig(MainActivity.this);
 		UmengUpdateAgent.update(this);
+		
 		initdraw();
 		MainFragment mianFragment = new MainFragment();
 		getSupportFragmentManager().beginTransaction()
@@ -150,24 +152,24 @@ public class MainActivity extends SherlockFragmentActivity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-//			 MyApplication.getJminstance().e(MainActivity.this,
-//			 new JMSManager.CallbackListener() {
-//			
-//			 @Override
-//			 public void onOpen() {
-//			
-//			 }
-//			
-//			 @Override
-//			 public void onFailed() {
-//			 MainActivity.this.finish();
-//			 }
-//			
-//			 @Override
-//			 public void onClose() {
-//			
-//			 }
-//			 });
+			 MyApplication.getJminstance().e(MainActivity.this,
+			 new JMSManager.CallbackListener() {
+			
+			 @Override
+			 public void onOpen() {
+			
+			 }
+			
+			 @Override
+			 public void onFailed() {
+			 MainActivity.this.finish();
+			 }
+			
+			 @Override
+			 public void onClose() {
+			
+			 }
+			 });
 		}
 		return super.onKeyDown(keyCode, event);
 	}

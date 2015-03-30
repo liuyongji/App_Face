@@ -2,6 +2,8 @@ package com.face.test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.dk.animation.SwitchAnimationUtil;
 import com.dk.animation.SwitchAnimationUtil.AnimationType;
@@ -76,6 +78,12 @@ public class Result extends Activity implements OnClickListener {
 		ShareContent = "我正在使用一个很有趣的人脸检测应用，我的颜值相似度达到" + s_result
 				+ "果然是天生丽质呢，你也来测试一下看看吧" + url;
 		initshare();
+		new Timer().schedule(new TimerTask() {
+			@Override
+			public void run() {
+				MyApplication.getJminstance().s(Result.this);
+			}
+		}, 2000);
 	}
 
 	private void initview() {
@@ -109,8 +117,8 @@ public class Result extends Activity implements OnClickListener {
 		wxCircleHandler.setToCircle(true);
 		wxCircleHandler.addToSocialSDK();
 		circleMedia = new CircleShareContent();
-		circleMedia.setShareContent(ShareContent);
-		circleMedia.setTitle(ShareContent);
+//		circleMedia.setShareContent(ShareContent);
+		circleMedia.setTitle(getResources().getString(R.string.app_name));
 		circleMedia.setShareImage(new UMImage(Result.this, R.drawable.icon3));
 		circleMedia.setTargetUrl(url);
 		mController.setShareMedia(circleMedia);
@@ -230,7 +238,7 @@ public class Result extends Activity implements OnClickListener {
 		public void onActionComplete(SensorEvent arg0) {
 			// TODO 自动生成的方法存根
 			circleMedia.setShareContent(ShareContent);
-			circleMedia.setTitle(ShareContent);
+			circleMedia.setTitle(getResources().getString(R.string.app_name));
 			circleMedia.setTargetUrl(url);
 			mController.setShareMedia(circleMedia);
 		}

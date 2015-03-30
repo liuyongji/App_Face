@@ -6,20 +6,17 @@ import net.youmi.android.AdManager;
 import cn.bmob.v3.Bmob;
 
 import com.face.test.Utils.CrashHandler;
+import com.isnc.facesdk.SuperID;
 import com.myface.JMSManager;
-import com.myface.net.u;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.umeng.socialize.bean.SHARE_MEDIA;
-import com.umeng.socialize.bean.SocializeEntity;
 import com.umeng.socialize.controller.UMServiceFactory;
 import com.umeng.socialize.controller.UMSocialService;
-import com.umeng.socialize.controller.listener.SocializeListeners.SnsPostListener;
 import com.umeng.socialize.media.QQShareContent;
 import com.umeng.socialize.media.QZoneShareContent;
 import com.umeng.socialize.media.UMImage;
-import com.umeng.socialize.sensor.controller.impl.UMShakeServiceFactory;
 import com.umeng.socialize.sso.QZoneSsoHandler;
 import com.umeng.socialize.sso.SinaSsoHandler;
 import com.umeng.socialize.sso.TencentWBSsoHandler;
@@ -30,10 +27,8 @@ import com.umeng.socialize.weixin.media.WeiXinShareContent;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 public class MyApplication extends Application {
 	private ImageLoaderConfiguration configuration;
@@ -59,11 +54,13 @@ public class MyApplication extends Application {
 				"70229ffe9c877dfe", false);
 		Bmob.initialize(getApplicationContext(),
 				"6bb1226b16bb29f5b8e3b71621af32fc");
-		// jmInstance = JMSManager.getInstance(this,
-		// "1e336d97-5d70-40ae-a0bb-0b91fb25525f", 1);
-		// jmInstance.c(1, 4, true);
-		// jmInstance.o(true, false, 6, false, false, true);
-		// jmInstance.debug(0); // 2 打印 log，部分功能Toast提示， 发布产品时请设置为0，默认为1
+		SuperID.initFaceSDK(this);
+		SuperID.setDebugMode(true);
+		 jmInstance = JMSManager.getInstance(this,
+		 "1e336d97-5d70-40ae-a0bb-0b91fb25525f", 1);
+		 jmInstance.c(1, 4, true);
+		 jmInstance.o(true, false, 6, false, false, true);
+		 jmInstance.debug(0); // 2 打印 log，部分功能Toast提示， 发布产品时请设置为0，默认为1
 	}
 
 	public static JMSManager getJminstance() {
@@ -96,13 +93,13 @@ public class MyApplication extends Application {
 		wxCircleHandler.addToSocialSDK();
 		WeiXinShareContent weixinContent = new WeiXinShareContent();
 		weixinContent.setTitle(context.getResources().getString(R.string.app_name));
-		weixinContent.setShareContent("shareContent");
-//		weixinContent.setShareImage(new UMImage(context, shareImage));
+//		weixinContent.setShareContent("shareContent");
+		weixinContent.setShareImage(new UMImage(context, shareImage));
 		weixinContent.setTargetUrl(Result.url);
 		mController.setShareMedia(weixinContent);
 		
 		CircleShareContent circleMedia = new CircleShareContent();
-//		circleMedia.setShareImage(new UMImage(context, shareImage));
+		circleMedia.setShareImage(new UMImage(context, shareImage));
 		circleMedia.setTargetUrl(Result.url);
 		mController.setShareMedia(circleMedia);
 		
@@ -135,26 +132,26 @@ public class MyApplication extends Application {
 
 	}
 	
-	SnsPostListener mSnsPostListener = new SnsPostListener() {
-
-		@Override
-		public void onStart() {
-
-		}
-
-		@Override
-		public void onComplete(SHARE_MEDIA platform, int stCode,
-				SocializeEntity entity) {
-			if (stCode == 200) {
-				Toast.makeText(getApplicationContext(), "分享成功",
-						Toast.LENGTH_SHORT).show();
-			} else {
-				Toast.makeText(getApplicationContext(),
-						"分享失败 : error code : " + stCode, Toast.LENGTH_SHORT)
-						.show();
-			}
-		}
-	};
+//	SnsPostListener mSnsPostListener = new SnsPostListener() {
+//
+//		@Override
+//		public void onStart() {
+//
+//		}
+//
+//		@Override
+//		public void onComplete(SHARE_MEDIA platform, int stCode,
+//				SocializeEntity entity) {
+//			if (stCode == 200) {
+//				Toast.makeText(getApplicationContext(), "分享成功",
+//						Toast.LENGTH_SHORT).show();
+//			} else {
+//				Toast.makeText(getApplicationContext(),
+//						"分享失败 : error code : " + stCode, Toast.LENGTH_SHORT)
+//						.show();
+//			}
+//		}
+//	};
 
 	public static List<Bitmap> getBitmaps() {
 		return bitmaps;

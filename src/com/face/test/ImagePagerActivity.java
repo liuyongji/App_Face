@@ -1,13 +1,17 @@
 package com.face.test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.co.senab.photoview.PhotoViewAttacher;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import com.loveplusplus.demo.image.HackyViewPager;
 import com.loveplusplus.demo.image.ImageDetailFragment;
+import com.umeng.socialize.controller.UMSocialService;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -27,6 +31,11 @@ public class ImagePagerActivity extends FragmentActivity {
 	private HackyViewPager mPager;
 	private int pagerPosition;
 	private TextView indicator;
+	private ImagePagerAdapter mAdapter;
+	private ArrayList<String> urls;
+	private SweetAlertDialog sDialog;
+	
+	private UMSocialService mController;
 	
 
 	@Override
@@ -35,11 +44,11 @@ public class ImagePagerActivity extends FragmentActivity {
 		Log.i("ImagePagerActivity", "onCreate");
 		setContentView(R.layout.image_detail_pager);
 		pagerPosition = getIntent().getIntExtra(EXTRA_IMAGE_INDEX, 0);
-		ArrayList<String> urls = getIntent().getStringArrayListExtra(EXTRA_IMAGE_URLS);
+		 urls = getIntent().getStringArrayListExtra(EXTRA_IMAGE_URLS);
 
 
 		mPager = (HackyViewPager) findViewById(R.id.pager);
-		ImagePagerAdapter mAdapter = new ImagePagerAdapter(
+		mAdapter = new ImagePagerAdapter(
 				getSupportFragmentManager(), urls);
 		mPager.setAdapter(mAdapter);
 		indicator = (TextView) findViewById(R.id.indicator);
@@ -71,6 +80,7 @@ public class ImagePagerActivity extends FragmentActivity {
 		}
 
 		mPager.setCurrentItem(pagerPosition);
+		
 	}
 
 	@Override
@@ -79,14 +89,46 @@ public class ImagePagerActivity extends FragmentActivity {
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
+		
 		getMenuInflater().inflate(R.menu.pagermenu, menu);
 		return true;
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
-		return super.onOptionsItemSelected(item);
+		
+		switch (item.getItemId()) {
+		case R.id.share:
+			Bitmap bm = BitmapFactory.decodeFile(urls.get(pagerPosition));
+			MyApplication.setShare(ImagePagerActivity.this, mController, null , bm);
+			break;
+		case R.id.delete:
+//			File file = new File(urls.get(pagerPosition));
+//			file.delete();
+			sDialog = new SweetAlertDialog(ImagePagerActivity.this,
+					SweetAlertDialog.NORMAL_TYPE);
+			sDialog.setTitleText("你确定要删除？");
+			sDialog.setConfirmText("删除!");
+			sDialog.showCancelButton(true);
+			sDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+				@Override
+				public void onClick(SweetAlertDialog sDialog) {
+					File file = new File(urls.get(pagerPosition));
+					file.delete();
+					mAdapter.notifyDataSetChanged();
+					sDialog.setTitleText("已删除!")
+							.setContentText(
+									"Your imaginary file has been deleted!")
+							.setConfirmText("OK")
+							.setConfirmClickListener(null)
+							.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+				}
+			});
+			sDialog.show();
+
+		default:
+			break;
+		}
+		return true;
 	}
 
 	private class ImagePagerAdapter extends FragmentStatePagerAdapter {
@@ -106,8 +148,12 @@ public class ImagePagerActivity extends FragmentActivity {
 		@Override
 		public Fragment getItem(int position) {
 			String url = fileList.get(position);
-			return ImageDetailFragment.newInstance(url);
+			Fragment fragment=ImageDetailFragment.newInstance(url);
+			
+			return fragment;
 		}
+		
+		
 
 	}
 }

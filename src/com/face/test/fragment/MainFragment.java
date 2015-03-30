@@ -1,8 +1,6 @@
 package com.face.test.fragment;
 
 import java.io.File;
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +14,7 @@ import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
 
 import com.andexert.library.ViewPagerIndicator;
+import com.face.test.Aty_GetFaceEmotion;
 import com.face.test.MyApplication;
 import com.face.test.R;
 import com.face.test.ReportTask;
@@ -28,12 +27,18 @@ import com.face.test.bean.Person;
 import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
+import com.isnc.facesdk.SuperID;
+import com.isnc.facesdk.common.Cache;
+import com.isnc.facesdk.common.SDKConfig;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -43,7 +48,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -74,6 +78,8 @@ public class MainFragment extends Fragment implements OnClickListener {
 	private Handler detectHandler = null;
 	private String face[] = new String[2];
 	private ProgressDialog progressBar;
+	private SharedPreferences sharedPreferences;
+//	private SharedPreferences sharedPreferences=getActivity().getSharedPreferences("userinfo", Context.MODE_PRIVATE);
 
 	public static final int DECTOR_SUCCESS = 0;
 	public static final int COMPARE_SUCCESS = 1;
@@ -91,7 +97,6 @@ public class MainFragment extends Fragment implements OnClickListener {
 
 	private HttpRequests request = null;// 在线api
 
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -99,6 +104,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 		View view = inflater.inflate(R.layout.main4, container, false);
 		request = new HttpRequests("99a9423512d4f19c17bd8d6b526e554c",
 				"z8stpP3-HMdYhg6kAK73A2nBFwZg4Thl");
+		sharedPreferences=getActivity().getSharedPreferences("userinfo", Context.MODE_PRIVATE);
 		initview(view);
 
 		detectHandler = new Handler() {
@@ -109,10 +115,10 @@ public class MainFragment extends Fragment implements OnClickListener {
 				}
 
 				switch (msg.what) {
-				
+
 				case DECTOR_SUCCESS:
 					ImageView imageView = (ImageView) mViewPager
-							.findViewWithTag(mViewPager.getCurrentItem());					
+							.findViewWithTag(mViewPager.getCurrentItem());
 					Bitmap bitmap = Util.watermarkBitmap(
 							bitmaps.get(mViewPager.getCurrentItem()),
 							(List<String>) msg.obj);
@@ -201,10 +207,18 @@ public class MainFragment extends Fragment implements OnClickListener {
 			}
 			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
 			bitmapOptions.inSampleSize = 8;
-			
+
 			bitmap = BitmapFactory.decodeFile(sdcard_temp, bitmapOptions);
 			setBitmap(bitmap);
 			//
+			break;
+		default:
+//			if (resultCode==SDKConfig.LOGINSUCCESS) {
+//				String superiduid = Cache.getCached(getActivity(), SDKConfig.KEY_APPUID);
+//				Editor editor= sharedPreferences.edit();
+//				editor.putString("superiduid", superiduid);
+//				editor.commit();
+//			}
 			break;
 		}
 
@@ -236,7 +250,15 @@ public class MainFragment extends Fragment implements OnClickListener {
 	public void onClick(View view) {
 		switch (view.getId()) {
 		case R.id.pick:
-			showPopMenu();
+			// SuperID.faceLogin(getActivity());
+//			String superIDuid=sharedPreferences.getString("superiduid", "error");
+//			Log.i("SuperID", superIDuid);
+//			SuperID.isUidAuthorized(getActivity(), superIDuid, intSuccessCallback,
+//					intFailCallback);
+			 showPopMenu();
+			// SuperID.GetFaceEmotion(getActivity());
+			// startActivity(new Intent(getActivity(),
+			// Aty_GetFaceEmotion.class));
 			break;
 		case R.id.bt_cancle:
 			mpopupWindow.dismiss();
@@ -311,8 +333,9 @@ public class MainFragment extends Fragment implements OnClickListener {
 
 		@Override
 		public void run() {
-			
-			byte[] bytes = Util.getBitmapByte(getActivity(), bitmaps.get(mViewPager.getCurrentItem()));
+
+			byte[] bytes = Util.getBitmapByte(getActivity(),
+					bitmaps.get(mViewPager.getCurrentItem()));
 			JSONObject jsonObject = null;
 			List<String> list = null;
 
@@ -400,6 +423,36 @@ public class MainFragment extends Fragment implements OnClickListener {
 			// TODO 自动生成的方法存根
 
 		}
+	};
+
+	private SuperID.IntSuccessCallback intSuccessCallback = new SuperID.IntSuccessCallback() {
+		public void onSuccess(int arg0) {
+			switch (arg0) {
+			case SDKConfig.ISAUTHORIZED:
+				SuperID.GetFaceEmotion(getActivity());
+				break;
+			case SDKConfig.NOAUTHORIZED:
+				SuperID.faceLogin(getActivity());
+				break;
+			default:
+				break;
+			}
+		};
+	};
+	private SuperID.IntFailCallback intFailCallback = new SuperID.IntFailCallback() {
+		public void onFail(int error) {
+			switch (error) {
+			case SDKConfig.APPTOKENERROR:
+				break;
+			case SDKConfig.OTHER_ERROR:
+			case SDKConfig.SDKVERSIONEXPIRED:
+				break;
+			case SDKConfig.APPTOKEN_EXPIRED:
+				break;
+			default:
+				break;
+			}
+		};
 	};
 
 }
