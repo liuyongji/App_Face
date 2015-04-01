@@ -1,6 +1,5 @@
 package com.face.test;
 
-import net.youmi.android.diy.DiyManager;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -117,20 +116,20 @@ public class MainActivity extends SherlockFragmentActivity {
 			ft.addToBackStack(null);
 			ft.commit();
 			break;
+//		case 1:
+//			DiyManager.showRecommendWall(MainActivity.this);
+//			break;
 		case 1:
-			DiyManager.showRecommendWall(MainActivity.this);
-			break;
-		case 2:
 			FeedbackAgent agent = new FeedbackAgent(MainActivity.this);
 			agent.startFeedbackActivity();
 			break;
-		case 3:
+		case 2:
 			fragment = new PhotosFragment();
 			ft.replace(R.id.drawer_content, fragment);
 			ft.addToBackStack(null);
 			ft.commit();
 			break;
-		case 4:
+		case 3:
 			MainActivity.this.finish();
 			break;
 
@@ -149,29 +148,32 @@ public class MainActivity extends SherlockFragmentActivity {
 		MobclickAgent.onPause(this);
 	}
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			 MyApplication.getJminstance().e(MainActivity.this,
-			 new JMSManager.CallbackListener() {
-			
-			 @Override
-			 public void onOpen() {
-			
-			 }
-			
-			 @Override
-			 public void onFailed() {
-			 MainActivity.this.finish();
-			 }
-			
-			 @Override
-			 public void onClose() {
-			
-			 }
-			 });
-		}
-		return super.onKeyDown(keyCode, event);
-	}
+//	@Override
+//	public boolean onKeyDown(int keyCode, KeyEvent event) {
+//		if (keyCode == KeyEvent.KEYCODE_BACK) {
+//			if (getSupportFragmentManager().getBackStackEntryCount()==0) {
+//				return false;
+//			}
+//			 MyApplication.getJminstance().e(MainActivity.this,
+//			 new JMSManager.CallbackListener() {
+//			
+//			 @Override
+//			 public void onOpen() {
+//			
+//			 }
+//			
+//			 @Override
+//			 public void onFailed() {
+//			 MainActivity.this.finish();
+//			 }
+//			
+//			 @Override
+//			 public void onClose() {
+//			
+//			 }
+//			 });
+//		}
+//		return super.onKeyDown(keyCode, event);
+//	}
 
 }

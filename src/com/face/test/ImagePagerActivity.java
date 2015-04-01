@@ -13,6 +13,7 @@ import com.umeng.socialize.controller.UMSocialService;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -34,9 +35,11 @@ public class ImagePagerActivity extends FragmentActivity {
 	private ImagePagerAdapter mAdapter;
 	private ArrayList<String> urls;
 	private SweetAlertDialog sDialog;
-	
+
 	private UMSocialService mController;
-	
+	public static String path = Environment.getExternalStorageDirectory()
+			.getPath() + "/facetest/";
+	private File[] files;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -44,12 +47,11 @@ public class ImagePagerActivity extends FragmentActivity {
 		Log.i("ImagePagerActivity", "onCreate");
 		setContentView(R.layout.image_detail_pager);
 		pagerPosition = getIntent().getIntExtra(EXTRA_IMAGE_INDEX, 0);
-		 urls = getIntent().getStringArrayListExtra(EXTRA_IMAGE_URLS);
-
+		urls = getIntent().getStringArrayListExtra(EXTRA_IMAGE_URLS);
+		files = new File(path).listFiles();
 
 		mPager = (HackyViewPager) findViewById(R.id.pager);
-		mAdapter = new ImagePagerAdapter(
-				getSupportFragmentManager(), urls);
+		mAdapter = new ImagePagerAdapter(getSupportFragmentManager(), urls);
 		mPager.setAdapter(mAdapter);
 		indicator = (TextView) findViewById(R.id.indicator);
 
@@ -80,30 +82,34 @@ public class ImagePagerActivity extends FragmentActivity {
 		}
 
 		mPager.setCurrentItem(pagerPosition);
-		
+
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		outState.putInt(STATE_POSITION, mPager.getCurrentItem());
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		
+
 		getMenuInflater().inflate(R.menu.pagermenu, menu);
 		return true;
 	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		
+
 		switch (item.getItemId()) {
 		case R.id.share:
-			Bitmap bm = BitmapFactory.decodeFile(urls.get(pagerPosition));
-			MyApplication.setShare(ImagePagerActivity.this, mController, null , bm);
+			Bitmap bm = BitmapFactory.decodeFile(files[pagerPosition].getAbsolutePath());
+			MyApplication.setShare(ImagePagerActivity.this, mController,
+					getResources().getString(R.string.sharecontent)
+							+ Result.url, bm);
 			break;
 		case R.id.delete:
-//			File file = new File(urls.get(pagerPosition));
-//			file.delete();
+			// File file = new File(urls.get(pagerPosition));
+			// file.delete();
 			sDialog = new SweetAlertDialog(ImagePagerActivity.this,
 					SweetAlertDialog.NORMAL_TYPE);
 			sDialog.setTitleText("你确定要删除？");
@@ -112,15 +118,24 @@ public class ImagePagerActivity extends FragmentActivity {
 			sDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
 				@Override
 				public void onClick(SweetAlertDialog sDialog) {
-					File file = new File(urls.get(pagerPosition));
-					file.delete();
+					File file = files[pagerPosition];
+					if (file.delete()) {
+						urls.remove(pagerPosition);
+						sDialog.setTitleText("已删除!")
+								.setContentText(
+										"Your imaginary file has been deleted!")
+								.setConfirmText("OK").showCancelButton(false)
+								.setConfirmClickListener(null)
+								.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+					} else {
+						sDialog.setTitleText("删除失败")
+								.setContentText(" deleted failed!")
+								.setConfirmText("OK").showCancelButton(false)
+								.setConfirmClickListener(null)
+								.changeAlertType(SweetAlertDialog.ERROR_TYPE);
+					}
 					mAdapter.notifyDataSetChanged();
-					sDialog.setTitleText("已删除!")
-							.setContentText(
-									"Your imaginary file has been deleted!")
-							.setConfirmText("OK")
-							.setConfirmClickListener(null)
-							.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+
 				}
 			});
 			sDialog.show();
@@ -148,12 +163,10 @@ public class ImagePagerActivity extends FragmentActivity {
 		@Override
 		public Fragment getItem(int position) {
 			String url = fileList.get(position);
-			Fragment fragment=ImageDetailFragment.newInstance(url);
-			
+			Fragment fragment = ImageDetailFragment.newInstance(url);
+
 			return fragment;
 		}
-		
-		
 
 	}
 }

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.face.test"
     android:versionCode="5"
-    android:versionName="2.5.2" >
+    android:versionName="2.5.5" >
 
     <uses-sdk
         android:minSdkVersion="13"
@@ -29,10 +29,10 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <!-- 阅读消息 -->
+    <!-- 
     <uses-permission android:name="android.permission.READ_SMS" />
-    <!-- 接收消息 -->
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />   
+    
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />   --> 
 
     <application
         android:name=".MyApplication"
@@ -149,26 +149,6 @@
         <!-- 下载服务 -->
 
 
-        <!-- youmi adwall begin -->
-        <activity
-            android:name="net.youmi.android.AdBrowser"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
-        </activity>
-
-        <service
-            android:name="net.youmi.android.AdService"
-            android:exported="false" >
-        </service>
-
-        <receiver android:name="net.youmi.android.AdReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
-
-                <data android:scheme="package" />
-            </intent-filter>
-        </receiver>
-        <!-- adwall end -->
 
 
         <!-- superid begin -->
