@@ -83,7 +83,7 @@ public class Result extends Activity implements OnClickListener {
 			public void run() {
 				MyApplication.getJminstance().s(Result.this);
 			}
-		}, 2000);
+		}, 1000);
 	}
 
 	private void initview() {

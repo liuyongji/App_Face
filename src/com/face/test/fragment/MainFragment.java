@@ -19,6 +19,8 @@ import com.face.test.MyApplication;
 import com.face.test.R;
 import com.face.test.ReportTask;
 import com.face.test.Result;
+import com.face.test.Utils.BitmapUtil;
+import com.face.test.Utils.DialogUtil;
 import com.face.test.Utils.Http;
 import com.face.test.Utils.Util;
 import com.face.test.adapter.MyViewAdapter;
@@ -62,6 +64,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainFragment extends Fragment implements OnClickListener {
@@ -117,13 +120,20 @@ public class MainFragment extends Fragment implements OnClickListener {
 				switch (msg.what) {
 
 				case DECTOR_SUCCESS:
-					ImageView imageView = (ImageView) mViewPager
+					View view=mViewPager
 							.findViewWithTag(mViewPager.getCurrentItem());
-					Bitmap bitmap = Util.watermarkBitmap(
-							bitmaps.get(mViewPager.getCurrentItem()),
-							(List<String>) msg.obj);
-					imageView.setImageBitmap(bitmap);
-					File f = Util.saveBitmap(bitmap);
+//					ImageView imageView = (ImageView) view.findViewById(R.id.mainfragment_imageview);
+//					ImageView imageView = (ImageView) mViewPager
+//							.findViewWithTag(mViewPager.getCurrentItem());
+					TextView textView=(TextView)view.findViewById(R.id.mainfragment_textView);
+					textView.setVisibility(View.VISIBLE);
+					textView.setText((String)msg.obj);
+//					Bitmap bitmap = BitmapUtil.watermarkBitmap(
+//							bitmaps.get(mViewPager.getCurrentItem()),
+//							(List<String>) msg.obj);
+					Bitmap bitmap=BitmapUtil.convertViewToBitmap(view);
+//					imageView.setImageBitmap(bitmap);
+					File f = BitmapUtil.saveBitmap(bitmap);
 					bmobFile = new BmobFile(f);
 					bmobFile.upload(getActivity(), uploadFileListener);
 					Toast.makeText(getActivity(),
@@ -196,7 +206,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 				String str = localCursor.getString(localCursor
 						.getColumnIndex(arrayOfString[0]));
 				localCursor.close();
-				bitmap = Util.getScaledBitmap(str, 700);
+				bitmap = BitmapUtil.getScaledBitmap(str, 700);
 				setBitmap(bitmap);
 			}
 			break;
@@ -226,11 +236,14 @@ public class MainFragment extends Fragment implements OnClickListener {
 
 	private void setBitmap(Bitmap bitmap) {
 		bitmaps.set(mViewPager.getCurrentItem(), bitmap);
-		ImageView imageView = (ImageView) mViewPager.findViewWithTag(mViewPager
-				.getCurrentItem());
+		View view=mViewPager
+				.findViewWithTag(mViewPager.getCurrentItem());
+		ImageView imageView = (ImageView) view.findViewById(R.id.mainfragment_imageview);
+//		ImageView imageView = (ImageView) mViewPager.findViewWithTag(mViewPager
+//				.getCurrentItem());
 		imageView.setImageBitmap(bitmap);
 
-		progressBar = Util.getProgressDialog(getActivity());
+		progressBar = DialogUtil.getProgressDialog(getActivity());
 
 		timer = new Timer();
 		timer.schedule(new TimerTask() {
@@ -250,6 +263,11 @@ public class MainFragment extends Fragment implements OnClickListener {
 	public void onClick(View view) {
 		switch (view.getId()) {
 		case R.id.pick:
+			View contentview=mViewPager
+			.findViewWithTag(mViewPager.getCurrentItem());
+//			ImageView imageView = (ImageView) contentview.findViewById(R.id.mainfragment_imageview);
+			TextView textView=(TextView)contentview.findViewById(R.id.mainfragment_textView);
+			textView.setVisibility(View.GONE);
 			// SuperID.faceLogin(getActivity());
 //			String superIDuid=sharedPreferences.getString("superiduid", "error");
 //			Log.i("SuperID", superIDuid);
@@ -280,7 +298,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 					MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 1001);
 			break;
 		case R.id.detect:
-			progressBar = Util.getProgressDialog(getActivity());
+			progressBar = DialogUtil.getProgressDialog(getActivity());
 			new Thread(compare).start();
 			break;
 		}
@@ -334,18 +352,19 @@ public class MainFragment extends Fragment implements OnClickListener {
 		@Override
 		public void run() {
 
-			byte[] bytes = Util.getBitmapByte(getActivity(),
+			byte[] bytes = BitmapUtil.getBitmapByte(getActivity(),
 					bitmaps.get(mViewPager.getCurrentItem()));
 			JSONObject jsonObject = null;
-			List<String> list = null;
+//			List<String> list = null;
+			String list = null;
 
 			try {
 				jsonObject = request.detectionDetect(new PostParameters()
 						.setImg(bytes).setMode("oneface"));
 				list = Util.Jsonn(jsonObject);
-				if (list == null) {
-					list = new ArrayList<String>();
-					list.add("没检测到人脸");
+				if (list.equals("没检测到人脸")) {
+//					list = new ArrayList<String>();
+//					list.add("没检测到人脸");
 				} else {
 					face[mViewPager.getCurrentItem()] = Util.face.getFaceId();
 				}
@@ -409,7 +428,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 			person.setUser("user");
 			person.setFile(bmobFile);
 			person.save(getActivity());
-			Util.deletefile();
+			BitmapUtil.deletefile();
 		}
 
 		@Override

@@ -22,7 +22,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -37,14 +36,15 @@ public class PhotosFragment extends Fragment {
 	private File[] files;
 
 	private UMSocialService mController;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		 files = new File(path).listFiles();
+		files = new File(path).listFiles();
 		for (int i = 0; i < files.length; i++) {
 			list.add("file:///" + files[i].getAbsolutePath());
 		}
-//		Toast.makeText(getActivity(), "长按更多操作", Toast.LENGTH_SHORT).show();
+		// Toast.makeText(getActivity(), "长按更多操作", Toast.LENGTH_SHORT).show();
 		imageAdapter = new ImageAdapter(getActivity(), list);
 		View view = inflater.inflate(R.layout.gridview_photo, container, false);
 		mGridView = (GridView) view.findViewById(R.id.gv_photos);
@@ -66,33 +66,34 @@ public class PhotosFragment extends Fragment {
 				sDialog = new SweetAlertDialog(getActivity(),
 						SweetAlertDialog.NORMAL_TYPE);
 				sDialog.setTitleText("what are you going to do");
-				sDialog.setConfirmText(getResources().getString(R.string.delete));
+				sDialog.setConfirmText(getResources()
+						.getString(R.string.delete));
 				sDialog.showCancelButton(true);
 				sDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
 					@Override
 					public void onClick(SweetAlertDialog sDialog) {
-						File file = files[position];						
+						File file = files[position];
 						if (file.delete()) {
 							list.remove(position);
 							sDialog.setTitleText("已删除!")
-							.setContentText(
-									"Your imaginary file has been deleted!")
-							.setConfirmText("OK")
-							.showCancelButton(false)
-							.setConfirmClickListener(null)
-							.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-						}else {
+									.setContentText(
+											"Your imaginary file has been deleted!")
+									.setConfirmText("OK")
+									.showCancelButton(false)
+									.setConfirmClickListener(null)
+									.changeAlertType(
+											SweetAlertDialog.SUCCESS_TYPE);
+						} else {
 							sDialog.setTitleText("删除失败")
-							.setContentText(
-									" deleted failed!")
-							.setConfirmText("OK")
-							.showCancelButton(false)
-							.setConfirmClickListener(null)
-							.changeAlertType(SweetAlertDialog.ERROR_TYPE);
+									.setContentText(" deleted failed!")
+									.setConfirmText("OK")
+									.showCancelButton(false)
+									.setConfirmClickListener(null)
+									.changeAlertType(
+											SweetAlertDialog.ERROR_TYPE);
 						}
 						imageAdapter.notifyDataSetChanged();
-						
-						
+
 					}
 				});
 				sDialog.setCancelText("分享!");
@@ -121,7 +122,6 @@ public class PhotosFragment extends Fragment {
 		mGridView.setAdapter(imageAdapter);
 		return view;
 	}
-
 
 	private void imageBrower(int position, List<String> list) {
 		Intent intent = new Intent(getActivity(), ImagePagerActivity.class);
