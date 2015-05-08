@@ -40,6 +40,10 @@ public class PhotosFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		File filepath=new File(path);
+		if (!filepath.exists()) {
+			filepath.mkdir();
+		}
 		files = new File(path).listFiles();
 		for (int i = 0; i < files.length; i++) {
 			list.add("file:///" + files[i].getAbsolutePath());

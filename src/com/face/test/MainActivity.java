@@ -3,6 +3,7 @@ package com.face.test;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.face.test.fragment.FuqixiangFragment;
 import com.face.test.fragment.MainFragment;
 import com.face.test.fragment.PhotosFragment;
 import com.myface.JMSManager;
@@ -130,6 +131,13 @@ public class MainActivity extends SherlockFragmentActivity {
 			ft.commit();
 			break;
 		case 3:
+			fragment=new FuqixiangFragment();
+			ft.replace(R.id.drawer_content, fragment);
+			ft.addToBackStack(null);
+			ft.commit();
+			
+			break;
+		case 4:
 			MainActivity.this.finish();
 			break;
 

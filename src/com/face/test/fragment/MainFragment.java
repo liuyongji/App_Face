@@ -77,12 +77,13 @@ public class MainFragment extends Fragment implements OnClickListener {
 	// public static Bitmap curBitmap[] = new Bitmap[2];
 	private final static String TAG = "facetest";
 	private Button seletcButton, duibiButton;
-	// private HandlerThread detectThread = null;
 	private Handler detectHandler = null;
 	private String face[] = new String[2];
 	private ProgressDialog progressBar;
 	private SharedPreferences sharedPreferences;
-//	private SharedPreferences sharedPreferences=getActivity().getSharedPreferences("userinfo", Context.MODE_PRIVATE);
+	// private SharedPreferences
+	// sharedPreferences=getActivity().getSharedPreferences("userinfo",
+	// Context.MODE_PRIVATE);
 
 	public static final int DECTOR_SUCCESS = 0;
 	public static final int COMPARE_SUCCESS = 1;
@@ -107,7 +108,8 @@ public class MainFragment extends Fragment implements OnClickListener {
 		View view = inflater.inflate(R.layout.main4, container, false);
 		request = new HttpRequests("99a9423512d4f19c17bd8d6b526e554c",
 				"z8stpP3-HMdYhg6kAK73A2nBFwZg4Thl");
-		sharedPreferences=getActivity().getSharedPreferences("userinfo", Context.MODE_PRIVATE);
+		sharedPreferences = getActivity().getSharedPreferences("userinfo",
+				Context.MODE_PRIVATE);
 		initview(view);
 
 		detectHandler = new Handler() {
@@ -120,25 +122,27 @@ public class MainFragment extends Fragment implements OnClickListener {
 				switch (msg.what) {
 
 				case DECTOR_SUCCESS:
-					View view=mViewPager
-							.findViewWithTag(mViewPager.getCurrentItem());
-//					ImageView imageView = (ImageView) view.findViewById(R.id.mainfragment_imageview);
-//					ImageView imageView = (ImageView) mViewPager
-//							.findViewWithTag(mViewPager.getCurrentItem());
-					TextView textView=(TextView)view.findViewById(R.id.mainfragment_textView);
+					View view = mViewPager.findViewWithTag(mViewPager
+							.getCurrentItem());
+					// ImageView imageView = (ImageView)
+					// view.findViewById(R.id.mainfragment_imageview);
+					// ImageView imageView = (ImageView) mViewPager
+					// .findViewWithTag(mViewPager.getCurrentItem());
+					TextView textView = (TextView) view
+							.findViewById(R.id.mainfragment_textView);
 					textView.setVisibility(View.VISIBLE);
-					textView.setText((String)msg.obj);
-//					Bitmap bitmap = BitmapUtil.watermarkBitmap(
-//							bitmaps.get(mViewPager.getCurrentItem()),
-//							(List<String>) msg.obj);
-					Bitmap bitmap=BitmapUtil.convertViewToBitmap(view);
-//					imageView.setImageBitmap(bitmap);
+					textView.setText((String) msg.obj);
+					// Bitmap bitmap = BitmapUtil.watermarkBitmap(
+					// bitmaps.get(mViewPager.getCurrentItem()),
+					// (List<String>) msg.obj);
+					Bitmap bitmap = BitmapUtil.convertViewToBitmap(view);
+					// imageView.setImageBitmap(bitmap);
 					File f = BitmapUtil.saveBitmap(bitmap);
 					bmobFile = new BmobFile(f);
 					bmobFile.upload(getActivity(), uploadFileListener);
-					Toast.makeText(getActivity(),
-							getResources().getString(R.string.save),
-							Toast.LENGTH_LONG).show();
+//					Toast.makeText(getActivity(),
+//							getResources().getString(R.string.save),
+//							Toast.LENGTH_LONG).show();
 					break;
 				case DECTOR_FAIL:
 					timer.cancel();
@@ -223,12 +227,13 @@ public class MainFragment extends Fragment implements OnClickListener {
 			//
 			break;
 		default:
-//			if (resultCode==SDKConfig.LOGINSUCCESS) {
-//				String superiduid = Cache.getCached(getActivity(), SDKConfig.KEY_APPUID);
-//				Editor editor= sharedPreferences.edit();
-//				editor.putString("superiduid", superiduid);
-//				editor.commit();
-//			}
+			// if (resultCode==SDKConfig.LOGINSUCCESS) {
+			// String superiduid = Cache.getCached(getActivity(),
+			// SDKConfig.KEY_APPUID);
+			// Editor editor= sharedPreferences.edit();
+			// editor.putString("superiduid", superiduid);
+			// editor.commit();
+			// }
 			break;
 		}
 
@@ -236,11 +241,12 @@ public class MainFragment extends Fragment implements OnClickListener {
 
 	private void setBitmap(Bitmap bitmap) {
 		bitmaps.set(mViewPager.getCurrentItem(), bitmap);
-		View view=mViewPager
-				.findViewWithTag(mViewPager.getCurrentItem());
-		ImageView imageView = (ImageView) view.findViewById(R.id.mainfragment_imageview);
-//		ImageView imageView = (ImageView) mViewPager.findViewWithTag(mViewPager
-//				.getCurrentItem());
+		View view = mViewPager.findViewWithTag(mViewPager.getCurrentItem());
+		ImageView imageView = (ImageView) view
+				.findViewById(R.id.mainfragment_imageview);
+		// ImageView imageView = (ImageView)
+		// mViewPager.findViewWithTag(mViewPager
+		// .getCurrentItem());
 		imageView.setImageBitmap(bitmap);
 
 		progressBar = DialogUtil.getProgressDialog(getActivity());
@@ -263,20 +269,14 @@ public class MainFragment extends Fragment implements OnClickListener {
 	public void onClick(View view) {
 		switch (view.getId()) {
 		case R.id.pick:
-			View contentview=mViewPager
-			.findViewWithTag(mViewPager.getCurrentItem());
-//			ImageView imageView = (ImageView) contentview.findViewById(R.id.mainfragment_imageview);
-			TextView textView=(TextView)contentview.findViewById(R.id.mainfragment_textView);
+			View contentview = mViewPager.findViewWithTag(mViewPager
+					.getCurrentItem());
+			// ImageView imageView = (ImageView)
+			// contentview.findViewById(R.id.mainfragment_imageview);
+			TextView textView = (TextView) contentview
+					.findViewById(R.id.mainfragment_textView);
 			textView.setVisibility(View.GONE);
-			// SuperID.faceLogin(getActivity());
-//			String superIDuid=sharedPreferences.getString("superiduid", "error");
-//			Log.i("SuperID", superIDuid);
-//			SuperID.isUidAuthorized(getActivity(), superIDuid, intSuccessCallback,
-//					intFailCallback);
-			 showPopMenu();
-			// SuperID.GetFaceEmotion(getActivity());
-			// startActivity(new Intent(getActivity(),
-			// Aty_GetFaceEmotion.class));
+			showPopMenu();
 			break;
 		case R.id.bt_cancle:
 			mpopupWindow.dismiss();
@@ -338,7 +338,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 				resultcompare = "没检测到人脸";
 			}
 			ArrayList<String> result = new ArrayList<String>();
-			result.add(similarityresult);
+			result.add(similarityresult+"%");
 			result.add(resultcompare);
 			Message message = new Message();
 			message.what = COMPARE_SUCCESS;
@@ -355,16 +355,17 @@ public class MainFragment extends Fragment implements OnClickListener {
 			byte[] bytes = BitmapUtil.getBitmapByte(getActivity(),
 					bitmaps.get(mViewPager.getCurrentItem()));
 			JSONObject jsonObject = null;
-//			List<String> list = null;
+			// List<String> list = null;
 			String list = null;
 
 			try {
 				jsonObject = request.detectionDetect(new PostParameters()
 						.setImg(bytes).setMode("oneface"));
+				Log.i("lyj", jsonObject.toString());
 				list = Util.Jsonn(jsonObject);
 				if (list.equals("没检测到人脸")) {
-//					list = new ArrayList<String>();
-//					list.add("没检测到人脸");
+					// list = new ArrayList<String>();
+					// list.add("没检测到人脸");
 				} else {
 					face[mViewPager.getCurrentItem()] = Util.face.getFaceId();
 				}
@@ -442,36 +443,6 @@ public class MainFragment extends Fragment implements OnClickListener {
 			// TODO 自动生成的方法存根
 
 		}
-	};
-
-	private SuperID.IntSuccessCallback intSuccessCallback = new SuperID.IntSuccessCallback() {
-		public void onSuccess(int arg0) {
-			switch (arg0) {
-			case SDKConfig.ISAUTHORIZED:
-				SuperID.GetFaceEmotion(getActivity());
-				break;
-			case SDKConfig.NOAUTHORIZED:
-				SuperID.faceLogin(getActivity());
-				break;
-			default:
-				break;
-			}
-		};
-	};
-	private SuperID.IntFailCallback intFailCallback = new SuperID.IntFailCallback() {
-		public void onFail(int error) {
-			switch (error) {
-			case SDKConfig.APPTOKENERROR:
-				break;
-			case SDKConfig.OTHER_ERROR:
-			case SDKConfig.SDKVERSIONEXPIRED:
-				break;
-			case SDKConfig.APPTOKEN_EXPIRED:
-				break;
-			default:
-				break;
-			}
-		};
 	};
 
 }

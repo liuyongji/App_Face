@@ -29,6 +29,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.Bitmap.Config;
 import android.os.Environment;
+import android.renderscript.Float2;
 import android.text.TextPaint;
 import android.util.Base64;
 import android.util.Log;
@@ -170,10 +171,18 @@ public class Util {
 	 */
 	public static String Similarity(JSONObject jsonObject) throws JSONException {
 
-		String string = jsonObject.getString("similarity").substring(0, 5)
-				+ "%";
+		String string = jsonObject.getString("similarity").substring(0, 5);
+				
 		return string;
 	}
+	public static int changeFloat(float float1){
+		if (float1<50) {
+//			float1=float1
+		}
+		return (int) float1;
+	}
+	
+	
 
 
 	
