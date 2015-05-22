@@ -9,26 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:id="@+id/relative_view"
         android:background="@drawable/card_bg" >
 
         <ImageView
             android:id="@+id/fuqi_imageview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/demo" />
+            android:src="@drawable/fuqix" />
 
-        <TextView
-            android:id="@+id/fuqi_textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/fuqi_imageview"
-            android:background="#AA363636"
-            android:padding="10dp"
-            android:text="test"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/white"
-            android:textSize="15sp"
-            />
     </RelativeLayout>
 
     

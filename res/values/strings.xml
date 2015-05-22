@@ -13,7 +13,9 @@
     <string name="edit">编辑</string>
     <string name="share">分享</string>
     <string name="delete">删除</string>
-    
+    <string name="tongxinlian">      是的，我不歧视同性恋</string>
+    <string name="qinglv">情侣指数：</string>
+         
     <string name="sharecontent">我正在使用一个很有趣的人脸检测应用 </string>
     <string name="save_success">保存成功，右滑菜单可查看</string>
     <string name="save_fail">保存出错了，可能是因为内存不足</string>

@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadFileListener;
 
 import com.andexert.library.ViewPagerIndicator;
@@ -19,16 +20,19 @@ import com.face.test.MyApplication;
 import com.face.test.R;
 import com.face.test.ReportTask;
 import com.face.test.Result;
+import com.face.test.Utils.AppUtils;
 import com.face.test.Utils.BitmapUtil;
 import com.face.test.Utils.DialogUtil;
 import com.face.test.Utils.Http;
 import com.face.test.Utils.Util;
 import com.face.test.adapter.MyViewAdapter;
 import com.face.test.bean.ClientError;
+import com.face.test.bean.FaceInfos;
 import com.face.test.bean.Person;
 import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
+import com.google.gson.Gson;
 import com.isnc.facesdk.SuperID;
 import com.isnc.facesdk.common.Cache;
 import com.isnc.facesdk.common.SDKConfig;
@@ -80,7 +84,8 @@ public class MainFragment extends Fragment implements OnClickListener {
 	private Handler detectHandler = null;
 	private String face[] = new String[2];
 	private ProgressDialog progressBar;
-	private SharedPreferences sharedPreferences;
+	private FaceInfos faceInfos;
+//	private SharedPreferences sharedPreferences;
 	// private SharedPreferences
 	// sharedPreferences=getActivity().getSharedPreferences("userinfo",
 	// Context.MODE_PRIVATE);
@@ -108,8 +113,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 		View view = inflater.inflate(R.layout.main4, container, false);
 		request = new HttpRequests("99a9423512d4f19c17bd8d6b526e554c",
 				"z8stpP3-HMdYhg6kAK73A2nBFwZg4Thl");
-		sharedPreferences = getActivity().getSharedPreferences("userinfo",
-				Context.MODE_PRIVATE);
+		
 		initview(view);
 
 		detectHandler = new Handler() {
@@ -363,6 +367,9 @@ public class MainFragment extends Fragment implements OnClickListener {
 						.setImg(bytes).setMode("oneface"));
 				Log.i("lyj", jsonObject.toString());
 				list = Util.Jsonn(jsonObject);
+				Gson gson = new Gson();
+				faceInfos = gson.fromJson(jsonObject.toString(),
+						FaceInfos.class);
 				if (list.equals("没检测到人脸")) {
 					// list = new ArrayList<String>();
 					// list.add("没检测到人脸");
@@ -428,6 +435,9 @@ public class MainFragment extends Fragment implements OnClickListener {
 			person = new Person();
 			person.setUser("user");
 			person.setFile(bmobFile);
+			person.setDoubles(true);
+			person.setSex(faceInfos.getFace().get(0).getAttribute().getGender().getValue());
+			person.setVerson(AppUtils.getVersionName(getActivity()));
 			person.save(getActivity());
 			BitmapUtil.deletefile();
 		}

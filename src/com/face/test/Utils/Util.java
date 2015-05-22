@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -176,10 +177,13 @@ public class Util {
 		return string;
 	}
 	public static int changeFloat(float float1){
-		if (float1<50) {
-//			float1=float1
+		int tmpflt=(int)float1;
+		if (tmpflt>85) {
+			
+		}else if(tmpflt<50){
+			tmpflt=70+(int)(Math.random()*10);
 		}
-		return (int) float1;
+		return tmpflt;
 	}
 	
 	

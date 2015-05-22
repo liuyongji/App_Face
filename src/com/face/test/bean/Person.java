@@ -14,6 +14,8 @@ public class Person extends BmobObject{
 	private String location;
 	private String date;
 	private String sex;
+	private boolean doubles;
+	private String verson;
 	public String getDate() {
 		return date;
 	}
@@ -43,6 +45,18 @@ public class Person extends BmobObject{
 	}
 	public void setSex(String sex) {
 		this.sex = sex;
+	}
+	public boolean isDoubles() {
+		return doubles;
+	}
+	public void setDoubles(boolean doubles) {
+		this.doubles = doubles;
+	}
+	public String getVerson() {
+		return verson;
+	}
+	public void setVerson(String verson) {
+		this.verson = verson;
 	}
 	
 
