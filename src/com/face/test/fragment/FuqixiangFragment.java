@@ -5,14 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
-import cn.pedant.SweetAlert.SweetAlertDialog;
-
 import com.face.test.R;
 import com.face.test.Utils.AppUtils;
 import com.face.test.Utils.BitmapUtil;
@@ -24,7 +20,7 @@ import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
 import com.google.gson.Gson;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -67,6 +63,7 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 	private FaceInfos faceInfos;
 	private BmobFile bmobFile;
 	
+	@SuppressLint("SimpleDateFormat")
 	private SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 
 	private String sdcard_temp = Environment.getExternalStorageDirectory()
@@ -98,7 +95,8 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 //					tv_result.setText(result);
 					bitmap=BitmapUtil.watermarkBitmap(bitmap, result);
 					iv_imageview.setImageBitmap(bitmap);
-					File f = BitmapUtil.saveBitmap(bitmap);
+					File f = BitmapUtil.saveBitmap(
+							bitmap, df.format(new Date()));
 					bmobFile = new BmobFile(f);
 					bmobFile.upload(getActivity(), uploadFileListener);
 					
@@ -126,57 +124,6 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 		btn_selete = (Button) view.findViewById(R.id.fuqi_pick);
 		btn_selete.setOnClickListener(this);
 		iv_imageview = (ImageView) view.findViewById(R.id.fuqi_imageview);
-		iv_imageview.setOnLongClickListener(new ImageView.OnLongClickListener() {
-			SweetAlertDialog sDialog;
-
-			@Override
-			public boolean onLongClick(View v) {
-				sDialog = new SweetAlertDialog(getActivity(),
-						SweetAlertDialog.NORMAL_TYPE)
-						.setTitleText("保存图片？")
-						.setConfirmText("OK")
-						.showCancelButton(true)
-						.setConfirmClickListener(
-								new SweetAlertDialog.OnSweetClickListener() {
-									@Override
-									public void onClick(SweetAlertDialog sDialog) {
-										if (bitmap==null) {
-											Toast.makeText(getActivity(), "请先测试", Toast.LENGTH_LONG).show();
-											sDialog.dismiss();
-											return;
-										}
-										boolean b = BitmapUtil.saveBitmap(
-												bitmap, df.format(new Date()));
-										if (b) {
-											sDialog.setTitleText("保存成功")
-													.setContentText(
-															getActivity().getResources()
-																	.getString(
-																			R.string.save_success))
-													.changeAlertType(
-															SweetAlertDialog.SUCCESS_TYPE);
-										} else {
-											sDialog.setTitleText("保存失败")
-													.setContentText(
-															getActivity().getResources()
-																	.getString(
-																			R.string.save_fail))
-													.changeAlertType(
-															SweetAlertDialog.ERROR_TYPE);
-										}
-
-										sDialog.setConfirmText("OK")
-												.setConfirmClickListener(null);
-
-									}
-								});
-				sDialog.show();
-
-				return true;
-			}
-		});
-//		tv_result = (TextView) view.findViewById(R.id.fuqi_textView);
-//		tv_result.setVisibility(View.GONE);
 	}
 
 	private void showPopMenu() {
@@ -362,7 +309,6 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 			person.setDoubles(true);
 			person.setVerson(AppUtils.getVersionName(getActivity()));
 			person.save(getActivity());
-			BitmapUtil.deletefile();
 		}
 
 		@Override

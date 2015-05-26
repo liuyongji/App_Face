@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg1"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.0dip"
+        android:layout_weight="1.0" />
+
+    
+
+    <LinearLayout
+        android:id="@+id/ll_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/main_btnstart"
+            android:layout_width="200.0dip"
+            android:layout_height="70.0dip"
+            android:text="开始" />
+
+        <Button
+            android:id="@+id/btn_answers"
+            android:layout_width="200.0dip"
+            android:layout_height="70.0dip"
+            android:layout_marginTop="10.0dip"
+            android:text="电影墙" />
+        <Button
+            android:id="@+id/btn_feeback"
+            android:layout_width="200.0dip"
+            android:layout_height="70.0dip"
+            android:layout_marginTop="10.0dip"
+            android:text="反馈" />
+
+         <Button
+            android:id="@+id/btn_ranklist"
+            android:layout_width="200.0dip"
+            android:layout_height="70.0dip"
+            android:layout_marginTop="10.0dip"
+            android:text="排行榜" />
+         <Button
+            android:id="@+id/btn_histroy"
+            android:layout_width="200.0dip"
+            android:layout_height="70.0dip"
+            android:layout_marginTop="10.0dip"
+            android:text="排行榜" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.0dip"
+        android:layout_weight="1.0" />
+
+    <TextView
+        android:id="@+id/tv_app_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        
+        android:layout_marginBottom="5.0dip"
+        android:text="版本: 2.2，作者：@liu_yj" />
+
+    
+
+   
+
+</LinearLayout>

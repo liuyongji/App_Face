@@ -1,8 +1,10 @@
 package com.face.test.fragment;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -11,40 +13,29 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import cn.bmob.v3.datatype.BmobFile;
-import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadFileListener;
 
 import com.andexert.library.ViewPagerIndicator;
-import com.face.test.Aty_GetFaceEmotion;
 import com.face.test.MyApplication;
 import com.face.test.R;
-import com.face.test.ReportTask;
 import com.face.test.Result;
 import com.face.test.Utils.AppUtils;
 import com.face.test.Utils.BitmapUtil;
 import com.face.test.Utils.DialogUtil;
-import com.face.test.Utils.Http;
 import com.face.test.Utils.Util;
 import com.face.test.adapter.MyViewAdapter;
-import com.face.test.bean.ClientError;
 import com.face.test.bean.FaceInfos;
 import com.face.test.bean.Person;
 import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
 import com.google.gson.Gson;
-import com.isnc.facesdk.SuperID;
-import com.isnc.facesdk.common.Cache;
-import com.isnc.facesdk.common.SDKConfig;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -79,21 +70,19 @@ public class MainFragment extends Fragment implements OnClickListener {
 	private List<Bitmap> bitmaps = new ArrayList<Bitmap>();
 	private List<String> mDatas = Arrays.asList("照片1", "照片2");
 	// public static Bitmap curBitmap[] = new Bitmap[2];
-	private final static String TAG = "facetest";
+	private final static String TAG = "lyj";
 	private Button seletcButton, duibiButton;
 	private Handler detectHandler = null;
 	private String face[] = new String[2];
 	private ProgressDialog progressBar;
 	private FaceInfos faceInfos;
-//	private SharedPreferences sharedPreferences;
-	// private SharedPreferences
-	// sharedPreferences=getActivity().getSharedPreferences("userinfo",
-	// Context.MODE_PRIVATE);
 
 	public static final int DECTOR_SUCCESS = 0;
 	public static final int COMPARE_SUCCESS = 1;
 	public static final int COMPARE_FAIL = 2;
 	public static final int DECTOR_FAIL = 3;
+
+	private int resultcode = -1;
 
 	private Timer timer;
 
@@ -104,6 +93,9 @@ public class MainFragment extends Fragment implements OnClickListener {
 	private String sdcard_temp = Environment.getExternalStorageDirectory()
 			+ File.separator + "tmps.jpg";
 
+	@SuppressLint("SimpleDateFormat")
+	private SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");// 设置日期格式
+
 	private HttpRequests request = null;// 在线api
 
 	@Override
@@ -113,7 +105,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 		View view = inflater.inflate(R.layout.main4, container, false);
 		request = new HttpRequests("99a9423512d4f19c17bd8d6b526e554c",
 				"z8stpP3-HMdYhg6kAK73A2nBFwZg4Thl");
-		
+
 		initview(view);
 
 		detectHandler = new Handler() {
@@ -122,31 +114,21 @@ public class MainFragment extends Fragment implements OnClickListener {
 				if (progressBar != null) {
 					progressBar.dismiss();
 				}
-
+				resultcode = msg.what;
 				switch (msg.what) {
 
 				case DECTOR_SUCCESS:
 					View view = mViewPager.findViewWithTag(mViewPager
 							.getCurrentItem());
-					// ImageView imageView = (ImageView)
-					// view.findViewById(R.id.mainfragment_imageview);
-					// ImageView imageView = (ImageView) mViewPager
-					// .findViewWithTag(mViewPager.getCurrentItem());
 					TextView textView = (TextView) view
 							.findViewById(R.id.mainfragment_textView);
 					textView.setVisibility(View.VISIBLE);
 					textView.setText((String) msg.obj);
-					// Bitmap bitmap = BitmapUtil.watermarkBitmap(
-					// bitmaps.get(mViewPager.getCurrentItem()),
-					// (List<String>) msg.obj);
 					Bitmap bitmap = BitmapUtil.convertViewToBitmap(view);
-					// imageView.setImageBitmap(bitmap);
-					File f = BitmapUtil.saveBitmap(bitmap);
+					File f = BitmapUtil.saveBitmap(bitmap,
+							df.format(new Date()));
 					bmobFile = new BmobFile(f);
 					bmobFile.upload(getActivity(), uploadFileListener);
-//					Toast.makeText(getActivity(),
-//							getResources().getString(R.string.save),
-//							Toast.LENGTH_LONG).show();
 					break;
 				case DECTOR_FAIL:
 					timer.cancel();
@@ -332,17 +314,20 @@ public class MainFragment extends Fragment implements OnClickListener {
 				similarityresult = Util.Similarity(jsonObject);
 			} catch (FaceppParseException e1) {
 				e1.printStackTrace();
-				new ReportTask(getActivity()).execute(Http.getError(e1));
 			} catch (JSONException e) {
 				e.printStackTrace();
-				new ReportTask(getActivity()).execute(Http.getError(e));
+				timer.cancel();
+				Message message = new Message();
+				message.what = -1;
+				detectHandler.sendMessage(message);
+				return;
 			}
 			Log.i(TAG, jsonObject.toString());
 			if (resultcompare == null || resultcompare == "") {
 				resultcompare = "没检测到人脸";
 			}
 			ArrayList<String> result = new ArrayList<String>();
-			result.add(similarityresult+"%");
+			result.add(similarityresult + "%");
 			result.add(resultcompare);
 			Message message = new Message();
 			message.what = COMPARE_SUCCESS;
@@ -378,12 +363,13 @@ public class MainFragment extends Fragment implements OnClickListener {
 				}
 			} catch (FaceppParseException e) {
 				e.printStackTrace();
-				new Http(getActivity()).postUrl(new ClientError(),
-						Http.getError(e));
+				timer.cancel();
+				Message message = new Message();
+				message.what = -1;
+				detectHandler.sendMessage(message);
+				return;
 			} catch (JSONException e) {
 				e.printStackTrace();
-				new Http(getActivity()).postUrl(new ClientError(),
-						Http.getError(e));
 			}
 			timer.cancel();
 			Message message = new Message();
@@ -435,11 +421,13 @@ public class MainFragment extends Fragment implements OnClickListener {
 			person = new Person();
 			person.setUser("user");
 			person.setFile(bmobFile);
-			person.setDoubles(true);
-			person.setSex(faceInfos.getFace().get(0).getAttribute().getGender().getValue());
+			person.setDoubles(false);
+			person.setResultcode(resultcode);
+			person.setSex(faceInfos.getFace().get(0).getAttribute().getGender()
+					.getValue());
 			person.setVerson(AppUtils.getVersionName(getActivity()));
 			person.save(getActivity());
-			BitmapUtil.deletefile();
+			// BitmapUtil.deletefile();
 		}
 
 		@Override

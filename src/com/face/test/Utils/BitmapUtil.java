@@ -85,7 +85,7 @@ public class BitmapUtil {
 		return tmpfile;
 	}
 
-	public static boolean saveBitmap(Bitmap bitmap, String name) {
+	public static File saveBitmap(Bitmap bitmap, String name) {
 		// f.createTempFile("prefix", "suffix");
 		File file = null;
 		try {
@@ -103,14 +103,12 @@ public class BitmapUtil {
 			Log.i("facetest", "create success");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			return false;
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return false;
 		}
-		return true;
+		return file;
 	}
 
 	/**

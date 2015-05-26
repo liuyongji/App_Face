@@ -52,7 +52,9 @@ public class MyViewAdapter extends PagerAdapter {
 				R.layout.mainfragment_image_layout, null);
 		final ImageView imageView = (ImageView) view
 				.findViewById(R.id.mainfragment_imageview);
-
+		final TextView textView = (TextView) view
+				.findViewById(R.id.mainfragment_textView);
+		textView.setVisibility(View.GONE);
 		// final ImageView imageView=new ImageView(context);
 		// if (bitmaps.get(position) != null) {
 		// imageView.setImageBitmap(bitmaps.get(position));
@@ -61,57 +63,58 @@ public class MyViewAdapter extends PagerAdapter {
 		// }
 		view.setTag(position);
 
-		imageView.setOnLongClickListener(new ImageView.OnLongClickListener() {
-			SweetAlertDialog sDialog;
-
-			@Override
-			public boolean onLongClick(View v) {
-				sDialog = new SweetAlertDialog(context,
-						SweetAlertDialog.NORMAL_TYPE)
-						.setTitleText("保存图片？")
-						.setConfirmText("OK")
-						.showCancelButton(true)
-						.setConfirmClickListener(
-								new SweetAlertDialog.OnSweetClickListener() {
-									@Override
-									public void onClick(SweetAlertDialog sDialog) {
-										Bitmap bitmap = BitmapUtil
-												.convertViewToBitmap(view);
-										// boolean b=BitmapUtil.saveBitmap(
-										// ((BitmapDrawable) (imageView
-										// .getDrawable()))
-										// .getBitmap(), df
-										// .format(new Date()));
-										boolean b = BitmapUtil.saveBitmap(
-												bitmap, df.format(new Date()));
-										if (b) {
-											sDialog.setTitleText("保存成功")
-													.setContentText(
-															context.getResources()
-																	.getString(
-																			R.string.save_success))
-													.changeAlertType(
-															SweetAlertDialog.SUCCESS_TYPE);
-										} else {
-											sDialog.setTitleText("保存失败")
-													.setContentText(
-															context.getResources()
-																	.getString(
-																			R.string.save_fail))
-													.changeAlertType(
-															SweetAlertDialog.ERROR_TYPE);
-										}
-
-										sDialog.setConfirmText("OK")
-												.setConfirmClickListener(null);
-
-									}
-								});
-				sDialog.show();
-
-				return true;
-			}
-		});
+		// imageView.setOnLongClickListener(new ImageView.OnLongClickListener()
+		// {
+		// SweetAlertDialog sDialog;
+		//
+		// @Override
+		// public boolean onLongClick(View v) {
+		// sDialog = new SweetAlertDialog(context,
+		// SweetAlertDialog.NORMAL_TYPE)
+		// .setTitleText("保存图片？")
+		// .setConfirmText("OK")
+		// .showCancelButton(true)
+		// .setConfirmClickListener(
+		// new SweetAlertDialog.OnSweetClickListener() {
+		// @Override
+		// public void onClick(SweetAlertDialog sDialog) {
+		// Bitmap bitmap = BitmapUtil
+		// .convertViewToBitmap(view);
+		// // boolean b=BitmapUtil.saveBitmap(
+		// // ((BitmapDrawable) (imageView
+		// // .getDrawable()))
+		// // .getBitmap(), df
+		// // .format(new Date()));
+		// boolean b = BitmapUtil.saveBitmap(
+		// bitmap, df.format(new Date()));
+		// if (b) {
+		// sDialog.setTitleText("保存成功")
+		// .setContentText(
+		// context.getResources()
+		// .getString(
+		// R.string.save_success))
+		// .changeAlertType(
+		// SweetAlertDialog.SUCCESS_TYPE);
+		// } else {
+		// sDialog.setTitleText("保存失败")
+		// .setContentText(
+		// context.getResources()
+		// .getString(
+		// R.string.save_fail))
+		// .changeAlertType(
+		// SweetAlertDialog.ERROR_TYPE);
+		// }
+		//
+		// sDialog.setConfirmText("OK")
+		// .setConfirmClickListener(null);
+		//
+		// }
+		// });
+		// sDialog.show();
+		//
+		// return true;
+		// }
+		// });
 		container.addView(view);
 		return view;
 
