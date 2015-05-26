@@ -5,10 +5,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
+
+import com.face.test.MyApplication;
 import com.face.test.R;
 import com.face.test.Utils.AppUtils;
 import com.face.test.Utils.BitmapUtil;
@@ -20,6 +24,7 @@ import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
 import com.google.gson.Gson;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -87,9 +92,9 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 					String result;
 //					tv_result.setVisibility(View.VISIBLE);
 					if (faceInfos.getFace().get(0).getAttribute().getGender().getValue().equals(faceInfos.getFace().get(1).getAttribute().getGender().getValue())) {
-						result=getResources().getString(R.string.qinglv)+(String)msg.obj+"   "+getResources().getString(R.string.tongxinlian);
+						result=(String)msg.obj+"   "+getResources().getString(R.string.tongxinlian);
 					}else {
-						result=getResources().getString(R.string.qinglv)+(String)msg.obj;
+						result=(String)msg.obj;
 						
 					}
 //					tv_result.setText(result);
@@ -239,10 +244,10 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 					jsonObject = request.recognitionCompare(new PostParameters()
 					.setFaceId1(face1).setFaceId2(face2));
 					Log.i("lyj", jsonObject.toString());
-					int float1=Util.changeFloat(Float.parseFloat(Util.Similarity(jsonObject)));
+					String float1=Util.changeFloat(Float.parseFloat(Util.Similarity(jsonObject)));
 					timer.cancel();
 					Message message = new Message();
-					message.obj=float1+"";
+					message.obj=float1;
 					message.what = 0;
 					detectHandler.sendMessage(message);
 					
@@ -307,7 +312,7 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 			person.setUser("user");
 			person.setFile(bmobFile);
 			person.setDoubles(true);
-			person.setVerson(AppUtils.getVersionName(getActivity()));
+			person.setVerson(MyApplication.getVersion());
 			person.save(getActivity());
 		}
 

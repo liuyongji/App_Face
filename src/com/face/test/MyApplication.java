@@ -4,6 +4,7 @@ import java.util.List;
 
 import cn.bmob.v3.Bmob;
 
+import com.face.test.Utils.AppUtils;
 import com.face.test.Utils.CrashHandler;
 import com.isnc.facesdk.SuperID;
 import com.myface.JMSManager;
@@ -35,6 +36,7 @@ public class MyApplication extends Application {
 	private static DisplayImageOptions options;
 	private static List<Bitmap> bitmaps;
 	private static JMSManager jmInstance;
+	private static String version;
 
 	@Override
 	public void onCreate() {
@@ -44,17 +46,14 @@ public class MyApplication extends Application {
 				getApplicationContext()).threadPoolSize(3)
 				.discCacheFileCount(100).build();
 		imageLoader.init(configuration);
+		version=AppUtils.getVersionName(getApplicationContext());
 		options = new DisplayImageOptions.Builder()
 				.showImageOnLoading(R.drawable.loading).cacheInMemory(true)
 				.cacheOnDisc(true).build();
 		CrashHandler crashHandler = CrashHandler.getInstance();
 		crashHandler.init(getApplicationContext());
-//		AdManager.getInstance(getApplicationContext()).init("3336b684c26b7540",
-//				"70229ffe9c877dfe", false);
 		Bmob.initialize(getApplicationContext(),
 				"6bb1226b16bb29f5b8e3b71621af32fc");
-//		SuperID.initFaceSDK(this);
-//		SuperID.setDebugMode(true);
 		 jmInstance = JMSManager.getInstance(this,
 		 "1e336d97-5d70-40ae-a0bb-0b91fb25525f", 1);
 		 jmInstance.c(1, 4, true);
@@ -131,26 +130,6 @@ public class MyApplication extends Application {
 
 	}
 	
-//	SnsPostListener mSnsPostListener = new SnsPostListener() {
-//
-//		@Override
-//		public void onStart() {
-//
-//		}
-//
-//		@Override
-//		public void onComplete(SHARE_MEDIA platform, int stCode,
-//				SocializeEntity entity) {
-//			if (stCode == 200) {
-//				Toast.makeText(getApplicationContext(), "分享成功",
-//						Toast.LENGTH_SHORT).show();
-//			} else {
-//				Toast.makeText(getApplicationContext(),
-//						"分享失败 : error code : " + stCode, Toast.LENGTH_SHORT)
-//						.show();
-//			}
-//		}
-//	};
 
 	public static List<Bitmap> getBitmaps() {
 		return bitmaps;
@@ -159,5 +138,9 @@ public class MyApplication extends Application {
 	public static void setBitmaps(List<Bitmap> bitmaps) {
 		MyApplication.bitmaps = bitmaps;
 	}
+	public static String getVersion(){
+		return version;
+	}
+	
 
 }

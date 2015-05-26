@@ -11,8 +11,6 @@
         android:layout_height="0.0dip"
         android:layout_weight="1.0" />
 
-    
-
     <LinearLayout
         android:id="@+id/ll_buttons"
         android:layout_width="wrap_content"
@@ -23,35 +21,41 @@
         <Button
             android:id="@+id/main_btnstart"
             android:layout_width="200.0dip"
-            android:layout_height="70.0dip"
-            android:text="开始" />
+            android:layout_height="60.0dip"
+             android:background="@drawable/btn_selector"
+            android:text="人脸检测" />
 
         <Button
             android:id="@+id/btn_answers"
             android:layout_width="200.0dip"
-            android:layout_height="70.0dip"
+            android:layout_height="60.0dip"
             android:layout_marginTop="10.0dip"
-            android:text="电影墙" />
+            android:background="@drawable/btn_selector"
+            android:text="情侣指数" />
+
         <Button
             android:id="@+id/btn_feeback"
             android:layout_width="200.0dip"
-            android:layout_height="70.0dip"
+            android:layout_height="60.0dip"
             android:layout_marginTop="10.0dip"
-            android:text="反馈" />
+            android:background="@drawable/btn_selector"
+            android:text="明星脸" />
 
-         <Button
+        <Button
             android:id="@+id/btn_ranklist"
             android:layout_width="200.0dip"
-            android:layout_height="70.0dip"
+            android:layout_height="60.0dip"
             android:layout_marginTop="10.0dip"
-            android:text="排行榜" />
-         <Button
+             android:background="@drawable/btn_selector"
+            android:text="测试历史" />
+
+        <Button
             android:id="@+id/btn_histroy"
             android:layout_width="200.0dip"
-            android:layout_height="70.0dip"
+            android:layout_height="60.0dip"
             android:layout_marginTop="10.0dip"
-            android:text="排行榜" />
-
+            android:background="@drawable/btn_selector"
+            android:text="反馈" />
     </LinearLayout>
 
     <View
@@ -63,12 +67,8 @@
         android:id="@+id/tv_app_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        
         android:layout_marginBottom="5.0dip"
-        android:text="版本: 2.2，作者：@liu_yj" />
-
-    
-
-   
+        android:text="版本: 2.2，作者：@liu_yj"
+        android:textColor="@color/white" />
 
 </LinearLayout>

@@ -20,6 +20,7 @@ public class MenuActivity extends Activity implements OnClickListener{
 	private static boolean isExit = false;
 	private Button btnstart, btnanswers, btnfeeback, btnranklist,btnhistroy;
 	private FeedbackAgent agent;
+	private TextView tvversion;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +34,8 @@ public class MenuActivity extends Activity implements OnClickListener{
 	}
 
 	private void initView() {
+		tvversion=(TextView)findViewById(R.id.tv_app_info);
+		tvversion.setText("版本:"+MyApplication.getVersion()+"，作者：@liu_yj");
 		btnstart = (Button) findViewById(R.id.main_btnstart);
 		btnanswers = (Button) findViewById(R.id.btn_answers);
 		btnfeeback = (Button) findViewById(R.id.btn_feeback);
@@ -71,14 +74,16 @@ public class MenuActivity extends Activity implements OnClickListener{
 			intent.putExtra("key", 2);
 			break;
 		case R.id.btn_feeback:
-			agent.startFeedbackActivity();
-			return;
-		case R.id.btn_ranklist:
 			intent.putExtra("key", 3);
+			
 			break;
-		case R.id.btn_histroy:
+		case R.id.btn_ranklist:
 			intent.putExtra("key", 4);
 			break;
+		case R.id.btn_histroy:
+			agent.startFeedbackActivity();
+			
+			return;
 		default:
 			break;
 		}

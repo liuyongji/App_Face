@@ -1,55 +1,23 @@
 package com.face.test.Utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.face.test.bean.ClientError;
 import com.face.test.bean.Face;
-
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Typeface;
-import android.graphics.Bitmap.Config;
-import android.os.Environment;
-import android.renderscript.Float2;
-import android.text.TextPaint;
-import android.util.Base64;
-import android.util.Log;
 
 public class Util {
 	public static Face face;
-
-
 
 	/*
 	 * json 解析
 	 */
 
-	public static String Jsonn(JSONObject jsonObject)
-			throws JSONException {
+	public static String Jsonn(JSONObject jsonObject) throws JSONException {
 
-		 StringBuffer buffer = new StringBuffer();
-//		List<String> list = new ArrayList<String>();
-		
+		StringBuffer buffer = new StringBuffer();
+		// List<String> list = new ArrayList<String>();
+
 		JSONArray jsonArray = jsonObject.getJSONArray("face");
 		if (jsonArray.length() > 0) {
 			for (int i = 0; i < jsonArray.length(); i++) {
@@ -73,31 +41,32 @@ public class Util {
 						.getDouble("value"));
 				// buffer.append(face.getFaceId()+"\n");
 
-//				list.add("肤色：" + face.getRaceValue());
-//				list.add("肤色准确度："
-//						+ Double.toString(face.getRaceConfidence()).substring(
-//								0, 5) + "%");
-//				list.add("性别：" + face.getGenderValue());
-//				list.add("性别准确度："
-//						+ Double.toString(face.getGenderConfidence())
-//								.substring(0, 5) + "%");
-//				list.add("年龄：" + face.getAgeValue() + "岁");
-//				list.add("年龄误差：" + face.getAgeRange());
-//				list.add("微笑指数：" + face.getSmilingValue() + "%");
+				// list.add("肤色：" + face.getRaceValue());
+				// list.add("肤色准确度："
+				// + Double.toString(face.getRaceConfidence()).substring(
+				// 0, 5) + "%");
+				// list.add("性别：" + face.getGenderValue());
+				// list.add("性别准确度："
+				// + Double.toString(face.getGenderConfidence())
+				// .substring(0, 5) + "%");
+				// list.add("年龄：" + face.getAgeValue() + "岁");
+				// list.add("年龄误差：" + face.getAgeRange());
+				// list.add("微笑指数：" + face.getSmilingValue() + "%");
 
-				 buffer.append("肤色：").append(face.getRaceValue()).append("  ");				
-				 buffer.append("性别：").append(face.getGenderValue()).append("  ");
-				 buffer.append("误差：")
-				 .append(Double.toString(face.getGenderConfidence())
-				 .substring(0, 5)).append("% ").append("\n");
-				 buffer.append("年龄：").append(face.getAgeValue()).append("岁 ");
-				 buffer.append("误差：").append(face.getAgeRange()).append("岁  ");
-				 buffer.append("笑容度：").append(Double.toString(face.getSmilingValue())
-						 .substring(0, 5)).append("%");
+				buffer.append("肤色：").append(face.getRaceValue()).append("  ");
+				buffer.append("性别：").append(face.getGenderValue()).append("  ");
+				buffer.append("误差：")
+						.append(Double.toString(face.getGenderConfidence())
+								.substring(0, 5)).append("% ").append("\n");
+				buffer.append("年龄：").append(face.getAgeValue()).append("岁 ");
+				buffer.append("误差：").append(face.getAgeRange()).append("岁  ");
+				buffer.append("笑容度：")
+						.append(Double.toString(face.getSmilingValue())
+								.substring(0, 5)).append("%");
 			}
 		} else {
 			buffer.append("没检测到人脸");
-//			return null;
+			// return null;
 		}
 
 		return buffer.toString();
@@ -173,25 +142,49 @@ public class Util {
 	public static String Similarity(JSONObject jsonObject) throws JSONException {
 
 		String string = jsonObject.getString("similarity").substring(0, 5);
-				
+
 		return string;
 	}
-	public static int changeFloat(float float1){
-		int tmpflt=(int)float1;
-		if (tmpflt>85) {
+
+	public static String changeFloat(float float1) {
+		int tmpflt = (int) float1;
+		String s = " ";
+		if (tmpflt < 80) {
+			tmpflt = 80 + (int) (Math.random() * 20);
+			s="情侣指数："+tmpflt;
+		}else if (tmpflt>92) {
+			s="情侣指数："+tmpflt+"  有可能是同一个人";
+		}else if (tmpflt<90&&tmpflt>85) {
+			s="情侣指数："+tmpflt+"  有可能是亲人";
+		}{
 			
-		}else if(tmpflt<50){
-			tmpflt=70+(int)(Math.random()*10);
 		}
-		return tmpflt;
+		return s;
 	}
-	
-	
 
+	public static String change1(String sim, int code) {
+		int num = (int) Float.parseFloat(sim);
+		// if (num<10) {
+		// return "num_0.png";
+		// }
+		int j = 0;
+		switch (code) {
+		case 1:
+			j = num / 10 / 10 % 10;
+			
+			break;
+		case 2:
+			j = num / 10 % 10;
+			break;
+		case 3:
+			j = num % 10;
+			break;
+		default:
+			break;
+		}
 
-	
-
-	
-	
+		String result = "num_" + j + ".png";
+		return result;
+	}
 
 }

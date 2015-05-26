@@ -76,6 +76,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 	private String face[] = new String[2];
 	private ProgressDialog progressBar;
 	private FaceInfos faceInfos;
+	
 
 	public static final int DECTOR_SUCCESS = 0;
 	public static final int COMPARE_SUCCESS = 1;
@@ -105,7 +106,6 @@ public class MainFragment extends Fragment implements OnClickListener {
 		View view = inflater.inflate(R.layout.main4, container, false);
 		request = new HttpRequests("99a9423512d4f19c17bd8d6b526e554c",
 				"z8stpP3-HMdYhg6kAK73A2nBFwZg4Thl");
-
 		initview(view);
 
 		detectHandler = new Handler() {
@@ -425,7 +425,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 			person.setResultcode(resultcode);
 			person.setSex(faceInfos.getFace().get(0).getAttribute().getGender()
 					.getValue());
-			person.setVerson(AppUtils.getVersionName(getActivity()));
+			person.setVerson(MyApplication.getVersion());
 			person.save(getActivity());
 			// BitmapUtil.deletefile();
 		}
