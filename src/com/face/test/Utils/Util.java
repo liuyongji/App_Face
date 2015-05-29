@@ -39,6 +39,8 @@ public class Util {
 						.getDouble("confidence"));
 				face.setSmilingValue(attrObject.getJSONObject("smiling")
 						.getDouble("value"));
+				face.setGlass(glassConvert(attrObject.getJSONObject("glass")
+						.getString("value")));
 				// buffer.append(face.getFaceId()+"\n");
 
 				// list.add("肤色：" + face.getRaceValue());
@@ -55,14 +57,15 @@ public class Util {
 
 				buffer.append("肤色：").append(face.getRaceValue()).append("  ");
 				buffer.append("性别：").append(face.getGenderValue()).append("  ");
-				buffer.append("误差：")
-						.append(Double.toString(face.getGenderConfidence())
-								.substring(0, 5)).append("% ").append("\n");
-				buffer.append("年龄：").append(face.getAgeValue()).append("岁 ");
-				buffer.append("误差：").append(face.getAgeRange()).append("岁  ");
+				buffer.append("年龄：").append(face.getAgeValue()).append("岁 ").append("\n");
+				
+				buffer.append("眼镜：").append(face.getGlass()).append("  ");
 				buffer.append("笑容度：")
 						.append(Double.toString(face.getSmilingValue())
-								.substring(0, 5)).append("%");
+								.substring(0, 4)).append("% ");
+				buffer.append("准确度：")
+				.append(Double.toString(face.getGenderConfidence())
+						.substring(0, 4)).append("% ");
 			}
 		} else {
 			buffer.append("没检测到人脸");
@@ -87,6 +90,18 @@ public class Util {
 
 		return result;
 	}
+	
+	private static String glassConvert(String glass){
+		String result="无";
+		if (glass.equals("None")) {
+			result="无";
+		}
+		else {
+			result="有";
+		}
+		return result;
+	}
+	
 
 	/**
 	 * 人种转换（英文->中文）

@@ -19,6 +19,9 @@ public class Face extends BmobObject{
 	    // 微笑程度  
 	    private double smilingValue;  
 	    // 人脸框的中心点坐标  
+	    
+	    private String glass;
+	    
 	    private double centerX;  
 	    private double centerY;  
 	  
@@ -101,5 +104,13 @@ public class Face extends BmobObject{
 	    public void setCenterY(double centerY) {  
 	        this.centerY = centerY;  
 	    }
+
+		public String getGlass() {
+			return glass;
+		}
+
+		public void setGlass(String glass) {
+			this.glass = glass;
+		}
 
 }

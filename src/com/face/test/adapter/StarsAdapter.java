@@ -66,7 +66,7 @@ public class StarsAdapter extends BaseAdapter {
 				.findViewById(R.id.score_image_3);
 		Stars stars = list.get(position);
 		name.setText(stars.getName());
-		MyApplication.displayImage(stars.getUrl(), imageView);
+		MyApplication.displayImage(stars.getBmobFile().getFileUrl(), imageView);
 		String image1=Util.change1(starsInfos.getCandidate().get(position)
 				.getSimilarity(),1);
 		String image2=Util.change1(starsInfos.getCandidate().get(position)

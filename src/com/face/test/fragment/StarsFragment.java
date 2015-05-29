@@ -70,22 +70,10 @@ public class StarsFragment extends Fragment implements OnClickListener {
 			Bundle savedInstanceState) {
 		request = new HttpRequests("99a9423512d4f19c17bd8d6b526e554c",
 				"z8stpP3-HMdYhg6kAK73A2nBFwZg4Thl");
-		View view = inflater.inflate(R.layout.main_fuqixiang, container, false);
+		View view = inflater.inflate(R.layout.main_stars, container, false);
 		initView(view);
 		
-		new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				try {
-					request.trainSearch(new PostParameters().setFacesetName("Stars"));
-				} catch (FaceppParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}).start();
+		new Thread(train).start();
 		
 		detectHandler = new Handler() {
 			public void handleMessage(Message msg) {
@@ -208,6 +196,21 @@ public class StarsFragment extends Fragment implements OnClickListener {
 		}, 20000);
 		new Thread(dector).start();
 	}
+	
+	Runnable train =new Runnable() {
+		
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			try {
+				request.trainSearch(new PostParameters().setFacesetName("Stars1"));
+			} catch (FaceppParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	};
+	
 
 	Runnable dector = new Runnable() {
 
@@ -232,7 +235,7 @@ public class StarsFragment extends Fragment implements OnClickListener {
 				}else {
 					String face1=faceInfos.getFace().get(0).getFace_id();
 					
-					jsonObject= request.recognitionSearch(new PostParameters().setKeyFaceId(face1).setFacesetName("Stars"));
+					jsonObject= request.recognitionSearch(new PostParameters().setKeyFaceId(face1).setFacesetName("Stars1"));
 					
 					Log.i("lyj", jsonObject.toString());
 					timer.cancel();

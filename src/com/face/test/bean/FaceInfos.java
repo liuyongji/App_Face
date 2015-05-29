@@ -175,6 +175,23 @@ public class FaceInfos {
 			private Gender gender;
 			private Smilling smilling;
 			private Age age;
+			private Glass glass;
+			public static class Glass{
+				private String value;
+				private String confidence;
+				public String getValue() {
+					return value;
+				}
+				public void setValue(String value) {
+					this.value = value;
+				}
+				public String getConfidence() {
+					return confidence;
+				}
+				public void setConfidence(String confidence) {
+					this.confidence = confidence;
+				}
+			}
 			public static class Race{
 				private String value;
 				private String confidence;
@@ -257,6 +274,12 @@ public class FaceInfos {
 			}
 			public void setRace(Race race) {
 				this.race = race;
+			}
+			public Glass getGlass() {
+				return glass;
+			}
+			public void setGlass(Glass glass) {
+				this.glass = glass;
 			}
 		}
 		public String getTag() {

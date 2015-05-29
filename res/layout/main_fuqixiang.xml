@@ -16,7 +16,7 @@
             android:id="@+id/fuqi_imageview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/anglebaby2" />
+            android:src="@drawable/fuqix" />
 
     </RelativeLayout>
 

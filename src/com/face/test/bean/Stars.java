@@ -7,6 +7,7 @@ public class Stars extends BmobObject{
 	private String faceId;
 	private String url;
 	private String name;
+	private BmobFile bmobFile;
 	public String getFaceId() {
 		return faceId;
 	}
@@ -25,6 +26,12 @@ public class Stars extends BmobObject{
 	}
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	public BmobFile getBmobFile() {
+		return bmobFile;
+	}
+	public void setBmobFile(BmobFile bmobFile) {
+		this.bmobFile = bmobFile;
 	}
 
 }

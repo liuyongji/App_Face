@@ -349,7 +349,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 
 			try {
 				jsonObject = request.detectionDetect(new PostParameters()
-						.setImg(bytes).setMode("oneface"));
+						.setImg(bytes).setMode("oneface").setAttribute("glass,gender,age,race,smiling"));
 				Log.i("lyj", jsonObject.toString());
 				list = Util.Jsonn(jsonObject);
 				Gson gson = new Gson();
