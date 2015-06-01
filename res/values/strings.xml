@@ -21,6 +21,7 @@
     <string name="save_fail">保存出错了，可能是因为内存不足</string>
     <string name="viewpager_indicator">%1$d/%2$d</string>
     <string name="no_net_state">网络不给力,或者服务器繁忙</string>
+    <string name="no_noface">检测不到人脸</string>
     <string name="tupiangeshi">图片格式不正确，请选择一张包含两张人脸的图片</string>
     <string name="choose_two">请选择两张清晰的人脸图片</string>
     <string name="dialog_default_title">Here\'s a message!</string>

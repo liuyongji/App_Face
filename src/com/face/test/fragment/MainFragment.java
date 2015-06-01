@@ -19,7 +19,6 @@ import com.andexert.library.ViewPagerIndicator;
 import com.face.test.MyApplication;
 import com.face.test.R;
 import com.face.test.Result;
-import com.face.test.Utils.AppUtils;
 import com.face.test.Utils.BitmapUtil;
 import com.face.test.Utils.DialogUtil;
 import com.face.test.Utils.Util;
@@ -247,7 +246,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 				detectHandler.sendMessage(message);
 				this.cancel();
 			}
-		}, 15000);
+		}, 20000);
 		new Thread(dector).start();
 	}
 

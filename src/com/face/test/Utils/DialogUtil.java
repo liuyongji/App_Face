@@ -33,7 +33,7 @@ public class DialogUtil {
 	public static ProgressDialog getProgressDialog(Context context) {
 
 		ProgressDialog progressDialog = ProgressDialog.show(context, "正在检测...",
-				"Please wait...", true, false);
+				"非wifi环境可能需要较长的等待时间...", true, false);
 		progressDialog.setCancelable(false);
 		progressDialog.setOnCancelListener(new OnCancelListener() {
 

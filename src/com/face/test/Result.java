@@ -102,7 +102,7 @@ public class Result extends Activity implements OnClickListener {
 		// TODO 自动生成的方法存根
 		mController = UMServiceFactory.getUMSocialService("com.face.test");
 		mController.setShareContent(ShareContent);
-		mController.setShareMedia(new UMImage(Result.this, R.drawable.icon3));
+		mController.setShareMedia(new UMImage(Result.this, R.drawable.icon));
 		// 注册微博一键登录
 		mController.getConfig().setSsoHandler(new TencentWBSsoHandler());
 		mController.getConfig().setSsoHandler(new SinaSsoHandler());
@@ -119,7 +119,7 @@ public class Result extends Activity implements OnClickListener {
 		circleMedia = new CircleShareContent();
 //		circleMedia.setShareContent(ShareContent);
 		circleMedia.setTitle(getResources().getString(R.string.app_name));
-		circleMedia.setShareImage(new UMImage(Result.this, R.drawable.icon3));
+		circleMedia.setShareImage(new UMImage(Result.this, R.drawable.icon));
 		circleMedia.setTargetUrl(url);
 		mController.setShareMedia(circleMedia);
 
@@ -142,8 +142,9 @@ public class Result extends Activity implements OnClickListener {
 		switch (v.getId()) {
 		case R.id.button1:
 			Intent intent = new Intent(Result.this, MainActivity.class);
-			Result.this.finish();
+			intent.putExtra("key", 1);
 			startActivity(intent);
+			Result.this.finish();
 			break;
 		case R.id.button2:
 			umAppAdapter = new UMAppAdapter(this);
@@ -156,27 +157,27 @@ public class Result extends Activity implements OnClickListener {
 		}
 	}
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		// TODO 自动生成的方法存根
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			Dialog isExit = new AlertDialog.Builder(Result.this)
-					.setTitle("系统提示")
-					.setMessage("你确定退出吗")
-					.setPositiveButton("确定",
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									// TODO 自动生成的方法存根
-									finish();
-								}
-							}).setNegativeButton("取消", null).create();
-			isExit.show();
-		}
-		return super.onKeyDown(keyCode, event);
-	}
+//	@Override
+//	public boolean onKeyDown(int keyCode, KeyEvent event) {
+//		// TODO 自动生成的方法存根
+//		if (keyCode == KeyEvent.KEYCODE_BACK) {
+//			Dialog isExit = new AlertDialog.Builder(Result.this)
+//					.setTitle("系统提示")
+//					.setMessage("你确定退出吗")
+//					.setPositiveButton("确定",
+//							new DialogInterface.OnClickListener() {
+//
+//								@Override
+//								public void onClick(DialogInterface dialog,
+//										int which) {
+//									// TODO 自动生成的方法存根
+//									finish();
+//								}
+//							}).setNegativeButton("取消", null).create();
+//			isExit.show();
+//		}
+//		return super.onKeyDown(keyCode, event);
+//	}
 
 	@Override
 	protected void onResume() {

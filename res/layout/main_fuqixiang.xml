@@ -40,7 +40,7 @@
                 android:id="@+id/fuqi_pick"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/blue"
+                android:background="@drawable/btn_selector"
                 android:text="选择图片" />
         </com.andexert.library.RippleView>
     </LinearLayout>

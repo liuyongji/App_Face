@@ -1,29 +1,15 @@
 package com.face.test;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.face.test.fragment.FuqixiangFragment;
 import com.face.test.fragment.MainFragment;
 import com.face.test.fragment.PhotosFragment;
 import com.face.test.fragment.StarsFragment;
-import com.myface.JMSManager;
 import com.umeng.analytics.MobclickAgent;
-import com.umeng.fb.FeedbackAgent;
 import com.umeng.update.UmengUpdateAgent;
 
-import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
-import android.view.KeyEvent;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 public class MainActivity extends SherlockFragmentActivity {
 	private Fragment fragment;

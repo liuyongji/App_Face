@@ -2,16 +2,23 @@ package com.face.test.fragment;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.json.JSONObject;
 
+import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.listener.UploadFileListener;
+
+import com.face.test.MyApplication;
 import com.face.test.R;
 import com.face.test.StarsResultActivity;
 import com.face.test.Utils.BitmapUtil;
 import com.face.test.Utils.DialogUtil;
+import com.face.test.bean.Bitchs;
 import com.face.test.bean.FaceInfos;
+import com.face.test.bean.Person;
 import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
@@ -58,6 +65,7 @@ public class StarsFragment extends Fragment implements OnClickListener {
 	private Handler detectHandler = null;
 	private HttpRequests request = null;// 在线api
 	private FaceInfos faceInfos;
+	private BmobFile bmobFile;
 	
 	@SuppressLint("SimpleDateFormat")
 	private SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -83,7 +91,14 @@ public class StarsFragment extends Fragment implements OnClickListener {
 				}
 				switch (msg.what) {
 				case 0:
+					
+					File f = BitmapUtil.saveBitmap(
+							bitmap, df.format(new Date()));
+					bmobFile = new BmobFile(f);
+					bmobFile.upload(getActivity(), uploadFileListener);
+					
 					Intent intent=new Intent(getActivity(),StarsResultActivity.class);
+					
 					intent.putExtra("stars", (String)msg.obj);
 					startActivity(intent);
 					break;
@@ -94,7 +109,7 @@ public class StarsFragment extends Fragment implements OnClickListener {
 					break;
 				case 2:
 					Toast.makeText(getActivity(),
-							getResources().getString(R.string.tupiangeshi),
+							getResources().getString(R.string.no_noface),
 							Toast.LENGTH_LONG).show();
 
 				default:
@@ -180,6 +195,7 @@ public class StarsFragment extends Fragment implements OnClickListener {
 
 	private void setbitmap(Bitmap bitmap) {
 		this.bitmap = bitmap;
+		MyApplication.setBitmap(bitmap);
 		iv_imageview.setImageBitmap(bitmap);
 		progressBar = DialogUtil.getProgressDialog(getActivity());
 
@@ -193,7 +209,7 @@ public class StarsFragment extends Fragment implements OnClickListener {
 				detectHandler.sendMessage(message);
 				this.cancel();
 			}
-		}, 20000);
+		}, 25000);
 		new Thread(dector).start();
 	}
 	
@@ -226,7 +242,7 @@ public class StarsFragment extends Fragment implements OnClickListener {
 				Gson gson = new Gson();
 				faceInfos = gson.fromJson(jsonObject.toString(),
 						FaceInfos.class);
-				if (faceInfos.getFace().size()<0) {
+				if (faceInfos.getFace().size()<=0) {
 					timer.cancel();
 					Message message = new Message();
 					message.what = 2;
@@ -235,7 +251,7 @@ public class StarsFragment extends Fragment implements OnClickListener {
 				}else {
 					String face1=faceInfos.getFace().get(0).getFace_id();
 					
-					jsonObject= request.recognitionSearch(new PostParameters().setKeyFaceId(face1).setFacesetName("Stars1"));
+					jsonObject= request.recognitionSearch(new PostParameters().setKeyFaceId(face1).setFacesetName("Stars1").setCount(4));
 					
 					Log.i("lyj", jsonObject.toString());
 					timer.cancel();
@@ -292,6 +308,30 @@ public class StarsFragment extends Fragment implements OnClickListener {
 			break;
 		}
 	}
+	
+	private UploadFileListener uploadFileListener = new UploadFileListener() {
+
+		@Override
+		public void onSuccess() {
+			// TODO 自动生成的方法存根
+			Bitchs person = new Bitchs();
+			person.setFile(bmobFile);
+			person.setVerson(MyApplication.getVersion());
+			person.save(getActivity());
+		}
+
+		@Override
+		public void onProgress(Integer arg0) {
+			// TODO 自动生成的方法存根
+
+		}
+
+		@Override
+		public void onFailure(int arg0, String arg1) {
+			// TODO 自动生成的方法存根
+
+		}
+	};
 
 
 }

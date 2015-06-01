@@ -6,7 +6,6 @@ import cn.bmob.v3.Bmob;
 
 import com.face.test.Utils.AppUtils;
 import com.face.test.Utils.CrashHandler;
-import com.isnc.facesdk.SuperID;
 import com.myface.JMSManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -35,6 +34,7 @@ public class MyApplication extends Application {
 	private static ImageLoader imageLoader = ImageLoader.getInstance();
 	private static DisplayImageOptions options;
 	private static List<Bitmap> bitmaps;
+	private static Bitmap bitmap;
 	private static JMSManager jmInstance;
 	private static String version;
 
@@ -140,6 +140,14 @@ public class MyApplication extends Application {
 	}
 	public static String getVersion(){
 		return version;
+	}
+	
+	
+	public static void setBitmap(Bitmap bitmap) {
+		MyApplication.bitmap = bitmap;
+	}
+	public static Bitmap getBitmap() {
+		return bitmap;
 	}
 	
 
