@@ -1,4 +1,4 @@
-package com.face.test;
+package com.face.test.activity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,6 +6,13 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
+import com.face.test.MyApplication;
+import com.face.test.R;
+import com.face.test.Result;
+import com.face.test.R.id;
+import com.face.test.R.layout;
+import com.face.test.R.menu;
+import com.face.test.R.string;
 import com.loveplusplus.demo.image.HackyViewPager;
 import com.loveplusplus.demo.image.ImageDetailFragment;
 import com.umeng.socialize.controller.UMSocialService;

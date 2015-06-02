@@ -1,4 +1,4 @@
-package com.face.test;
+package com.face.test.activity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,10 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.FindListener;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.face.test.MyApplication;
+import com.face.test.R;
+import com.face.test.R.id;
+import com.face.test.R.layout;
 import com.face.test.adapter.StarsAdapter;
 import com.face.test.bean.Stars;
 import com.face.test.bean.StarsInfos;

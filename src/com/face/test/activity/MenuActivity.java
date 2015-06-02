@@ -1,5 +1,9 @@
-package com.face.test;
+package com.face.test.activity;
 
+import com.face.test.MyApplication;
+import com.face.test.R;
+import com.face.test.R.id;
+import com.face.test.R.layout;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
 

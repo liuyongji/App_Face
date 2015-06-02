@@ -77,7 +77,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 	private FaceInfos faceInfos;
 	
 
-	public static final int DECTOR_SUCCESS = 0;
+	public static final int DECTOR_SUCCESS = 7002;
 	public static final int COMPARE_SUCCESS = 1;
 	public static final int COMPARE_FAIL = 2;
 	public static final int DECTOR_FAIL = 3;
@@ -101,7 +101,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO 自动生成的方法存根
+		
 		View view = inflater.inflate(R.layout.main4, container, false);
 		request = new HttpRequests("99a9423512d4f19c17bd8d6b526e554c",
 				"z8stpP3-HMdYhg6kAK73A2nBFwZg4Thl");
@@ -153,7 +153,31 @@ public class MainFragment extends Fragment implements OnClickListener {
 					startActivity(intent);
 					getActivity().finish();
 					break;
+				case 1303:
+					Toast.makeText(getActivity(),
+							getResources().getString(R.string.photostoolarge),
+							Toast.LENGTH_LONG).show();
+					break;
+				case 1301:
+					Toast.makeText(getActivity(),
+							getResources().getString(R.string.photoserror),
+							Toast.LENGTH_LONG).show();
+					break;
+				case 1202:
+					Toast.makeText(getActivity(),
+							getResources().getString(R.string.serverbusy),
+							Toast.LENGTH_LONG).show();
+					break;
+				case 1001:
+					Toast.makeText(getActivity(),
+							getResources().getString(R.string.no_net_state),
+							Toast.LENGTH_LONG).show();
+					break;
+				
 				default:
+					Toast.makeText(getActivity(),
+							getResources().getString(R.string.no_net_state),
+							Toast.LENGTH_LONG).show();
 					break;
 				}
 			};
@@ -212,13 +236,6 @@ public class MainFragment extends Fragment implements OnClickListener {
 			//
 			break;
 		default:
-			// if (resultCode==SDKConfig.LOGINSUCCESS) {
-			// String superiduid = Cache.getCached(getActivity(),
-			// SDKConfig.KEY_APPUID);
-			// Editor editor= sharedPreferences.edit();
-			// editor.putString("superiduid", superiduid);
-			// editor.commit();
-			// }
 			break;
 		}
 
@@ -313,6 +330,9 @@ public class MainFragment extends Fragment implements OnClickListener {
 				similarityresult = Util.Similarity(jsonObject);
 			} catch (FaceppParseException e1) {
 				e1.printStackTrace();
+				Message message = new Message();
+				message.what = e1.getErrorCode();
+				detectHandler.sendMessage(message);
 			} catch (JSONException e) {
 				e.printStackTrace();
 				timer.cancel();
@@ -361,10 +381,11 @@ public class MainFragment extends Fragment implements OnClickListener {
 					face[mViewPager.getCurrentItem()] = Util.face.getFaceId();
 				}
 			} catch (FaceppParseException e) {
+				
 				e.printStackTrace();
 				timer.cancel();
 				Message message = new Message();
-				message.what = -1;
+				message.what = e.getErrorCode();
 				detectHandler.sendMessage(message);
 				return;
 			} catch (JSONException e) {
@@ -417,6 +438,9 @@ public class MainFragment extends Fragment implements OnClickListener {
 		@Override
 		public void onSuccess() {
 			// TODO 自动生成的方法存根
+			if (faceInfos.getFace().size()==0) {
+				return;
+			}
 			person = new Person();
 			person.setUser("user");
 			person.setFile(bmobFile);

@@ -13,9 +13,9 @@ import cn.bmob.v3.listener.UploadFileListener;
 
 import com.face.test.MyApplication;
 import com.face.test.R;
-import com.face.test.StarsResultActivity;
 import com.face.test.Utils.BitmapUtil;
 import com.face.test.Utils.DialogUtil;
+import com.face.test.activity.StarsResultActivity;
 import com.face.test.bean.Bitchs;
 import com.face.test.bean.FaceInfos;
 import com.face.test.bean.Person;
@@ -110,6 +110,10 @@ public class StarsFragment extends Fragment implements OnClickListener {
 				case 2:
 					Toast.makeText(getActivity(),
 							getResources().getString(R.string.no_noface),
+							Toast.LENGTH_LONG).show();
+				case 1202:
+					Toast.makeText(getActivity(),
+							getResources().getString(R.string.serverbusy),
 							Toast.LENGTH_LONG).show();
 
 				default:
@@ -264,6 +268,9 @@ public class StarsFragment extends Fragment implements OnClickListener {
 
 			} catch (FaceppParseException e) {
 				e.printStackTrace();
+				Message message = new Message();
+				message.what = e.getErrorCode();
+				detectHandler.sendMessage(message);
 			} 
 
 		}

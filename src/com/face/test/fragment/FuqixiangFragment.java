@@ -87,8 +87,9 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 				if (progressBar != null) {
 					progressBar.dismiss();
 				}
+				
 				switch (msg.what) {
-				case 0:
+				case 7002:
 					String result;
 //					tv_result.setVisibility(View.VISIBLE);
 					if (faceInfos.getFace().get(0).getAttribute().getGender().getValue().equals(faceInfos.getFace().get(1).getAttribute().getGender().getValue())) {
@@ -115,8 +116,19 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 					Toast.makeText(getActivity(),
 							getResources().getString(R.string.tupiangeshi),
 							Toast.LENGTH_LONG).show();
+				case 1202:
+					Toast.makeText(getActivity(),
+							getResources().getString(R.string.serverbusy),
+							Toast.LENGTH_LONG).show();
+					break;
+				case 1001:
+					
+				
 
 				default:
+					Toast.makeText(getActivity(),
+							getResources().getString(R.string.no_net_state),
+							Toast.LENGTH_LONG).show();
 					break;
 				}
 				
@@ -248,13 +260,16 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 					timer.cancel();
 					Message message = new Message();
 					message.obj=float1;
-					message.what = 0;
+					message.what = 7002;
 					detectHandler.sendMessage(message);
 					
 				}
 
 			} catch (FaceppParseException e) {
 				e.printStackTrace();
+				Message message = new Message();
+				message.what=e.getErrorCode();
+				detectHandler.sendMessage(message);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

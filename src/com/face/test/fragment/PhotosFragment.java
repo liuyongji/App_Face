@@ -6,12 +6,13 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-import com.face.test.ImagePagerActivity;
 import com.face.test.MyApplication;
 import com.face.test.R;
 import com.face.test.Result;
+import com.face.test.activity.ImagePagerActivity;
 import com.face.test.adapter.ImageAdapter;
 import com.umeng.socialize.controller.UMSocialService;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;

@@ -1,6 +1,9 @@
-package com.face.test;
+package com.face.test.activity;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.face.test.R;
+import com.face.test.R.id;
+import com.face.test.R.layout;
 import com.face.test.fragment.FuqixiangFragment;
 import com.face.test.fragment.MainFragment;
 import com.face.test.fragment.PhotosFragment;

@@ -7,6 +7,7 @@ import java.util.TimerTask;
 
 import com.dk.animation.SwitchAnimationUtil;
 import com.dk.animation.SwitchAnimationUtil.AnimationType;
+import com.face.test.activity.MainActivity;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.scrshot.UMScrShotController.OnScreenshotListener;
 import com.umeng.scrshot.adapter.UMAppAdapter;

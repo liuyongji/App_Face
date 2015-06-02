@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.face.test"
-    android:versionCode="7"
-    android:versionName="2.7.1" >
+    android:versionCode="9"
+    android:versionName="2.8.3" >
 
     <uses-sdk
         android:minSdkVersion="13"
@@ -22,17 +22,19 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <!--superid  -->
+    <!-- superid -->
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-feature android:name="android.hardware.camera.setParameters" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <!-- 
+    <!--
     <uses-permission android:name="android.permission.READ_SMS" />
     
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />   --> 
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    -->
 
     <application
         android:name=".MyApplication"
@@ -41,8 +43,7 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
         <activity
-           
-            android:name="com.face.test.MenuActivity"
+            android:name="com.face.test.activity.MenuActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -55,18 +56,17 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.face.test.ImagePagerActivity"
+            android:name="com.face.test.activity.ImagePagerActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.face.test.MainActivity"
+            android:name="com.face.test.activity.MainActivity"
             android:label="@string/app_name" >
         </activity>
-         <activity
-            android:name="com.face.test.StarsResultActivity"
+        <activity
+            android:name="com.face.test.activity.StarsResultActivity"
             android:label="@string/app_name" >
         </activity>
-        
         <activity
             android:name="com.umeng.socialize.view.ShareActivity"
             android:configChanges="orientation|keyboard"
@@ -153,15 +153,12 @@
         <service android:name="com.myface.net.JMDown" />
         <!-- 下载服务 -->
 
-
-     
-
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="53e0dea2fd98c5e85300a9db" />
         <meta-data
             android:name="UMENG_CHANNEL"
-            android:value="360" />
+            android:value="baidu" />
     </application>
 
 </manifest>
