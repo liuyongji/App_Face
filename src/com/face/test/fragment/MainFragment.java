@@ -18,10 +18,10 @@ import cn.bmob.v3.listener.UploadFileListener;
 import com.andexert.library.ViewPagerIndicator;
 import com.face.test.MyApplication;
 import com.face.test.R;
-import com.face.test.Result;
 import com.face.test.Utils.BitmapUtil;
 import com.face.test.Utils.DialogUtil;
 import com.face.test.Utils.Util;
+import com.face.test.activity.ResultActivity;
 import com.face.test.adapter.MyViewAdapter;
 import com.face.test.bean.FaceInfos;
 import com.face.test.bean.Person;
@@ -29,6 +29,7 @@ import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
 import com.google.gson.Gson;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.annotation.SuppressLint;
@@ -143,7 +144,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 					break;
 				case COMPARE_SUCCESS:
 					MyApplication.setBitmaps(bitmaps);
-					Intent intent = new Intent(getActivity(), Result.class);
+					Intent intent = new Intent(getActivity(), ResultActivity.class);
 					Bundle bundle = new Bundle();
 					bundle.putString("Compare",
 							((ArrayList<String>) msg.obj).get(0));

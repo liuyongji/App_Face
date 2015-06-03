@@ -8,8 +8,8 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import com.face.test.MyApplication;
 import com.face.test.R;
-import com.face.test.Result;
 import com.face.test.activity.ImagePagerActivity;
+import com.face.test.activity.ResultActivity;
 import com.face.test.adapter.ImageAdapter;
 import com.umeng.socialize.controller.UMSocialService;
 
@@ -115,7 +115,7 @@ public class PhotosFragment extends Fragment {
 								mController,
 								getActivity().getResources().getString(
 										R.string.sharecontent)
-										+ Result.url, bitmap);
+										+ ResultActivity.url, bitmap);
 						sDialog.dismissWithAnimation();
 					}
 				});

@@ -47,7 +47,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.face.test.Result"
+            android:name="com.face.test.activity.ResultActivity"
             android:label="@string/app_name" >
         </activity>
         <activity

@@ -8,7 +8,6 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import com.face.test.MyApplication;
 import com.face.test.R;
-import com.face.test.Result;
 import com.face.test.R.id;
 import com.face.test.R.layout;
 import com.face.test.R.menu;
@@ -112,7 +111,7 @@ public class ImagePagerActivity extends FragmentActivity {
 			Bitmap bm = BitmapFactory.decodeFile(files[pagerPosition].getAbsolutePath());
 			MyApplication.setShare(ImagePagerActivity.this, mController,
 					getResources().getString(R.string.sharecontent)
-							+ Result.url, bm);
+							+ ResultActivity.url, bm);
 			break;
 		case R.id.delete:
 			// File file = new File(urls.get(pagerPosition));

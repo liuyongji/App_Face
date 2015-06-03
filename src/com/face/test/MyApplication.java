@@ -6,6 +6,7 @@ import cn.bmob.v3.Bmob;
 
 import com.face.test.Utils.AppUtils;
 import com.face.test.Utils.CrashHandler;
+import com.face.test.activity.ResultActivity;
 import com.myface.JMSManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -95,12 +96,12 @@ public class MyApplication extends Application {
 		weixinContent.setTitle(context.getResources().getString(R.string.app_name));
 //		weixinContent.setShareContent("shareContent");
 		weixinContent.setShareImage(new UMImage(context, shareImage));
-		weixinContent.setTargetUrl(Result.url);
+		weixinContent.setTargetUrl(ResultActivity.url);
 		mController.setShareMedia(weixinContent);
 		
 		CircleShareContent circleMedia = new CircleShareContent();
 		circleMedia.setShareImage(new UMImage(context, shareImage));
-		circleMedia.setTargetUrl(Result.url);
+		circleMedia.setTargetUrl(ResultActivity.url);
 		mController.setShareMedia(circleMedia);
 		
 		
@@ -115,13 +116,13 @@ public class MyApplication extends Application {
 //		qqShareContent.setShareContent(shareContent);
 		qqShareContent.setTitle(context.getResources().getString(R.string.app_name));
 		qqShareContent.setShareImage(new UMImage(context, shareImage));
-		qqShareContent.setTargetUrl(Result.url);
+		qqShareContent.setTargetUrl(ResultActivity.url);
 		
 		mController.setShareMedia(qqShareContent);
 		
 		QZoneShareContent qzone = new QZoneShareContent();
 		qzone.setShareContent(shareContent);
-		qzone.setTargetUrl(Result.url);
+		qzone.setTargetUrl(ResultActivity.url);
 		qzone.setTitle(context.getResources().getString(R.string.app_name));
 		qzone.setShareImage(new UMImage(context, shareImage));
 		mController.setShareMedia(qzone);
