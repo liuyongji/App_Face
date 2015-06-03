@@ -37,6 +37,7 @@ public class MyApplication extends Application {
 	private static Bitmap bitmap;
 	private static JMSManager jmInstance;
 	private static String version;
+	private static String channel;
 
 	@Override
 	public void onCreate() {
@@ -47,6 +48,7 @@ public class MyApplication extends Application {
 				.discCacheFileCount(100).build();
 		imageLoader.init(configuration);
 		version=AppUtils.getVersionName(getApplicationContext());
+		channel=AppUtils.getChannelId(getApplicationContext(), "UMENG_CHANNEL");
 		options = new DisplayImageOptions.Builder()
 				.showImageOnLoading(R.drawable.loading).cacheInMemory(true)
 				.cacheOnDisc(true).build();
@@ -140,6 +142,10 @@ public class MyApplication extends Application {
 	}
 	public static String getVersion(){
 		return version;
+	}
+	
+	public static String getChannel(){
+		return channel;
 	}
 	
 	

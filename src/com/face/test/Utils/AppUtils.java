@@ -1,9 +1,11 @@
 package com.face.test.Utils;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Bundle;
 
 /**
  * 跟App相关的辅助类
@@ -60,6 +62,23 @@ public class AppUtils
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public static String getChannelId(Context ctx, String channel) {
+		String douId = null;
+		PackageManager pm = ctx.getPackageManager();
+		ApplicationInfo appInfo;
+		try {
+			appInfo = pm.getApplicationInfo(ctx.getPackageName(),
+					PackageManager.GET_META_DATA);
+			Bundle metaData = appInfo.metaData;
+			if (metaData != null)
+				douId = "" + metaData.getString(channel);
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		return douId;
 	}
 
 }

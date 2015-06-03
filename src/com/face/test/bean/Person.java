@@ -17,6 +17,7 @@ public class Person extends BmobObject{
 	private boolean doubles;
 	private String verson;
 	private int resultcode;
+	private String channel;
 	public String getDate() {
 		return date;
 	}
@@ -64,6 +65,12 @@ public class Person extends BmobObject{
 	}
 	public void setResultcode(int resultcode) {
 		this.resultcode = resultcode;
+	}
+	public String getChannel() {
+		return channel;
+	}
+	public void setChannel(String channel) {
+		this.channel = channel;
 	}
 	
 

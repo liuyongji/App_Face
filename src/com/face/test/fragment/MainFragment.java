@@ -449,8 +449,9 @@ public class MainFragment extends Fragment implements OnClickListener {
 			person.setSex(faceInfos.getFace().get(0).getAttribute().getGender()
 					.getValue());
 			person.setVerson(MyApplication.getVersion());
+			person.setChannel(MyApplication.getChannel());
 			person.save(getActivity());
-			// BitmapUtil.deletefile();
+//			 BitmapUtil.deletefile();
 		}
 
 		@Override
