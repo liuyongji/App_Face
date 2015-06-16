@@ -31,7 +31,7 @@ import android.widget.ImageView;
 public class PhotosFragment extends Fragment {
 	public static String path = Environment.getExternalStorageDirectory()
 			.getPath() + "/facetest/";
-	private List<String> list = new ArrayList<String>();
+	private List<String> list;
 	private GridView mGridView;
 	private ImageAdapter imageAdapter;
 	private File[] files;
@@ -41,16 +41,6 @@ public class PhotosFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		File filepath=new File(path);
-		if (!filepath.exists()) {
-			filepath.mkdir();
-		}
-		files = new File(path).listFiles();
-		for (int i = 0; i < files.length; i++) {
-			list.add("file:///" + files[i].getAbsolutePath());
-		}
-		// Toast.makeText(getActivity(), "长按更多操作", Toast.LENGTH_SHORT).show();
-		imageAdapter = new ImageAdapter(getActivity(), list);
 		View view = inflater.inflate(R.layout.gridview_photo, container, false);
 		mGridView = (GridView) view.findViewById(R.id.gv_photos);
 		mGridView.setOnItemClickListener(new OnItemClickListener() {
@@ -124,8 +114,27 @@ public class PhotosFragment extends Fragment {
 				return true;
 			}
 		});
-		mGridView.setAdapter(imageAdapter);
 		return view;
+	}
+	
+	
+	private void initData(){
+		File filepath=new File(path);
+		if (!filepath.exists()) {
+			filepath.mkdir();
+		}
+		list=new ArrayList<String>();
+		files = new File(path).listFiles();
+		for (int i = 0; i < files.length; i++) {
+			list.add("file:///" + files[i].getAbsolutePath());
+		}
+		imageAdapter = new ImageAdapter(getActivity(), list);
+		mGridView.setAdapter(imageAdapter);
+	}
+	@Override
+	public void onResume() {
+		super.onResume();
+		initData();
 	}
 
 	private void imageBrower(int position, List<String> list) {

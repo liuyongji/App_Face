@@ -123,7 +123,7 @@ public class ImagePagerActivity extends FragmentActivity {
 			sDialog.showCancelButton(true);
 			sDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
 				@Override
-				public void onClick(SweetAlertDialog sDialog) {
+				public void onClick(final SweetAlertDialog sDialog) {
 					File file = files[pagerPosition];
 					if (file.delete()) {
 						urls.remove(pagerPosition);
@@ -131,8 +131,18 @@ public class ImagePagerActivity extends FragmentActivity {
 								.setContentText(
 										"Your imaginary file has been deleted!")
 								.setConfirmText("OK").showCancelButton(false)
-								.setConfirmClickListener(null)
+								.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+
+									@Override
+									public void onClick(
+											SweetAlertDialog sweetAlertDialog) {
+										// TODO Auto-generated method stub
+										ImagePagerActivity.this.finish();
+									}
+									
+								})
 								.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+						
 					} else {
 						sDialog.setTitleText("删除失败")
 								.setContentText(" deleted failed!")
@@ -140,7 +150,7 @@ public class ImagePagerActivity extends FragmentActivity {
 								.setConfirmClickListener(null)
 								.changeAlertType(SweetAlertDialog.ERROR_TYPE);
 					}
-					mAdapter.notifyDataSetChanged();
+//					mAdapter.notifyDataSetChanged();
 
 				}
 			});

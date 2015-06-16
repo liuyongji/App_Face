@@ -16,6 +16,7 @@ import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
 
 import com.andexert.library.ViewPagerIndicator;
+import com.face.test.Const;
 import com.face.test.MyApplication;
 import com.face.test.R;
 import com.face.test.Utils.BitmapUtil;
@@ -41,6 +42,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -62,26 +64,22 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainFragment extends Fragment implements OnClickListener {
+public class MainFragment extends Fragment implements OnClickListener, Const {
 	private PopupWindow mpopupWindow;
 	private ViewPager mViewPager;
-	private ViewPagerIndicator mIndicator;
+	// private ViewPagerIndicator mIndicator;
 	private MyViewAdapter mAdapter;
 	private List<Bitmap> bitmaps = new ArrayList<Bitmap>();
 	private List<String> mDatas = Arrays.asList("照片1", "照片2");
-	// public static Bitmap curBitmap[] = new Bitmap[2];
 	private final static String TAG = "lyj";
 	private Button seletcButton, duibiButton;
-	private Handler detectHandler = null;
+	private Myhandler detectHandler = null;
 	private String face[] = new String[2];
 	private ProgressDialog progressBar;
 	private FaceInfos faceInfos;
-	
 
-	public static final int DECTOR_SUCCESS = 7002;
-	public static final int COMPARE_SUCCESS = 1;
-	public static final int COMPARE_FAIL = 2;
-	public static final int DECTOR_FAIL = 3;
+	private DectorThread dectorThread;
+	private CompareThread compareThread;
 
 	private int resultcode = -1;
 
@@ -92,119 +90,123 @@ public class MainFragment extends Fragment implements OnClickListener {
 	private BmobFile bmobFile;
 
 	private String sdcard_temp = Environment.getExternalStorageDirectory()
-			+ File.separator + "tmps.jpg";
+			+ File.separator + "test.jpg";
 
 	@SuppressLint("SimpleDateFormat")
 	private SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");// 设置日期格式
 
 	private HttpRequests request = null;// 在线api
 
+	// private File f;
+	private class Myhandler extends Handler {
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void handleMessage(Message msg) {
+			if (progressBar != null) {
+				progressBar.dismiss();
+			}
+			resultcode = msg.what;
+			switch (msg.what) {
+
+			case DECTOR_SUCCESS:
+
+				View view = mViewPager.findViewWithTag(mViewPager
+						.getCurrentItem());
+				TextView textView = (TextView) view
+						.findViewById(R.id.mainfragment_textView);
+				textView.setVisibility(View.VISIBLE);
+				textView.setText((String) msg.obj);
+				new Timer().schedule(new TimerTask() {
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						Message message = new Message();
+						message.what = SAVE_BITMAP;
+						detectHandler.sendMessage(message);
+					}
+				}, 500);
+
+				break;
+			case DECTOR_FAIL:
+				timer.cancel();
+				Toast.makeText(getActivity(),
+						getResources().getString(R.string.no_net_state),
+						Toast.LENGTH_LONG).show();
+				break;
+			case COMPARE_FAIL:
+				Toast.makeText(getActivity(),
+						getResources().getString(R.string.choose_two),
+						Toast.LENGTH_LONG).show();
+				break;
+			case COMPARE_SUCCESS:
+				MyApplication.setBitmaps(bitmaps);
+				Intent intent = new Intent(getActivity(), ResultActivity.class);
+				Bundle bundle = new Bundle();
+				bundle.putString("Compare",
+						((ArrayList<String>) msg.obj).get(0));
+				bundle.putString("Result", ((ArrayList<String>) msg.obj).get(1));
+				intent.putExtras(bundle);
+				startActivity(intent);
+				getActivity().finish();
+				break;
+			case 1303:
+				Toast.makeText(getActivity(),
+						getResources().getString(R.string.photostoolarge),
+						Toast.LENGTH_LONG).show();
+				break;
+			case 1301:
+				Toast.makeText(getActivity(),
+						getResources().getString(R.string.photoserror),
+						Toast.LENGTH_LONG).show();
+				break;
+			case 1202:
+				Toast.makeText(getActivity(),
+						getResources().getString(R.string.serverbusy),
+						Toast.LENGTH_LONG).show();
+				break;
+			case 1001:
+				Toast.makeText(getActivity(),
+						getResources().getString(R.string.no_net_state),
+						Toast.LENGTH_LONG).show();
+				break;
+			case SAVE_BITMAP:
+				Bitmap bitmap = BitmapUtil.convertViewToBitmap(mViewPager
+						.findViewWithTag(mViewPager.getCurrentItem()));
+				File f = BitmapUtil.saveBitmap(bitmap, df.format(new Date()));
+				bmobFile = new BmobFile(f);
+				bmobFile.upload(getActivity(), uploadFileListener);
+				break;
+
+			default:
+				Toast.makeText(getActivity(),
+						getResources().getString(R.string.no_net_state),
+						Toast.LENGTH_LONG).show();
+				break;
+			}
+		};
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
+
 		View view = inflater.inflate(R.layout.main4, container, false);
 		request = new HttpRequests("99a9423512d4f19c17bd8d6b526e554c",
 				"z8stpP3-HMdYhg6kAK73A2nBFwZg4Thl");
 		initview(view);
 
-		detectHandler = new Handler() {
-			@SuppressWarnings("unchecked")
-			public void handleMessage(Message msg) {
-				if (progressBar != null) {
-					progressBar.dismiss();
-				}
-				resultcode = msg.what;
-				switch (msg.what) {
-
-				case DECTOR_SUCCESS:
-					View view = mViewPager.findViewWithTag(mViewPager
-							.getCurrentItem());
-					TextView textView = (TextView) view
-							.findViewById(R.id.mainfragment_textView);
-					textView.setVisibility(View.VISIBLE);
-					textView.setText((String) msg.obj);
-					Bitmap bitmap = BitmapUtil.convertViewToBitmap(view);
-					File f = BitmapUtil.saveBitmap(bitmap,
-							df.format(new Date()));
-					bmobFile = new BmobFile(f);
-					bmobFile.upload(getActivity(), uploadFileListener);
-					break;
-				case DECTOR_FAIL:
-					timer.cancel();
-					Thread.currentThread().interrupt();
-					Toast.makeText(getActivity(),
-							getResources().getString(R.string.no_net_state),
-							Toast.LENGTH_LONG).show();
-					break;
-				case COMPARE_FAIL:
-					Toast.makeText(getActivity(),
-							getResources().getString(R.string.choose_two),
-							Toast.LENGTH_LONG).show();
-					break;
-				case COMPARE_SUCCESS:
-					MyApplication.setBitmaps(bitmaps);
-					Intent intent = new Intent(getActivity(), ResultActivity.class);
-					Bundle bundle = new Bundle();
-					bundle.putString("Compare",
-							((ArrayList<String>) msg.obj).get(0));
-					bundle.putString("Result",
-							((ArrayList<String>) msg.obj).get(1));
-					intent.putExtras(bundle);
-					startActivity(intent);
-					getActivity().finish();
-					break;
-				case 1303:
-					Toast.makeText(getActivity(),
-							getResources().getString(R.string.photostoolarge),
-							Toast.LENGTH_LONG).show();
-					break;
-				case 1301:
-					Toast.makeText(getActivity(),
-							getResources().getString(R.string.photoserror),
-							Toast.LENGTH_LONG).show();
-					break;
-				case 1202:
-					Toast.makeText(getActivity(),
-							getResources().getString(R.string.serverbusy),
-							Toast.LENGTH_LONG).show();
-					break;
-				case 1001:
-					Toast.makeText(getActivity(),
-							getResources().getString(R.string.no_net_state),
-							Toast.LENGTH_LONG).show();
-					break;
-				
-				default:
-					Toast.makeText(getActivity(),
-							getResources().getString(R.string.no_net_state),
-							Toast.LENGTH_LONG).show();
-					break;
-				}
-			};
-		};
+		detectHandler = new Myhandler();
 		return view;
 	}
 
-	private void initview(View view) {
-		seletcButton = (Button) view.findViewById(R.id.pick);
-		duibiButton = (Button) view.findViewById(R.id.detect);
-		seletcButton.setOnClickListener(this);
-		duibiButton.setOnClickListener(this);
-		mViewPager = (ViewPager) view.findViewById(R.id.pager);
-		mIndicator = (ViewPagerIndicator) view.findViewById(R.id.id_indicator);
-		mIndicator.setTabItemTitles(mDatas);
-		mAdapter = new MyViewAdapter(getActivity());
-		mViewPager.setAdapter(mAdapter);
-		mIndicator.setViewPager(mViewPager, 0);
-		bitmaps.add(null);
-		bitmaps.add(null);
-	}
+	
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Bitmap bitmap;
+		super.onActivityResult(requestCode, resultCode, data);
 
+		Bitmap bitmap;
 		switch (requestCode) {
 		case 1001: {
 			if (data != null) {
@@ -220,6 +222,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 				String str = localCursor.getString(localCursor
 						.getColumnIndex(arrayOfString[0]));
 				localCursor.close();
+
 				bitmap = BitmapUtil.getScaledBitmap(str, 700);
 				setBitmap(bitmap);
 			}
@@ -233,9 +236,10 @@ public class MainFragment extends Fragment implements OnClickListener {
 			bitmapOptions.inSampleSize = 8;
 
 			bitmap = BitmapFactory.decodeFile(sdcard_temp, bitmapOptions);
+
 			setBitmap(bitmap);
-			//
 			break;
+
 		default:
 			break;
 		}
@@ -243,30 +247,23 @@ public class MainFragment extends Fragment implements OnClickListener {
 	}
 
 	private void setBitmap(Bitmap bitmap) {
+
 		bitmaps.set(mViewPager.getCurrentItem(), bitmap);
 		View view = mViewPager.findViewWithTag(mViewPager.getCurrentItem());
 		ImageView imageView = (ImageView) view
 				.findViewById(R.id.mainfragment_imageview);
-		// ImageView imageView = (ImageView)
-		// mViewPager.findViewWithTag(mViewPager
-		// .getCurrentItem());
+
 		imageView.setImageBitmap(bitmap);
 
 		progressBar = DialogUtil.getProgressDialog(getActivity());
 
 		timer = new Timer();
-		timer.schedule(new TimerTask() {
-
-			@Override
-			public void run() {
-				Message message = new Message();
-				message.what = DECTOR_FAIL;
-				detectHandler.sendMessage(message);
-				this.cancel();
-			}
-		}, 20000);
-		new Thread(dector).start();
+		timer.schedule(new Mytimertask(), 20000);
+		dectorThread = new DectorThread();
+		dectorThread.start();
 	}
+
+	
 
 	@Override
 	public void onClick(View view) {
@@ -274,8 +271,6 @@ public class MainFragment extends Fragment implements OnClickListener {
 		case R.id.pick:
 			View contentview = mViewPager.findViewWithTag(mViewPager
 					.getCurrentItem());
-			// ImageView imageView = (ImageView)
-			// contentview.findViewById(R.id.mainfragment_imageview);
 			TextView textView = (TextView) contentview
 					.findViewById(R.id.mainfragment_textView);
 			textView.setVisibility(View.GONE);
@@ -288,7 +283,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 			mpopupWindow.dismiss();
 			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 			intent.addCategory(Intent.CATEGORY_DEFAULT);
-			File file = new File(sdcard_temp);
+			File file = new File(this.sdcard_temp);
 			if (file.exists()) {
 				file.delete();
 			}
@@ -302,65 +297,72 @@ public class MainFragment extends Fragment implements OnClickListener {
 			break;
 		case R.id.detect:
 			progressBar = DialogUtil.getProgressDialog(getActivity());
-			new Thread(compare).start();
+			compareThread = new CompareThread();
+			compareThread.start();
 			break;
 		}
 	}
 
-	Runnable compare = new Runnable() {
+	private class CompareThread extends Thread {
 		@Override
 		public void run() {
-			// byte[] bytes=Tool.getBitmapByte(curBitmap);
-			JSONObject jsonObject = null;
-			String resultcompare = null;
-			String similarityresult = null;
+			// TODO Auto-generated method stub
+			super.run();
+			while (!isInterrupted()) {
+				// byte[] bytes=Tool.getBitmapByte(curBitmap);
+				JSONObject jsonObject = null;
+				String resultcompare = null;
+				String similarityresult = null;
 
-			try {
-				for (int i = 0; i < face.length; i++) {
-					if (face[i] == null) {
-						Message message = new Message();
-						message.what = COMPARE_FAIL;
-						detectHandler.sendMessage(message);
-						return;
+				try {
+					for (int i = 0; i < face.length; i++) {
+						if (face[i] == null) {
+							Message message = new Message();
+							message.what = COMPARE_FAIL;
+							detectHandler.sendMessage(message);
+							return;
+						}
 					}
-				}
 
-				jsonObject = request.recognitionCompare(new PostParameters()
-						.setFaceId1(face[0]).setFaceId2(face[1]));
-				resultcompare = Util.CompareResult(jsonObject);
-				similarityresult = Util.Similarity(jsonObject);
-			} catch (FaceppParseException e1) {
-				e1.printStackTrace();
+					jsonObject = request
+							.recognitionCompare(new PostParameters()
+									.setFaceId1(face[0]).setFaceId2(face[1]));
+					resultcompare = Util.CompareResult(jsonObject);
+					similarityresult = Util.Similarity(jsonObject);
+				} catch (FaceppParseException e1) {
+					e1.printStackTrace();
+					Message message = new Message();
+					message.what = e1.getErrorCode();
+					detectHandler.sendMessage(message);
+				} catch (JSONException e) {
+					e.printStackTrace();
+					timer.cancel();
+					Message message = new Message();
+					message.what = -1;
+					detectHandler.sendMessage(message);
+					return;
+				}
+				Log.i(TAG, jsonObject.toString());
+				if (resultcompare == null || resultcompare == "") {
+					resultcompare = "没检测到人脸";
+				}
+				ArrayList<String> result = new ArrayList<String>();
+				result.add(similarityresult + "%");
+				result.add(resultcompare);
 				Message message = new Message();
-				message.what = e1.getErrorCode();
+				message.what = COMPARE_SUCCESS;
+				message.obj = result;
 				detectHandler.sendMessage(message);
-			} catch (JSONException e) {
-				e.printStackTrace();
-				timer.cancel();
-				Message message = new Message();
-				message.what = -1;
-				detectHandler.sendMessage(message);
-				return;
 			}
-			Log.i(TAG, jsonObject.toString());
-			if (resultcompare == null || resultcompare == "") {
-				resultcompare = "没检测到人脸";
-			}
-			ArrayList<String> result = new ArrayList<String>();
-			result.add(similarityresult + "%");
-			result.add(resultcompare);
-			Message message = new Message();
-			message.what = COMPARE_SUCCESS;
-			message.obj = result;
-			detectHandler.sendMessage(message);
 
 		}
-	};
-	Runnable dector = new Runnable() {
+	}
 
+	private class DectorThread extends Thread {
 		@Override
 		public void run() {
-
+			// TODO Auto-generated method stub
+			super.run();
 			byte[] bytes = BitmapUtil.getBitmapByte(getActivity(),
 					bitmaps.get(mViewPager.getCurrentItem()));
 			JSONObject jsonObject = null;
@@ -369,7 +371,8 @@ public class MainFragment extends Fragment implements OnClickListener {
 
 			try {
 				jsonObject = request.detectionDetect(new PostParameters()
-						.setImg(bytes).setMode("oneface").setAttribute("glass,gender,age,race,smiling"));
+						.setImg(bytes).setMode("oneface")
+						.setAttribute("glass,gender,age,race,smiling"));
 				Log.i("lyj", jsonObject.toString());
 				list = Util.Jsonn(jsonObject);
 				Gson gson = new Gson();
@@ -382,7 +385,7 @@ public class MainFragment extends Fragment implements OnClickListener {
 					face[mViewPager.getCurrentItem()] = Util.face.getFaceId();
 				}
 			} catch (FaceppParseException e) {
-				
+
 				e.printStackTrace();
 				timer.cancel();
 				Message message = new Message();
@@ -397,8 +400,10 @@ public class MainFragment extends Fragment implements OnClickListener {
 			message.what = DECTOR_SUCCESS;
 			message.obj = list;
 			detectHandler.sendMessage(message);
+
 		}
-	};
+
+	}
 
 	private void showPopMenu() {
 		View view = View
@@ -439,11 +444,11 @@ public class MainFragment extends Fragment implements OnClickListener {
 		@Override
 		public void onSuccess() {
 			// TODO 自动生成的方法存根
-			if (faceInfos.getFace().size()==0) {
+			if (faceInfos.getFace().size() == 0) {
 				return;
 			}
 			person = new Person();
-			person.setUser("user");
+			person.setUser(MyApplication.getImei());
 			person.setFile(bmobFile);
 			person.setDoubles(false);
 			person.setResultcode(resultcode);
@@ -451,8 +456,9 @@ public class MainFragment extends Fragment implements OnClickListener {
 					.getValue());
 			person.setVerson(MyApplication.getVersion());
 			person.setChannel(MyApplication.getChannel());
+			person.setModel(Build.MODEL);
 			person.save(getActivity());
-//			 BitmapUtil.deletefile();
+			// BitmapUtil.deletefile();
 		}
 
 		@Override
@@ -464,8 +470,36 @@ public class MainFragment extends Fragment implements OnClickListener {
 		@Override
 		public void onFailure(int arg0, String arg1) {
 			// TODO 自动生成的方法存根
-
 		}
 	};
+
+	private void initview(View view) {
+		seletcButton = (Button) view.findViewById(R.id.pick);
+		duibiButton = (Button) view.findViewById(R.id.detect);
+		seletcButton.setOnClickListener(this);
+		duibiButton.setOnClickListener(this);
+		mViewPager = (ViewPager) view.findViewById(R.id.pager);
+		ViewPagerIndicator mIndicator = (ViewPagerIndicator) view
+				.findViewById(R.id.id_indicator);
+		mIndicator.setTabItemTitles(mDatas);
+		mAdapter = new MyViewAdapter(getActivity());
+		mViewPager.setAdapter(mAdapter);
+		mIndicator.setViewPager(mViewPager, 0);
+		bitmaps.add(null);
+		bitmaps.add(null);
+	}
+	private class Mytimertask extends TimerTask {
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			Message message = new Message();
+			message.what = DECTOR_FAIL;
+			detectHandler.sendMessage(message);
+			this.cancel();
+		}
+
+	}
+	
 
 }

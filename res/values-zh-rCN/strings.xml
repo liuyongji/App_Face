@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">人脸检测</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="pg_sdk_edit_sample_edit">编辑</string>
+    <string name="pg_sdk_edit_sample_choose_photo">选择照片</string>
+    <string name="pg_sdk_edit_sample_re_edit">再次编辑</string>
+
+</resources>

@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 
 /**
  * 跟App相关的辅助类
@@ -80,6 +81,14 @@ public class AppUtils
 
 		return douId;
 	}
+	
+	
+	public static String getImei(Context ctx){
+		TelephonyManager tm = (TelephonyManager) ctx.getSystemService(Context.TELEPHONY_SERVICE);  
+		return tm.getDeviceId();
+		
+	}
+	
 
 }
 

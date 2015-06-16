@@ -59,7 +59,7 @@ public class MyViewAdapter extends PagerAdapter {
 		// if (bitmaps.get(position) != null) {
 		// imageView.setImageBitmap(bitmaps.get(position));
 		// } else {
-		imageView.setImageResource(R.drawable.demoooo);
+		imageView.setImageResource(R.drawable.anglebaby2);
 		// }
 		view.setTag(position);
 

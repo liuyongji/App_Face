@@ -2,6 +2,8 @@ package com.face.test;
 
 import java.util.List;
 
+import us.pinguo.edit.sdk.PGEditImageLoader;
+import us.pinguo.edit.sdk.base.PGEditSDK;
 import cn.bmob.v3.Bmob;
 
 import com.face.test.Utils.AppUtils;
@@ -11,6 +13,7 @@ import com.myface.JMSManager;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.testin.agent.TestinAgent;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.controller.UMServiceFactory;
 import com.umeng.socialize.controller.UMSocialService;
@@ -39,16 +42,21 @@ public class MyApplication extends Application {
 	private static JMSManager jmInstance;
 	private static String version;
 	private static String channel;
+	private static String imei;
 
 	@Override
 	public void onCreate() {
 		// TODO 自动生成的方法存根
 		super.onCreate();
+		TestinAgent.init(this);
+		PGEditImageLoader.initImageLoader(this);
+		PGEditSDK.instance().initSDK(this);
 		configuration = new ImageLoaderConfiguration.Builder(
 				getApplicationContext()).threadPoolSize(3)
 				.discCacheFileCount(100).build();
 		imageLoader.init(configuration);
 		version=AppUtils.getVersionName(getApplicationContext());
+		imei=AppUtils.getImei(getApplicationContext());
 		channel=AppUtils.getChannelId(getApplicationContext(), "UMENG_CHANNEL");
 		options = new DisplayImageOptions.Builder()
 				.showImageOnLoading(R.drawable.loading).cacheInMemory(true)
@@ -147,6 +155,10 @@ public class MyApplication extends Application {
 	
 	public static String getChannel(){
 		return channel;
+	}
+	
+	public static String getImei(){
+		return imei;
 	}
 	
 	

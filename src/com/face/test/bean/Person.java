@@ -18,6 +18,7 @@ public class Person extends BmobObject{
 	private String verson;
 	private int resultcode;
 	private String channel;
+	private String model;
 	public String getDate() {
 		return date;
 	}
@@ -71,6 +72,12 @@ public class Person extends BmobObject{
 	}
 	public void setChannel(String channel) {
 		this.channel = channel;
+	}
+	public String getModel() {
+		return model;
+	}
+	public void setModel(String model) {
+		this.model = model;
 	}
 	
 

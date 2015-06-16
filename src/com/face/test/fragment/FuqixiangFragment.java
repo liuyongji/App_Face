@@ -328,6 +328,7 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 			person.setFile(bmobFile);
 			person.setDoubles(true);
 			person.setVerson(MyApplication.getVersion());
+			person.setChannel(MyApplication.getChannel());
 			person.save(getActivity());
 		}
 

@@ -67,7 +67,7 @@ public class StarsResultActivity extends SherlockFragmentActivity {
 				Intent intent=new Intent(StarsResultActivity.this,StarsDetailActivity.class);
 				intent.putExtra("result_score", starsInfos.getCandidate().get(arg2).getSimilarity());
 				intent.putExtra("result_image", starlist.get(arg2).getBmobFile().getFileUrl());
-//				intent.putExtra("bitmap", mBitmap);
+				intent.putExtra("result_name", starlist.get(arg2).getName());
 				startActivity(intent);
 				
 

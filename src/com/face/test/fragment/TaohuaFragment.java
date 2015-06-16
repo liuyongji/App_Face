@@ -18,7 +18,6 @@ import com.face.test.Utils.DialogUtil;
 import com.face.test.activity.StarsResultActivity;
 import com.face.test.bean.Bitchs;
 import com.face.test.bean.FaceInfos;
-import com.face.test.bean.Person;
 import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
@@ -54,11 +53,11 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-public class StarsFragment extends Fragment implements OnClickListener {
+public class TaohuaFragment extends Fragment implements OnClickListener {
 	private PopupWindow mpopupWindow;
 	private Button btn_selete;
 	private ImageView iv_imageview;
-//	private TextView tv_result;
+	// private TextView tv_result;
 	private ProgressDialog progressBar;
 	private Timer timer;
 	private Bitmap bitmap;
@@ -66,7 +65,7 @@ public class StarsFragment extends Fragment implements OnClickListener {
 	private HttpRequests request = null;// 在线api
 	private FaceInfos faceInfos;
 	private BmobFile bmobFile;
-	
+
 	@SuppressLint("SimpleDateFormat")
 	private SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 
@@ -80,26 +79,24 @@ public class StarsFragment extends Fragment implements OnClickListener {
 				"z8stpP3-HMdYhg6kAK73A2nBFwZg4Thl");
 		View view = inflater.inflate(R.layout.main_stars, container, false);
 		initView(view);
-		
-		new Thread(train).start();
-		
+
 		detectHandler = new Handler() {
 			public void handleMessage(Message msg) {
-				
+
 				if (progressBar != null) {
 					progressBar.dismiss();
 				}
 				switch (msg.what) {
 				case 0:
-					
-					File f = BitmapUtil.saveBitmap(
-							bitmap, df.format(new Date()));
+					File f = BitmapUtil.saveBitmap(bitmap,
+							df.format(new Date()));
 					bmobFile = new BmobFile(f);
 					bmobFile.upload(getActivity(), uploadFileListener);
-					
-					Intent intent=new Intent(getActivity(),StarsResultActivity.class);
-					
-					intent.putExtra("stars", (String)msg.obj);
+
+					Intent intent = new Intent(getActivity(),
+							StarsResultActivity.class);
+
+					intent.putExtra("stars", (String) msg.obj);
 					startActivity(intent);
 					break;
 				case 1:
@@ -119,7 +116,7 @@ public class StarsFragment extends Fragment implements OnClickListener {
 				default:
 					break;
 				}
-				
+
 			};
 		};
 		return view;
@@ -216,21 +213,6 @@ public class StarsFragment extends Fragment implements OnClickListener {
 		}, 25000);
 		new Thread(dector).start();
 	}
-	
-	Runnable train =new Runnable() {
-		
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			try {
-				request.trainSearch(new PostParameters().setFacesetName("Stars1"));
-			} catch (FaceppParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	};
-	
 
 	Runnable dector = new Runnable() {
 
@@ -246,24 +228,26 @@ public class StarsFragment extends Fragment implements OnClickListener {
 				Gson gson = new Gson();
 				faceInfos = gson.fromJson(jsonObject.toString(),
 						FaceInfos.class);
-				if (faceInfos.getFace().size()<=0) {
+				if (faceInfos.getFace().size() <= 0) {
 					timer.cancel();
 					Message message = new Message();
 					message.what = 2;
 					detectHandler.sendMessage(message);
 					return;
-				}else {
-					String face1=faceInfos.getFace().get(0).getFace_id();
-					
-					jsonObject= request.recognitionSearch(new PostParameters().setKeyFaceId(face1).setFacesetName("Stars1").setCount(6));
-					
+				} else {
+					String face1 = faceInfos.getFace().get(0).getFace_id();
+
+					jsonObject = request.recognitionSearch(new PostParameters()
+							.setKeyFaceId(face1).setFacesetName("Stars1")
+							.setCount(4));
+
 					Log.i("lyj", jsonObject.toString());
 					timer.cancel();
 					Message message = new Message();
-					message.obj=jsonObject.toString();
+					message.obj = jsonObject.toString();
 					message.what = 0;
 					detectHandler.sendMessage(message);
-					
+
 				}
 
 			} catch (FaceppParseException e) {
@@ -271,7 +255,7 @@ public class StarsFragment extends Fragment implements OnClickListener {
 				Message message = new Message();
 				message.what = e.getErrorCode();
 				detectHandler.sendMessage(message);
-			} 
+			}
 
 		}
 	};
@@ -315,7 +299,7 @@ public class StarsFragment extends Fragment implements OnClickListener {
 			break;
 		}
 	}
-	
+
 	private UploadFileListener uploadFileListener = new UploadFileListener() {
 
 		@Override
@@ -339,6 +323,5 @@ public class StarsFragment extends Fragment implements OnClickListener {
 
 		}
 	};
-
 
 }

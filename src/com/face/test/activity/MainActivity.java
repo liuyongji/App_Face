@@ -2,12 +2,11 @@ package com.face.test.activity;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.face.test.R;
-import com.face.test.R.id;
-import com.face.test.R.layout;
 import com.face.test.fragment.FuqixiangFragment;
 import com.face.test.fragment.MainFragment;
 import com.face.test.fragment.PhotosFragment;
 import com.face.test.fragment.StarsFragment;
+import com.face.test.fragment.TaohuaFragment;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.update.UmengUpdateAgent;
 
@@ -36,8 +35,13 @@ public class MainActivity extends SherlockFragmentActivity {
 			break;
 		case 4:
 			fragment=new PhotosFragment();
+			break;
+		case 5:
+			fragment=new TaohuaFragment();
+			break;
 
 		default:
+			fragment = new MainFragment();
 			break;
 		}
 		// getSupportFragmentManager().beginTransaction().addToBackStack(null);
