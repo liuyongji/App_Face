@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.os.Environment;
 import android.telephony.TelephonyManager;
 
 /**
@@ -87,6 +88,16 @@ public class AppUtils
 		TelephonyManager tm = (TelephonyManager) ctx.getSystemService(Context.TELEPHONY_SERVICE);  
 		return tm.getDeviceId();
 		
+	}
+	
+	public static boolean IsCanUseSdCard() {  
+	    try {  
+	        return Environment.getExternalStorageState().equals(  
+	                Environment.MEDIA_MOUNTED);  
+	    } catch (Exception e) {  
+	        e.printStackTrace();  
+	    }  
+	    return false;  
 	}
 	
 

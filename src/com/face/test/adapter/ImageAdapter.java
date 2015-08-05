@@ -2,11 +2,8 @@ package com.face.test.adapter;
 
 import java.util.List;
 
-import com.face.test.MyApplication;
+import com.face.test.App;
 import com.face.test.R;
-import com.face.test.R.id;
-import com.face.test.R.layout;
-
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -58,7 +55,7 @@ public class ImageAdapter extends BaseAdapter {
 		
 		imageView.setLayoutParams(new LinearLayout.LayoutParams(width / 3,
 				width / 3));
-		MyApplication.displayImage(list.get(position), imageView);
+		App.displayImage(list.get(position), imageView);
 		
 		return convertView;
 	}

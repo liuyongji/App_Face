@@ -12,7 +12,7 @@ import org.json.JSONObject;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
 
-import com.face.test.MyApplication;
+import com.face.test.App;
 import com.face.test.R;
 import com.face.test.Utils.AppUtils;
 import com.face.test.Utils.BitmapUtil;
@@ -327,8 +327,8 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 			person.setUser("user");
 			person.setFile(bmobFile);
 			person.setDoubles(true);
-			person.setVerson(MyApplication.getVersion());
-			person.setChannel(MyApplication.getChannel());
+			person.setVerson(App.getVersion());
+			person.setChannel(App.getChannel());
 			person.save(getActivity());
 		}
 

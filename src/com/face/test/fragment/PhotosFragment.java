@@ -6,7 +6,7 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-import com.face.test.MyApplication;
+import com.face.test.App;
 import com.face.test.R;
 import com.face.test.activity.ImagePagerActivity;
 import com.face.test.activity.ResultActivity;
@@ -100,7 +100,7 @@ public class PhotosFragment extends Fragment {
 								.findViewById(R.id.imageView1);
 						Bitmap bitmap = ((BitmapDrawable) (imageView
 								.getDrawable())).getBitmap();
-						MyApplication.setShare(
+						App.setShare(
 								getActivity(),
 								mController,
 								getActivity().getResources().getString(

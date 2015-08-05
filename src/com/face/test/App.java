@@ -2,8 +2,8 @@ package com.face.test;
 
 import java.util.List;
 
-import us.pinguo.edit.sdk.PGEditImageLoader;
-import us.pinguo.edit.sdk.base.PGEditSDK;
+//import us.pinguo.edit.sdk.PGEditImageLoader;
+//import us.pinguo.edit.sdk.base.PGEditSDK;
 import cn.bmob.v3.Bmob;
 
 import com.face.test.Utils.AppUtils;
@@ -31,9 +31,10 @@ import com.umeng.socialize.weixin.media.WeiXinShareContent;
 import android.app.Activity;
 import android.app.Application;
 import android.graphics.Bitmap;
+import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
-public class MyApplication extends Application {
+public class App extends Application {
 	private ImageLoaderConfiguration configuration;
 	private static ImageLoader imageLoader = ImageLoader.getInstance();
 	private static DisplayImageOptions options;
@@ -43,21 +44,38 @@ public class MyApplication extends Application {
 	private static String version;
 	private static String channel;
 	private static String imei;
+	protected static App mInstance;
+	private DisplayMetrics displayMetrics = null;
+
+	public App() {
+		mInstance = this;
+	}
+
+	public static App getApp() {
+		if (mInstance != null && mInstance instanceof App) {
+			return (App) mInstance;
+		} else {
+			mInstance = new App();
+			mInstance.onCreate();
+			return (App) mInstance;
+		}
+	}
 
 	@Override
 	public void onCreate() {
 		// TODO 自动生成的方法存根
 		super.onCreate();
 		TestinAgent.init(this);
-		PGEditImageLoader.initImageLoader(this);
-		PGEditSDK.instance().initSDK(this);
+//		PGEditImageLoader.initImageLoader(this);
+//		PGEditSDK.instance().initSDK(this);
 		configuration = new ImageLoaderConfiguration.Builder(
 				getApplicationContext()).threadPoolSize(3)
 				.discCacheFileCount(100).build();
 		imageLoader.init(configuration);
-		version=AppUtils.getVersionName(getApplicationContext());
-		imei=AppUtils.getImei(getApplicationContext());
-		channel=AppUtils.getChannelId(getApplicationContext(), "UMENG_CHANNEL");
+		version = AppUtils.getVersionName(getApplicationContext());
+		imei = AppUtils.getImei(getApplicationContext());
+		channel = AppUtils.getChannelId(getApplicationContext(),
+				"UMENG_CHANNEL");
 		options = new DisplayImageOptions.Builder()
 				.showImageOnLoading(R.drawable.loading).cacheInMemory(true)
 				.cacheOnDisc(true).build();
@@ -65,11 +83,11 @@ public class MyApplication extends Application {
 		crashHandler.init(getApplicationContext());
 		Bmob.initialize(getApplicationContext(),
 				"6bb1226b16bb29f5b8e3b71621af32fc");
-		 jmInstance = JMSManager.getInstance(this,
-		 "1e336d97-5d70-40ae-a0bb-0b91fb25525f", 1);
-		 jmInstance.c(1, 4, true);
-		 jmInstance.o(true, false, 6, false, false, true);
-		 jmInstance.debug(0); // 2 打印 log，部分功能Toast提示， 发布产品时请设置为0，默认为1
+		jmInstance = JMSManager.getInstance(this,
+				"1e336d97-5d70-40ae-a0bb-0b91fb25525f", 1);
+		jmInstance.c(1, 4, true);
+		jmInstance.o(true, false, 6, false, false, false);
+		jmInstance.debug(0); // 2 打印 log，部分功能Toast提示， 发布产品时请设置为0，默认为1
 	}
 
 	public static JMSManager getJminstance() {
@@ -80,8 +98,8 @@ public class MyApplication extends Application {
 		imageLoader.displayImage(url, imageView, options);
 	}
 
-	public static void setShare(final Activity context, UMSocialService mController,
-			String shareContent, Bitmap shareImage) {
+	public static void setShare(final Activity context,
+			UMSocialService mController, String shareContent, Bitmap shareImage) {
 		mController = UMServiceFactory.getUMSocialService("com.face.test");
 		if (shareContent != null) {
 			mController.setShareContent(shareContent);
@@ -89,10 +107,9 @@ public class MyApplication extends Application {
 
 		mController.setShareMedia(new UMImage(context, shareImage));
 
-		
 		mController.getConfig().setSsoHandler(new TencentWBSsoHandler());
 		mController.getConfig().setSsoHandler(new SinaSsoHandler());
-		
+
 		UMWXHandler wxHandler = new UMWXHandler(context, "wxd0792b8632aa595b",
 				"93f25458b2909f967e6ba19d089f14d7");
 		wxHandler.addToSocialSDK();
@@ -101,73 +118,116 @@ public class MyApplication extends Application {
 		wxCircleHandler.setToCircle(true);
 		wxCircleHandler.addToSocialSDK();
 		WeiXinShareContent weixinContent = new WeiXinShareContent();
-		weixinContent.setTitle(context.getResources().getString(R.string.app_name));
-//		weixinContent.setShareContent("shareContent");
+		weixinContent.setTitle(context.getResources().getString(
+				R.string.app_name));
+		// weixinContent.setShareContent("shareContent");
 		weixinContent.setShareImage(new UMImage(context, shareImage));
 		weixinContent.setTargetUrl(ResultActivity.url);
 		mController.setShareMedia(weixinContent);
-		
+
 		CircleShareContent circleMedia = new CircleShareContent();
 		circleMedia.setShareImage(new UMImage(context, shareImage));
 		circleMedia.setTargetUrl(ResultActivity.url);
 		mController.setShareMedia(circleMedia);
-		
-		
+
 		UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(context, "1101987894",
 				"McgaoeK2xHK8T0qm");
 		qqSsoHandler.addToSocialSDK();
 		QZoneSsoHandler qZoneSsoHandler = new QZoneSsoHandler(context,
 				"1101987894", "McgaoeK2xHK8T0qm");
 		qZoneSsoHandler.addToSocialSDK();
-		
+
 		QQShareContent qqShareContent = new QQShareContent();
-//		qqShareContent.setShareContent(shareContent);
-		qqShareContent.setTitle(context.getResources().getString(R.string.app_name));
+		// qqShareContent.setShareContent(shareContent);
+		qqShareContent.setTitle(context.getResources().getString(
+				R.string.app_name));
 		qqShareContent.setShareImage(new UMImage(context, shareImage));
 		qqShareContent.setTargetUrl(ResultActivity.url);
-		
+
 		mController.setShareMedia(qqShareContent);
-		
+
 		QZoneShareContent qzone = new QZoneShareContent();
 		qzone.setShareContent(shareContent);
 		qzone.setTargetUrl(ResultActivity.url);
 		qzone.setTitle(context.getResources().getString(R.string.app_name));
 		qzone.setShareImage(new UMImage(context, shareImage));
 		mController.setShareMedia(qzone);
-		
+
 		mController.getConfig().setSinaCallbackUrl("http://www.sina.com");
 		mController.getConfig().removePlatform(SHARE_MEDIA.DOUBAN);
 		mController.openShare(context, false);
 
 	}
-	
 
 	public static List<Bitmap> getBitmaps() {
 		return bitmaps;
 	}
 
 	public static void setBitmaps(List<Bitmap> bitmaps) {
-		MyApplication.bitmaps = bitmaps;
+		App.bitmaps = bitmaps;
 	}
-	public static String getVersion(){
+
+	public static String getVersion() {
 		return version;
 	}
-	
-	public static String getChannel(){
+
+	public static String getChannel() {
 		return channel;
 	}
-	
-	public static String getImei(){
+
+	public static String getImei() {
 		return imei;
 	}
-	
-	
+
 	public static void setBitmap(Bitmap bitmap) {
-		MyApplication.bitmap = bitmap;
+		App.bitmap = bitmap;
 	}
+
 	public static Bitmap getBitmap() {
 		return bitmap;
 	}
-	
+
+	public float getScreenDensity() {
+		if (this.displayMetrics == null) {
+			setDisplayMetrics(getResources().getDisplayMetrics());
+		}
+		return this.displayMetrics.density;
+	}
+
+	public int getScreenHeight() {
+		if (this.displayMetrics == null) {
+			setDisplayMetrics(getResources().getDisplayMetrics());
+		}
+		return this.displayMetrics.heightPixels;
+	}
+
+	public int getScreenWidth() {
+		if (this.displayMetrics == null) {
+			setDisplayMetrics(getResources().getDisplayMetrics());
+		}
+		return this.displayMetrics.widthPixels;
+	}
+
+	public void setDisplayMetrics(DisplayMetrics DisplayMetrics) {
+		this.displayMetrics = DisplayMetrics;
+	}
+
+	public int dp2px(float f) {
+		return (int) (0.5F + f * getScreenDensity());
+	}
+
+	public int px2dp(float pxValue) {
+		return (int) (pxValue / getScreenDensity() + 0.5f);
+	}
+
+	// 获取应用的data/data/....File目录
+	public String getFilesDirPath() {
+		return getFilesDir().getAbsolutePath();
+	}
+
+	// 获取应用的data/data/....Cache目录
+	public String getCacheDirPath() {
+		return getCacheDir().getAbsolutePath();
+	}
 
 }

@@ -1,18 +1,20 @@
 package com.face.test.activity;
 
-import com.face.test.MyApplication;
-import com.face.test.R;
-import com.face.test.Utils.BitmapUtil;
-import com.umeng.socialize.controller.UMSocialService;
-
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.face.test.App;
+import com.face.test.R;
+import com.face.test.Utils.BitmapUtil;
+import com.umeng.socialize.controller.UMSocialService;
 
 public class StarsDetailActivity extends Activity implements OnClickListener {
 	private Button btnshare, btnback;
@@ -32,8 +34,6 @@ public class StarsDetailActivity extends Activity implements OnClickListener {
 		result_score=getIntent().getExtras().getString("result_score");
 		result_url=getIntent().getExtras().getString("result_image");
 		result_name=getIntent().getExtras().getString("result_name");
-//		mBitmap=getIntent().getParcelableExtra("bitmap");
-		
 		initView();
 		
 	}
@@ -47,8 +47,8 @@ public class StarsDetailActivity extends Activity implements OnClickListener {
 		tvname.setText(result_name);
 		ivimage1 = (ImageView) findViewById(R.id.local_photo);
 		ivimage2 = (ImageView) findViewById(R.id.result_photo);
-		MyApplication.displayImage(result_url, ivimage2);
-		ivimage1.setImageBitmap(MyApplication.getBitmap());
+		App.displayImage(result_url, ivimage2);
+		ivimage1.setImageBitmap(App.getBitmap());
 		btnshare.setOnClickListener(this);
 		btnback.setOnClickListener(this);
 	}
@@ -66,7 +66,7 @@ public class StarsDetailActivity extends Activity implements OnClickListener {
 			
 			Bitmap bitmap=BitmapUtil.myShot(StarsDetailActivity.this);
 			
-			MyApplication.setShare(StarsDetailActivity.this, mController,"", bitmap);
+			App.setShare(StarsDetailActivity.this, mController,"", bitmap);
 
 			break;
 

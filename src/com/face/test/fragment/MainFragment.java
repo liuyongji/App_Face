@@ -17,7 +17,7 @@ import cn.bmob.v3.listener.UploadFileListener;
 
 import com.andexert.library.ViewPagerIndicator;
 import com.face.test.Const;
-import com.face.test.MyApplication;
+import com.face.test.App;
 import com.face.test.R;
 import com.face.test.Utils.BitmapUtil;
 import com.face.test.Utils.DialogUtil;
@@ -141,7 +141,7 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 						Toast.LENGTH_LONG).show();
 				break;
 			case COMPARE_SUCCESS:
-				MyApplication.setBitmaps(bitmaps);
+				App.setBitmaps(bitmaps);
 				Intent intent = new Intent(getActivity(), ResultActivity.class);
 				Bundle bundle = new Bundle();
 				bundle.putString("Compare",
@@ -448,14 +448,14 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 				return;
 			}
 			person = new Person();
-			person.setUser(MyApplication.getImei());
+			person.setUser(App.getImei());
 			person.setFile(bmobFile);
 			person.setDoubles(false);
 			person.setResultcode(resultcode);
 			person.setSex(faceInfos.getFace().get(0).getAttribute().getGender()
 					.getValue());
-			person.setVerson(MyApplication.getVersion());
-			person.setChannel(MyApplication.getChannel());
+			person.setVerson(App.getVersion());
+			person.setChannel(App.getChannel());
 			person.setModel(Build.MODEL);
 			person.save(getActivity());
 			// BitmapUtil.deletefile();

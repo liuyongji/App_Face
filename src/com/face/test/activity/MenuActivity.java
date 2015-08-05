@@ -2,10 +2,15 @@ package com.face.test.activity;
 
 import java.io.File;
 
-import us.pinguo.edit.sdk.PGEditActivity;
-import us.pinguo.edit.sdk.base.PGEditSDK;
-import com.face.test.MyApplication;
+//import us.pinguo.edit.sdk.PGEditActivity;
+//import us.pinguo.edit.sdk.base.PGEditSDK;
+
+
+
+
+import com.face.test.App;
 import com.face.test.R;
+import com.face.test.Utils.AppUtils;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
 
@@ -18,6 +23,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -46,7 +52,7 @@ public class MenuActivity extends Activity implements OnClickListener {
 
 	private void initView() {
 		tvversion = (TextView) findViewById(R.id.tv_app_info);
-		tvversion.setText("版本:" + MyApplication.getVersion() + "，作者：@liu_yj");
+		tvversion.setText("版本:" + App.getVersion() + "，作者：@liu_yj");
 		btnstart = (Button) findViewById(R.id.main_btnstart);
 		btnanswers = (Button) findViewById(R.id.btn_answers);
 		btnfeeback = (Button) findViewById(R.id.btn_feeback);
@@ -98,14 +104,17 @@ public class MenuActivity extends Activity implements OnClickListener {
 			intent.putExtra("key", 5);
 			break;
 		case R.id.btn_edit:
-			intent = new Intent(Intent.ACTION_PICK,
-					MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-			startActivityForResult(intent, REQUEST_CODE_PICK_PICTURE);
+			if (AppUtils.IsCanUseSdCard()) {
+				intent = new Intent(Intent.ACTION_PICK,
+						MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+				startActivityForResult(intent, REQUEST_CODE_PICK_PICTURE);
+			}else
+				Toast.makeText(this, "该功能需要sd卡支持", Toast.LENGTH_LONG).show();
+			
 			return;
 
 		case R.id.btn_histroy:
 			agent.startFeedbackActivity();
-
 			return;
 		default:
 			break;
@@ -119,7 +128,7 @@ public class MenuActivity extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == REQUEST_CODE_PICK_PICTURE
-				&& resultCode == Activity.RESULT_OK && null != data) {
+				) {
 
 			Uri selectedImage = data.getData();
 			String[] filePathColumns = new String[] { MediaStore.Images.Media.DATA };
@@ -129,32 +138,20 @@ public class MenuActivity extends Activity implements OnClickListener {
 			int columnIndex = c.getColumnIndex(filePathColumns[0]);
 			String mPicturePath = c.getString(columnIndex);
 			c.close();
-			String folderPath = Environment.getExternalStorageDirectory()
-					+ File.separator + "facetest" + File.separator;
-			File file = new File(folderPath);
-			if (!file.exists()) {
-				file.mkdir();
-			}
-			String outFilePath = folderPath + System.currentTimeMillis()
-					+ ".jpg";
-			PGEditSDK.instance().startEdit(this, PGEditActivity.class,
-					mPicturePath, outFilePath);
-			return;
+//			String folderPath = Environment.getExternalStorageDirectory()
+//					+ File.separator + "facetest" + File.separator;
+//			File file = new File(folderPath);
+//			if (!file.exists()) {
+//				file.mkdir();
+//			}
+//			String outFilePath = folderPath + System.currentTimeMillis()
+//					+ ".jpg";
+			Uri imageUri = Uri.fromFile(new File(mPicturePath));
+			Intent intent = new Intent(MenuActivity.this, PhotoProcessActivity.class);
+			intent.setData(imageUri);
+			startActivity(intent);
 		}
 
-		if (requestCode == PGEditSDK.PG_EDIT_SDK_REQUEST_CODE
-				&& resultCode == Activity.RESULT_OK) {
-
-//			PGEditResult editResult = PGEditSDK.instance().handleEditResult(
-//					data);
-
-			Toast.makeText(this, "图片已保存到历史相册", Toast.LENGTH_LONG).show();
-		}
-
-		if (requestCode == PGEditSDK.PG_EDIT_SDK_REQUEST_CODE
-				&& resultCode == PGEditSDK.PG_EDIT_SDK_RESULT_CODE_CANCEL) {
-			Toast.makeText(this, "编辑取消", Toast.LENGTH_SHORT).show();
-		}
 
 		
 	}
@@ -186,7 +183,6 @@ public class MenuActivity extends Activity implements OnClickListener {
 			mHandler.sendEmptyMessageDelayed(0, 2000);
 		} else {
 			finish();
-//			System.exit(0);
 		}
 	}
 

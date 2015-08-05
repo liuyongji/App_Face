@@ -2,7 +2,7 @@ package com.face.test.adapter;
 
 import java.util.List;
 
-import com.face.test.MyApplication;
+import com.face.test.App;
 import com.face.test.R;
 import com.face.test.Utils.BitmapUtil;
 import com.face.test.Utils.Util;
@@ -66,7 +66,7 @@ public class StarsAdapter extends BaseAdapter {
 				.findViewById(R.id.score_image_3);
 		Stars stars = list.get(position);
 		name.setText(stars.getName());
-		MyApplication.displayImage(stars.getBmobFile().getFileUrl(), imageView);
+		App.displayImage(stars.getBmobFile().getFileUrl(), imageView);
 		String image1=Util.change1(starsInfos.getCandidate().get(position)
 				.getSimilarity(),1);
 		String image2=Util.change1(starsInfos.getCandidate().get(position)

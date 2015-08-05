@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,8 +22,7 @@ import android.widget.Toast;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.FindListener;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.face.test.MyApplication;
+import com.face.test.App;
 import com.face.test.R;
 import com.face.test.R.id;
 import com.face.test.R.layout;
@@ -33,7 +33,7 @@ import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
 import com.google.gson.Gson;
 
-public class StarsResultActivity extends SherlockFragmentActivity {
+public class StarsResultActivity extends FragmentActivity {
 	private ListView listView;
 	private StarsInfos starsInfos;
 	private StarsAdapter starsAdapter;
@@ -87,7 +87,7 @@ public class StarsResultActivity extends SherlockFragmentActivity {
 		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {
-				MyApplication.getJminstance().s(StarsResultActivity.this);
+				App.getJminstance().s(StarsResultActivity.this);
 			}
 		}, 2000);
 		

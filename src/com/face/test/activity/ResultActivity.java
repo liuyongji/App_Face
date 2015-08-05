@@ -7,7 +7,7 @@ import java.util.TimerTask;
 
 import com.dk.animation.SwitchAnimationUtil;
 import com.dk.animation.SwitchAnimationUtil.AnimationType;
-import com.face.test.MyApplication;
+import com.face.test.App;
 import com.face.test.R;
 import com.face.test.R.drawable;
 import com.face.test.R.id;
@@ -75,7 +75,7 @@ public class ResultActivity extends Activity implements OnClickListener {
 		bundle = this.getIntent().getExtras();
 		String s_result = bundle.getString("Compare");
 		String resultString = bundle.getString("Result");
-		list = MyApplication.getBitmaps();
+		list = App.getBitmaps();
 		result1.setImageBitmap(list.get(0));
 		result2.setImageBitmap(list.get(1));
 		resultTextView.setText(resultString);
@@ -87,7 +87,7 @@ public class ResultActivity extends Activity implements OnClickListener {
 		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {
-				MyApplication.getJminstance().s(ResultActivity.this);
+				App.getJminstance().s(ResultActivity.this);
 			}
 		}, 1000);
 	}

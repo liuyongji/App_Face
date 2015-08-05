@@ -1,6 +1,5 @@
 package com.face.test.activity;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.face.test.R;
 import com.face.test.fragment.FuqixiangFragment;
 import com.face.test.fragment.MainFragment;
@@ -12,8 +11,9 @@ import com.umeng.update.UmengUpdateAgent;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
-public class MainActivity extends SherlockFragmentActivity {
+public class MainActivity extends FragmentActivity {
 	private Fragment fragment;
 
 	@Override

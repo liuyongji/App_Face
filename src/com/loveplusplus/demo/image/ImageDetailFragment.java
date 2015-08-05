@@ -2,7 +2,7 @@ package com.loveplusplus.demo.image;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-import com.face.test.MyApplication;
+import com.face.test.App;
 import com.face.test.R;
 
 import uk.co.senab.photoview.PhotoView;
@@ -62,7 +62,7 @@ public class ImageDetailFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);	
-		MyApplication.displayImage(mImageUrl, mImageView);
+		App.displayImage(mImageUrl, mImageView);
 		
 	}
 	@Override

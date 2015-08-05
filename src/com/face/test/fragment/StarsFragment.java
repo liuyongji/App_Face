@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
 
-import com.face.test.MyApplication;
+import com.face.test.App;
 import com.face.test.R;
 import com.face.test.Utils.BitmapUtil;
 import com.face.test.Utils.DialogUtil;
@@ -199,7 +199,7 @@ public class StarsFragment extends Fragment implements OnClickListener {
 
 	private void setbitmap(Bitmap bitmap) {
 		this.bitmap = bitmap;
-		MyApplication.setBitmap(bitmap);
+		App.setBitmap(bitmap);
 		iv_imageview.setImageBitmap(bitmap);
 		progressBar = DialogUtil.getProgressDialog(getActivity());
 
@@ -323,7 +323,7 @@ public class StarsFragment extends Fragment implements OnClickListener {
 			// TODO 自动生成的方法存根
 			Bitchs person = new Bitchs();
 			person.setFile(bmobFile);
-			person.setVerson(MyApplication.getVersion());
+			person.setVerson(App.getVersion());
 			person.save(getActivity());
 		}
 

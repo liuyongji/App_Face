@@ -79,7 +79,7 @@
 
                 <ImageView
                     android:id="@+id/local_photo"
-                    android:layout_width="fill_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:scaleType="fitCenter"
                     android:src="@drawable/loading" />
@@ -100,7 +100,7 @@
 
                 <ImageView
                     android:id="@+id/result_photo"
-                    android:layout_width="fill_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:scaleType="fitCenter"
                     android:src="@drawable/loading" />

@@ -6,7 +6,7 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-import com.face.test.MyApplication;
+import com.face.test.App;
 import com.face.test.R;
 import com.face.test.R.id;
 import com.face.test.R.layout;
@@ -109,7 +109,7 @@ public class ImagePagerActivity extends FragmentActivity {
 		switch (item.getItemId()) {
 		case R.id.share:
 			Bitmap bm = BitmapFactory.decodeFile(files[pagerPosition].getAbsolutePath());
-			MyApplication.setShare(ImagePagerActivity.this, mController,
+			App.setShare(ImagePagerActivity.this, mController,
 					getResources().getString(R.string.sharecontent)
 							+ ResultActivity.url, bm);
 			break;
