@@ -8,9 +8,11 @@ import java.io.File;
 
 
 
+
 import com.face.test.App;
 import com.face.test.R;
 import com.face.test.Utils.AppUtils;
+import com.stickercamera.app.ui.CropPhotoActivity;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
 
@@ -47,7 +49,6 @@ public class MenuActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_menu);
 		agent = new FeedbackAgent(MenuActivity.this);
 		initView();
-
 	}
 
 	private void initView() {
@@ -147,7 +148,7 @@ public class MenuActivity extends Activity implements OnClickListener {
 //			String outFilePath = folderPath + System.currentTimeMillis()
 //					+ ".jpg";
 			Uri imageUri = Uri.fromFile(new File(mPicturePath));
-			Intent intent = new Intent(MenuActivity.this, PhotoProcessActivity.class);
+			Intent intent = new Intent(MenuActivity.this, CropPhotoActivity.class);
 			intent.setData(imageUri);
 			startActivity(intent);
 		}

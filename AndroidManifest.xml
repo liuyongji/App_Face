@@ -49,9 +49,19 @@
         <activity
             android:name="com.face.test.activity.PhotoProcessActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" >
+            android:screenOrientation="portrait" >
         </activity>
+         <activity
+            android:name="com.stickercamera.app.ui.CropPhotoActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+         <activity
+            android:name="com.stickercamera.app.ui.EditTextActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+
         <activity
             android:name="com.face.test.activity.ResultActivity"
             android:label="@string/app_name" >
