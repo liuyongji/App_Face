@@ -219,6 +219,32 @@ public class BitmapUtil {
 		cv.restore();// 存储
 		return newb;
 	}
+	
+	  public static Bitmap watermarkBitmap(Bitmap src, Bitmap watermark,
+	            float with,float hheth) {
+	        if (src == null) {
+	            return null;
+	        }
+	        int w = src.getWidth();
+	        int h = src.getHeight(); 
+	        //需要处理图片太大造成的内存超过的问题,这里我的图片很小所以不写相应代码了        
+	        Bitmap newb= Bitmap.createBitmap(w, h, Config.ARGB_8888);// 创建一个新的和SRC长度宽度一样的位图
+	        Canvas cv = new Canvas(newb);
+	        cv.drawBitmap(src, 0, 0, null);// 在 0，0坐标开始画入src    
+	        Paint paint=new Paint();
+	        //加入图片
+	        if (watermark != null) {
+	            int ww = watermark.getWidth();
+	            int wh = watermark.getHeight();
+	            paint.setAlpha(50);
+	            cv.drawBitmap(watermark, with, hheth, paint);// 在src的右下角画入水印            
+	        }
+	      
+	       
+	        cv.save(Canvas.ALL_SAVE_FLAG);// 保存
+	        cv.restore();// 存储
+	        return newb;
+	    }
 
 	public static void deletefile() {
 		tmpfile.delete();
@@ -243,5 +269,20 @@ public class BitmapUtil {
 	    }   
 	    return image;   
 	}
+	 public static Bitmap doodle(Bitmap src, Bitmap watermark)  
+	    {  
+	        // 另外创建一张图片  
+	        Bitmap newb = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Config.ARGB_8888);// 创建一个新的和SRC长度宽度一样的位图  
+	        Canvas canvas = new Canvas(newb);  
+	        canvas.drawBitmap(src, 0, 0, null);// 在 0，0坐标开始画入原图片src  
+	        canvas.drawBitmap(watermark, (src.getWidth() - watermark.getWidth()) / 2, (src.getHeight() - watermark.getHeight()) / 2, null); // 涂鸦图片画到原图片中间位置  
+	        canvas.save(Canvas.ALL_SAVE_FLAG);  
+	        canvas.restore();  
+	          
+	        watermark.recycle();  
+	        watermark = null;  
+	          
+	        return newb;  
+	    } 
 
 }

@@ -69,7 +69,7 @@ public class PhotosFragment extends Fragment {
 					public void onClick(SweetAlertDialog sDialog) {
 						File file = files[position];
 						if (file.delete()) {
-							list.remove(position);
+							initData();							
 							sDialog.setTitleText("已删除!")
 									.setContentText(
 											"Your imaginary file has been deleted!")

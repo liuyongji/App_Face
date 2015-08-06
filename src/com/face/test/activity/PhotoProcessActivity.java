@@ -16,9 +16,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.ButterKnife;
-
-import com.common.util.FileUtils;
 import com.common.util.ImageUtils;
 import com.common.util.StringUtils;
 import com.common.util.TimeUtils;
@@ -32,7 +29,6 @@ import com.face.test.App;
 import com.face.test.Utils.BitmapUtil;
 import com.stickercamera.AppConstants;
 import com.stickercamera.app.camera.CameraBaseActivity;
-import com.stickercamera.app.camera.CameraManager;
 import com.stickercamera.app.camera.EffectService;
 import com.stickercamera.app.camera.adapter.FilterAdapter;
 import com.stickercamera.app.camera.adapter.StickerToolAdapter;
@@ -40,7 +36,6 @@ import com.stickercamera.app.camera.effect.FilterEffect;
 import com.stickercamera.app.camera.util.EffectUtil;
 import com.stickercamera.app.camera.util.GPUImageFilterTools;
 import com.stickercamera.app.model.Addon;
-import com.stickercamera.app.model.FeedItem;
 import com.stickercamera.app.model.TagItem;
 import com.stickercamera.app.ui.EditTextActivity;
 
@@ -50,9 +45,7 @@ import java.util.List;
 
 
 
-//import butterknife.ButterKnife;
-//import butterknife.InjectView;
-import de.greenrobot.event.EventBus;
+
 import it.sephiroth.android.library.widget.HListView;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageView;
@@ -68,7 +61,7 @@ public class PhotoProcessActivity extends CameraBaseActivity {
 	GPUImageView mGPUImageView;
 	// 绘图区域
 	// @InjectView(R.id.drawing_view_container)
-	ViewGroup drawArea;
+	RelativeLayout drawArea;
 	// 底部按钮
 //	@InjectView(R.id.sticker_btn)
 	TextView stickerBtn;
@@ -129,7 +122,7 @@ public class PhotoProcessActivity extends CameraBaseActivity {
 	}
 
 	private void init() {
-		drawArea = (ViewGroup) findViewById(R.id.drawing_view_container);
+		drawArea = (RelativeLayout) findViewById(R.id.drawing_view_container);
 		mGPUImageView = (GPUImageView) findViewById(R.id.gpuimage);
 		stickerBtn=(TextView) findViewById(R.id.sticker_btn);
 		filterBtn=(TextView)findViewById(R.id.filter_btn);
@@ -311,22 +304,17 @@ public class PhotoProcessActivity extends CameraBaseActivity {
 
 		@Override
 		protected String doInBackground(Bitmap... params) {
-			String fileName = null;
+			String fileName = "1111";
 			try {
 				bitmap = params[0];
 
-				String picName = TimeUtils.dtFormat(new Date(),
-						"yyyyMMddHHmmss");
-				BitmapUtil.saveBitmap(bitmap, picName);
-//				fileName = ImageUtils.saveToFile(FileUtils.getInst()
-//						.getPhotoSavedPath() + "/" + picName, false, bitmap);
 
 			} catch (Exception e) {
 				e.printStackTrace();
-				toast("图片处理错误，请重试", Toast.LENGTH_LONG);
+				toast("图片处理错误，请重试:"+e.getMessage(), Toast.LENGTH_LONG);
 			}
-			toast("图片已保存至历史相册", Toast.LENGTH_LONG);
-			PhotoProcessActivity.this.finish();
+//			toast("图片已保存至历史相册", Toast.LENGTH_LONG);
+//			PhotoProcessActivity.this.finish();
 			return fileName;
 		}
 
@@ -337,18 +325,49 @@ public class PhotoProcessActivity extends CameraBaseActivity {
 			if (StringUtils.isEmpty(fileName)) {
 				return;
 			}
-
-			// 将照片信息保存至sharedPreference
-			// 保存标签信息
-			List<TagItem> tagInfoList = new ArrayList<TagItem>();
+			
+			final List<TagItem> tagInfoList = new ArrayList<TagItem>();
 			for (LabelView label : labels) {
 				tagInfoList.add(label.getTagInfo());
 			}
-
-			// 将图片信息通过EventBus发送到MainActivity
-//			FeedItem feedItem = new FeedItem(tagInfoList, fileName);
-//			EventBus.getDefault().post(feedItem);
-//			CameraManager.getInst().close();
+			Bitmap b = null;
+			String picName = TimeUtils.dtFormat(new Date(),
+					"yyyyMMddHHmmss");
+			
+											
+//			b=BitmapUtil.watermarkBitmap(bitmap, picName);
+//			BitmapUtil.convertViewToBitmap(tagView);
+			b=BitmapUtil.doodle(bitmap, BitmapUtil.convertViewToBitmap(drawArea));
+//			b=BitmapUtil.watermarkBitmap(bitmap, BitmapUtil
+//					.convertViewToBitmap(drawArea),0,0);
+			
+//			for (TagItem feedImageTag : tagInfoList) {
+//				LabelView tagView = new LabelView(PhotoProcessActivity.this);	
+////				drawArea.addView(tagView);
+//				
+//				
+//				tagView.init(feedImageTag);
+//				
+//				
+//				TextView textView=new TextView(PhotoProcessActivity.this);
+//				drawArea.addView(tagView);
+//				textView.setText("ssssss");
+//												
+////				b=BitmapUtil.watermarkBitmap(bitmap, picName);
+////				BitmapUtil.convertViewToBitmap(tagView);
+////				b=BitmapUtil.doodle(bitmap, BitmapUtil.convertViewToBitmap(tagView));
+//				b=BitmapUtil.watermarkBitmap(bitmap, BitmapUtil
+//						.convertViewToBitmap(textView),0,0);
+////						(int) (feedImageTag.getX() * ((double) drawArea
+////								.getWidth() / (double) 1242)),
+////						(int) (feedImageTag.getY() * ((double) drawArea
+////								.getWidth() / (double) 1242)));
+//			}
+			BitmapUtil.saveBitmap(b, picName);
+			Toast.makeText(PhotoProcessActivity.this, "图片已保存至历史相册",  Toast.LENGTH_LONG).show();
+			
+			PhotoProcessActivity.this.finish();
+			
 		}
 	}
 
