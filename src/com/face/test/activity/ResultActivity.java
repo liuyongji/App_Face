@@ -13,6 +13,7 @@ import com.face.test.R.drawable;
 import com.face.test.R.id;
 import com.face.test.R.layout;
 import com.face.test.R.string;
+import com.face.test.Utils.BitmapUtil;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.scrshot.UMScrShotController.OnScreenshotListener;
 import com.umeng.scrshot.adapter.UMAppAdapter;
@@ -21,10 +22,6 @@ import com.umeng.socialize.bean.SocializeEntity;
 import com.umeng.socialize.controller.UMServiceFactory;
 import com.umeng.socialize.controller.UMSocialService;
 import com.umeng.socialize.media.UMImage;
-import com.umeng.socialize.sensor.UMSensor.OnSensorListener;
-import com.umeng.socialize.sensor.UMSensor.WhitchButton;
-import com.umeng.socialize.sensor.controller.UMShakeService;
-import com.umeng.socialize.sensor.controller.impl.UMShakeServiceFactory;
 import com.umeng.socialize.sso.QZoneSsoHandler;
 import com.umeng.socialize.sso.SinaSsoHandler;
 import com.umeng.socialize.sso.TencentWBSsoHandler;
@@ -56,15 +53,10 @@ public class ResultActivity extends Activity implements OnClickListener {
 	private List<Bitmap> list;
 
 	private UMSocialService mController;
-	private UMAppAdapter umAppAdapter;
 	private List<SHARE_MEDIA> platforms;
-	private UMShakeService umsharecontorl;
-	private CircleShareContent circleMedia;
-	private String ShareContent;
 	// 93f25458b2909f967e6ba19d089f14d7 weixin screst
 	public static final String url = "http://myfacetest.bmob.cn/";
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO 自动生成的方法存根
@@ -73,23 +65,40 @@ public class ResultActivity extends Activity implements OnClickListener {
 		initview();
 		Bundle bundle = new Bundle();
 		bundle = this.getIntent().getExtras();
-		String s_result = bundle.getString("Compare");
+		bundle.getString("Compare");
 		String resultString = bundle.getString("Result");
-		list = App.getBitmaps();
-		result1.setImageBitmap(list.get(0));
-		result2.setImageBitmap(list.get(1));
+		list =App.getBitmaps();
+		if (list!=null) {
+			result1.setImageBitmap(list.get(0));
+			result2.setImageBitmap(list.get(1));
+		}
+		
 		resultTextView.setText(resultString);
 		new SwitchAnimationUtil().startAnimation(getWindow().getDecorView(),
 				AnimationType.ALPHA);
-		ShareContent = "我正在使用一个很有趣的人脸检测应用，我的颜值相似度达到" + s_result
-				+ "果然是天生丽质呢，你也来测试一下看看吧" + url;
-		initshare();
+		//		initshare();
 		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {
 				App.getJminstance().s(ResultActivity.this);
 			}
 		}, 1000);
+	}
+	@Override
+	protected void onResume() {
+		// TODO 自动生成的方法存根
+		super.onResume();
+		MobclickAgent.onResume(this);
+		platforms = new ArrayList<SHARE_MEDIA>();
+		platforms.add(SHARE_MEDIA.SINA);
+		platforms.add(SHARE_MEDIA.QZONE);
+		platforms.add(SHARE_MEDIA.WEIXIN_CIRCLE);
+		// platforms.add(SHARE_MEDIA.TENCENT);
+
+//		umsharecontorl.setShareContent(ShareContent);
+//		umsharecontorl.registerShakeListender(ResultActivity.this, umAppAdapter,
+//				platforms, onSensorListener);
+
 	}
 
 	private void initview() {
@@ -104,43 +113,6 @@ public class ResultActivity extends Activity implements OnClickListener {
 		share.setOnClickListener(this);
 	}
 
-	private void initshare() {
-		// TODO 自动生成的方法存根
-		mController = UMServiceFactory.getUMSocialService("com.face.test");
-		mController.setShareContent(ShareContent);
-		mController.setShareMedia(new UMImage(ResultActivity.this, R.drawable.icon));
-		// 注册微博一键登录
-		mController.getConfig().setSsoHandler(new TencentWBSsoHandler());
-		mController.getConfig().setSsoHandler(new SinaSsoHandler());
-
-		// 微信
-		UMWXHandler wxHandler = new UMWXHandler(ResultActivity.this,
-				"wxd0792b8632aa595b", "93f25458b2909f967e6ba19d089f14d7");
-		wxHandler.addToSocialSDK();
-
-		UMWXHandler wxCircleHandler = new UMWXHandler(ResultActivity.this,
-				"wxd0792b8632aa595b", "93f25458b2909f967e6ba19d089f14d7");
-		wxCircleHandler.setToCircle(true);
-		wxCircleHandler.addToSocialSDK();
-		circleMedia = new CircleShareContent();
-//		circleMedia.setShareContent(ShareContent);
-		circleMedia.setTitle(getResources().getString(R.string.app_name));
-		circleMedia.setShareImage(new UMImage(ResultActivity.this, R.drawable.icon));
-		circleMedia.setTargetUrl(url);
-		mController.setShareMedia(circleMedia);
-
-		// 腾讯
-		UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(ResultActivity.this,
-				"1101987894", "McgaoeK2xHK8T0qm");
-		qqSsoHandler.addToSocialSDK();
-		QZoneSsoHandler qZoneSsoHandler = new QZoneSsoHandler(ResultActivity.this,
-				"1101987894", "McgaoeK2xHK8T0qm");
-		qZoneSsoHandler.addToSocialSDK();
-
-		mController.getConfig().setSinaCallbackUrl("http://www.sina.com");
-		mController.getConfig().removePlatform(SHARE_MEDIA.DOUBAN);
-		umsharecontorl = UMShakeServiceFactory.getShakeService("com.face.test");
-	}
 
 	@Override
 	public void onClick(View v) {
@@ -153,62 +125,21 @@ public class ResultActivity extends Activity implements OnClickListener {
 			ResultActivity.this.finish();
 			break;
 		case R.id.button2:
-			umAppAdapter = new UMAppAdapter(this);
-			umsharecontorl.takeScrShot(ResultActivity.this, umAppAdapter,
-					onScreenshotListener);
-			mController.openShare(ResultActivity.this, false);
+			
+			Bitmap bitmap=BitmapUtil.myShot(ResultActivity.this);
+			App.setShare(ResultActivity.this, mController,"", bitmap);
 			break;
 		default:
 			break;
 		}
 	}
 
-//	@Override
-//	public boolean onKeyDown(int keyCode, KeyEvent event) {
-//		// TODO 自动生成的方法存根
-//		if (keyCode == KeyEvent.KEYCODE_BACK) {
-//			Dialog isExit = new AlertDialog.Builder(Result.this)
-//					.setTitle("系统提示")
-//					.setMessage("你确定退出吗")
-//					.setPositiveButton("确定",
-//							new DialogInterface.OnClickListener() {
-//
-//								@Override
-//								public void onClick(DialogInterface dialog,
-//										int which) {
-//									// TODO 自动生成的方法存根
-//									finish();
-//								}
-//							}).setNegativeButton("取消", null).create();
-//			isExit.show();
-//		}
-//		return super.onKeyDown(keyCode, event);
-//	}
-
-	@Override
-	protected void onResume() {
-		// TODO 自动生成的方法存根
-		super.onResume();
-		MobclickAgent.onResume(this);
-		umAppAdapter = new UMAppAdapter(this);
-		platforms = new ArrayList<SHARE_MEDIA>();
-		platforms.add(SHARE_MEDIA.SINA);
-		platforms.add(SHARE_MEDIA.QZONE);
-		platforms.add(SHARE_MEDIA.WEIXIN_CIRCLE);
-		// platforms.add(SHARE_MEDIA.TENCENT);
-
-		umsharecontorl.setShareContent(ShareContent);
-		umsharecontorl.registerShakeListender(ResultActivity.this, umAppAdapter,
-				platforms, onSensorListener);
-
-	}
 
 	@Override
 	protected void onPause() {
 		// TODO 自动生成的方法存根
 		super.onPause();
 		MobclickAgent.onPause(this);
-		umsharecontorl.unregisterShakeListener(ResultActivity.this);
 	}
 
 	@Override
@@ -221,45 +152,5 @@ public class ResultActivity extends Activity implements OnClickListener {
 			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
 		}
 	}
-
-	private OnSensorListener onSensorListener = new OnSensorListener() {
-
-		@Override
-		public void onStart() {
-			// TODO 自动生成的方法存根
-			// Toast.makeText(Result.this, "onstart", Toast.LENGTH_LONG).show();
-		}
-
-		@Override
-		public void onComplete(SHARE_MEDIA arg0, int arg1, SocializeEntity arg2) {
-			// TODO 自动生成的方法存根
-			// Toast.makeText(Result.this, "分享成功", Toast.LENGTH_LONG).show();
-		}
-
-		@Override
-		public void onButtonClick(WhitchButton arg0) {
-			// TODO 自动生成的方法存根
-		}
-
-		@Override
-		public void onActionComplete(SensorEvent arg0) {
-			// TODO 自动生成的方法存根
-			circleMedia.setShareContent(ShareContent);
-			circleMedia.setTitle(getResources().getString(R.string.app_name));
-			circleMedia.setTargetUrl(url);
-			mController.setShareMedia(circleMedia);
-		}
-	};
-	private OnScreenshotListener onScreenshotListener = new OnScreenshotListener() {
-
-		@Override
-		public void onComplete(Bitmap bitmap) {
-			// TODO 自动生成的方法存根
-			mController.setShareMedia(new UMImage(ResultActivity.this, bitmap));
-			// 设置点击分享到微信朋友圈的图片
-			circleMedia.setShareImage(new UMImage(ResultActivity.this, bitmap));
-
-		}
-	};
 
 }

@@ -3,9 +3,6 @@ package com.face.test.fragment;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,12 +11,11 @@ import cn.bmob.v3.listener.UploadFileListener;
 
 import com.face.test.App;
 import com.face.test.R;
-import com.face.test.Utils.AppUtils;
 import com.face.test.Utils.BitmapUtil;
 import com.face.test.Utils.DialogUtil;
 import com.face.test.Utils.Util;
 import com.face.test.bean.FaceInfos;
-import com.face.test.bean.Person;
+import com.face.test.bean.Person2;
 import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
@@ -61,7 +57,7 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 	private ImageView iv_imageview;
 //	private TextView tv_result;
 	private ProgressDialog progressBar;
-	private Timer timer;
+//	private Timer timer;
 	private Bitmap bitmap;
 	private Handler detectHandler = null;
 	private HttpRequests request = null;// 在线api
@@ -77,8 +73,7 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		request = new HttpRequests("99a9423512d4f19c17bd8d6b526e554c",
-				"z8stpP3-HMdYhg6kAK73A2nBFwZg4Thl");
+		request = App.getApp().getRequests();
 		View view = inflater.inflate(R.layout.main_fuqixiang, container, false);
 		initView(view);
 		detectHandler = new Handler() {
@@ -215,17 +210,17 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 		iv_imageview.setImageBitmap(bitmap);
 		progressBar = DialogUtil.getProgressDialog(getActivity());
 
-		timer = new Timer();
-		timer.schedule(new TimerTask() {
-
-			@Override
-			public void run() {
-				Message message = new Message();
-				message.what = 1;
-				detectHandler.sendMessage(message);
-				this.cancel();
-			}
-		}, 20000);
+//		timer = new Timer();
+//		timer.schedule(new TimerTask() {
+//
+//			@Override
+//			public void run() {
+//				Message message = new Message();
+//				message.what = 1;
+//				detectHandler.sendMessage(message);
+//				this.cancel();
+//			}
+//		}, 20000);
 		new Thread(dector).start();
 	}
 
@@ -244,7 +239,7 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 				faceInfos = gson.fromJson(jsonObject.toString(),
 						FaceInfos.class);
 				if (faceInfos.getFace().size()<2) {
-					timer.cancel();
+//					timer.cancel();
 					Message message = new Message();
 					message.what = 2;
 					detectHandler.sendMessage(message);
@@ -257,7 +252,7 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 					.setFaceId1(face1).setFaceId2(face2));
 					Log.i("lyj", jsonObject.toString());
 					String float1=Util.changeFloat(Float.parseFloat(Util.Similarity(jsonObject)));
-					timer.cancel();
+//					timer.cancel();
 					Message message = new Message();
 					message.obj=float1;
 					message.what = 7002;
@@ -268,7 +263,12 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 			} catch (FaceppParseException e) {
 				e.printStackTrace();
 				Message message = new Message();
-				message.what=e.getErrorCode();
+				if (e.getErrorCode()!=null) {
+					message.what=e.getErrorCode();
+				}else {
+					message.what=1;
+				}
+				
 				detectHandler.sendMessage(message);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -323,7 +323,7 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 		@Override
 		public void onSuccess() {
 			// TODO 自动生成的方法存根
-			Person person = new Person();
+			Person2 person = new Person2();
 			person.setUser("user");
 			person.setFile(bmobFile);
 			person.setDoubles(true);

@@ -9,6 +9,17 @@ import java.io.File;
 
 
 
+
+
+
+
+
+import org.lasque.tusdk.core.TuSdk;
+import org.lasque.tusdk.core.TuSdkContext;
+import org.lasque.tusdk.core.gpuimage.extend.FilterManager;
+import org.lasque.tusdk.core.gpuimage.extend.FilterManager.FilterManagerDelegate;
+import org.lasque.tusdk.impl.view.widget.TuProgressHub;
+
 import com.face.test.App;
 import com.face.test.R;
 import com.face.test.Utils.AppUtils;
@@ -48,6 +59,7 @@ public class MenuActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_menu);
 		agent = new FeedbackAgent(MenuActivity.this);
+		TuSdk.checkFilterManager(mFilterManagerDelegate);
 		initView();
 	}
 
@@ -186,5 +198,15 @@ public class MenuActivity extends Activity implements OnClickListener {
 			finish();
 		}
 	}
+	
+	private FilterManagerDelegate mFilterManagerDelegate = new FilterManagerDelegate()
+	{
+	    @Override
+	    public void onFilterManagerInited(FilterManager manager)
+	    {
+	        TuProgressHub.showSuccess(MenuActivity.this,
+	                TuSdkContext.getString("lsq_inited"));
+	    }
+	};
 
 }

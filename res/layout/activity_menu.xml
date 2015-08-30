@@ -84,7 +84,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5.0dip"
         android:text="版本: 2.2，作者：@liu_yj"
-        android:visibility="gone"
+        
         android:textColor="@color/white" />
 
 </LinearLayout>

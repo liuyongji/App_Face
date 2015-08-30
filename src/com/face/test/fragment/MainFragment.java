@@ -1,6 +1,7 @@
 package com.face.test.fragment;
 
 import java.io.File;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.TimerTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.lasque.tusdkdemo.simple.CameraComponentSimple;
 
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
@@ -25,7 +27,7 @@ import com.face.test.Utils.Util;
 import com.face.test.activity.ResultActivity;
 import com.face.test.adapter.MyViewAdapter;
 import com.face.test.bean.FaceInfos;
-import com.face.test.bean.Person;
+import com.face.test.bean.Person2;
 import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
@@ -83,9 +85,9 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 
 	private int resultcode = -1;
 
-	private Timer timer;
+	// private Timer timer;
 
-	private Person person;
+	private Person2 person;
 
 	private BmobFile bmobFile;
 
@@ -103,9 +105,7 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void handleMessage(Message msg) {
-			if (progressBar != null) {
-				progressBar.dismiss();
-			}
+			
 			resultcode = msg.what;
 			switch (msg.what) {
 
@@ -117,6 +117,8 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 						.findViewById(R.id.mainfragment_textView);
 				textView.setVisibility(View.VISIBLE);
 				textView.setText((String) msg.obj);
+
+				
 				new Timer().schedule(new TimerTask() {
 
 					@Override
@@ -126,52 +128,78 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 						message.what = SAVE_BITMAP;
 						detectHandler.sendMessage(message);
 					}
-				}, 500);
+				}, 1000);
 
 				break;
 			case DECTOR_FAIL:
-				timer.cancel();
+				if (progressBar != null) {
+					progressBar.dismiss();
+				}
+				// timer.cancel();
 				Toast.makeText(getActivity(),
 						getResources().getString(R.string.no_net_state),
 						Toast.LENGTH_LONG).show();
 				break;
 			case COMPARE_FAIL:
+				if (progressBar != null) {
+					progressBar.dismiss();
+				}
 				Toast.makeText(getActivity(),
 						getResources().getString(R.string.choose_two),
 						Toast.LENGTH_LONG).show();
 				break;
 			case COMPARE_SUCCESS:
+				if (progressBar != null) {
+					progressBar.dismiss();
+				}
 				App.setBitmaps(bitmaps);
 				Intent intent = new Intent(getActivity(), ResultActivity.class);
 				Bundle bundle = new Bundle();
 				bundle.putString("Compare",
 						((ArrayList<String>) msg.obj).get(0));
 				bundle.putString("Result", ((ArrayList<String>) msg.obj).get(1));
+				// bundle.putSerializable("bitmaps",((ArrayList<Bitmap>)bitmaps));
+				// intent.putExtra("bitmaps", (Serializable) bitmaps);
 				intent.putExtras(bundle);
 				startActivity(intent);
 				getActivity().finish();
 				break;
 			case 1303:
+				if (progressBar != null) {
+					progressBar.dismiss();
+				}
 				Toast.makeText(getActivity(),
 						getResources().getString(R.string.photostoolarge),
 						Toast.LENGTH_LONG).show();
 				break;
 			case 1301:
+				if (progressBar != null) {
+					progressBar.dismiss();
+				}
 				Toast.makeText(getActivity(),
 						getResources().getString(R.string.photoserror),
 						Toast.LENGTH_LONG).show();
 				break;
 			case 1202:
+				if (progressBar != null) {
+					progressBar.dismiss();
+				}
 				Toast.makeText(getActivity(),
 						getResources().getString(R.string.serverbusy),
 						Toast.LENGTH_LONG).show();
 				break;
 			case 1001:
+				if (progressBar != null) {
+					progressBar.dismiss();
+				}
 				Toast.makeText(getActivity(),
 						getResources().getString(R.string.no_net_state),
 						Toast.LENGTH_LONG).show();
 				break;
 			case SAVE_BITMAP:
+				if (progressBar != null) {
+					progressBar.dismiss();
+				}
 				Bitmap bitmap = BitmapUtil.convertViewToBitmap(mViewPager
 						.findViewWithTag(mViewPager.getCurrentItem()));
 				File f = BitmapUtil.saveBitmap(bitmap, df.format(new Date()));
@@ -180,6 +208,9 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 				break;
 
 			default:
+				if (progressBar != null) {
+					progressBar.dismiss();
+				}
 				Toast.makeText(getActivity(),
 						getResources().getString(R.string.no_net_state),
 						Toast.LENGTH_LONG).show();
@@ -187,20 +218,18 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 			}
 		};
 	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.main4, container, false);
-		request = new HttpRequests("99a9423512d4f19c17bd8d6b526e554c",
-				"z8stpP3-HMdYhg6kAK73A2nBFwZg4Thl");
+		request = App.getApp().getRequests();
 		initview(view);
 
 		detectHandler = new Myhandler();
 		return view;
 	}
-
-	
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -257,13 +286,11 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 
 		progressBar = DialogUtil.getProgressDialog(getActivity());
 
-		timer = new Timer();
-		timer.schedule(new Mytimertask(), 20000);
+		// timer = new Timer();
+		// timer.schedule(new Mytimertask(), 20000);
 		dectorThread = new DectorThread();
 		dectorThread.start();
 	}
-
-	
 
 	@Override
 	public void onClick(View view) {
@@ -280,15 +307,19 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 			mpopupWindow.dismiss();
 			break;
 		case R.id.rl_camera:
+			
+			
 			mpopupWindow.dismiss();
-			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			intent.addCategory(Intent.CATEGORY_DEFAULT);
-			File file = new File(this.sdcard_temp);
-			if (file.exists()) {
-				file.delete();
-			}
-			intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-			startActivityForResult(intent, 1002);
+			
+			new CameraComponentSimple().showSimple(getActivity());
+//			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//			intent.addCategory(Intent.CATEGORY_DEFAULT);
+//			File file = new File(this.sdcard_temp);
+//			if (file.exists()) {
+//				file.delete();
+//			}
+//			intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+//			startActivityForResult(intent, 1002);
 			break;
 		case R.id.rl_tuku:
 			mpopupWindow.dismiss();
@@ -308,52 +339,55 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 		public void run() {
 			// TODO Auto-generated method stub
 			super.run();
-			while (!isInterrupted()) {
-				// byte[] bytes=Tool.getBitmapByte(curBitmap);
-				JSONObject jsonObject = null;
-				String resultcompare = null;
-				String similarityresult = null;
 
-				try {
-					for (int i = 0; i < face.length; i++) {
-						if (face[i] == null) {
-							Message message = new Message();
-							message.what = COMPARE_FAIL;
-							detectHandler.sendMessage(message);
-							return;
-						}
+			// byte[] bytes=Tool.getBitmapByte(curBitmap);
+			JSONObject jsonObject = null;
+			String resultcompare = null;
+			String similarityresult = null;
+
+			try {
+				for (int i = 0; i < face.length; i++) {
+					if (face[i] == null) {
+						Message message = new Message();
+						message.what = COMPARE_FAIL;
+						detectHandler.sendMessage(message);
+						return;
 					}
+				}
 
-					jsonObject = request
-							.recognitionCompare(new PostParameters()
-									.setFaceId1(face[0]).setFaceId2(face[1]));
-					resultcompare = Util.CompareResult(jsonObject);
-					similarityresult = Util.Similarity(jsonObject);
-				} catch (FaceppParseException e1) {
-					e1.printStackTrace();
-					Message message = new Message();
-					message.what = e1.getErrorCode();
-					detectHandler.sendMessage(message);
-				} catch (JSONException e) {
-					e.printStackTrace();
-					timer.cancel();
-					Message message = new Message();
-					message.what = -1;
-					detectHandler.sendMessage(message);
-					return;
-				}
-				Log.i(TAG, jsonObject.toString());
-				if (resultcompare == null || resultcompare == "") {
-					resultcompare = "没检测到人脸";
-				}
-				ArrayList<String> result = new ArrayList<String>();
-				result.add(similarityresult + "%");
-				result.add(resultcompare);
+				jsonObject = request.recognitionCompare(new PostParameters()
+						.setFaceId1(face[0]).setFaceId2(face[1]));
+				resultcompare = Util.CompareResult(jsonObject);
+				similarityresult = Util.Similarity(jsonObject);
+			} catch (FaceppParseException e) {
+				e.printStackTrace();
 				Message message = new Message();
-				message.what = COMPARE_SUCCESS;
-				message.obj = result;
+				if (e.getErrorCode() != null) {
+					message.what = e.getErrorCode();
+				} else {
+					message.what = 3;
+				}
 				detectHandler.sendMessage(message);
+				return;
+			} catch (JSONException e) {
+				e.printStackTrace();
+				// timer.cancel();
+				Message message = new Message();
+				message.what = -1;
+				detectHandler.sendMessage(message);
+				return;
 			}
+			Log.i(TAG, jsonObject.toString());
+			if (resultcompare == null || resultcompare == "") {
+				resultcompare = "没检测到人脸";
+			}
+			ArrayList<String> result = new ArrayList<String>();
+			result.add(similarityresult + "%");
+			result.add(resultcompare);
+			Message message = new Message();
+			message.what = COMPARE_SUCCESS;
+			message.obj = result;
+			detectHandler.sendMessage(message);
 
 		}
 	}
@@ -370,32 +404,41 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 			String list = null;
 
 			try {
+
 				jsonObject = request.detectionDetect(new PostParameters()
 						.setImg(bytes).setMode("oneface")
 						.setAttribute("glass,gender,age,race,smiling"));
-				Log.i("lyj", jsonObject.toString());
+				Log.i(TAG, jsonObject.toString());
 				list = Util.Jsonn(jsonObject);
 				Gson gson = new Gson();
 				faceInfos = gson.fromJson(jsonObject.toString(),
 						FaceInfos.class);
-				if (list.equals("没检测到人脸")) {
-					// list = new ArrayList<String>();
-					// list.add("没检测到人脸");
+				if (faceInfos.getFace().size() > 0) {
+					face[mViewPager.getCurrentItem()] = faceInfos.getFace()
+							.get(0).getFace_id();
+					// face[mViewPager.getCurrentItem()] =
+					// Util.face.getFaceId();
 				} else {
-					face[mViewPager.getCurrentItem()] = Util.face.getFaceId();
+
 				}
 			} catch (FaceppParseException e) {
 
 				e.printStackTrace();
-				timer.cancel();
+				// timer.cancel();
+
 				Message message = new Message();
-				message.what = e.getErrorCode();
+				if (e.getErrorCode() != null) {
+					message.what = e.getErrorCode();
+				} else {
+					message.what = 3;
+				}
+
 				detectHandler.sendMessage(message);
 				return;
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			timer.cancel();
+			// timer.cancel();
 			Message message = new Message();
 			message.what = DECTOR_SUCCESS;
 			message.obj = list;
@@ -447,7 +490,7 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 			if (faceInfos.getFace().size() == 0) {
 				return;
 			}
-			person = new Person();
+			person = new Person2();
 			person.setUser(App.getImei());
 			person.setFile(bmobFile);
 			person.setDoubles(false);
@@ -488,18 +531,5 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 		bitmaps.add(null);
 		bitmaps.add(null);
 	}
-	private class Mytimertask extends TimerTask {
-
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			Message message = new Message();
-			message.what = DECTOR_FAIL;
-			detectHandler.sendMessage(message);
-			this.cancel();
-		}
-
-	}
-	
 
 }

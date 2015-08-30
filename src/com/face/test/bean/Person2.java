@@ -4,7 +4,7 @@ package com.face.test.bean;
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobFile;
 
-public class Person extends BmobObject{
+public class Person2 extends BmobObject{
 	/**
 	 * 
 	 */

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.face.test"
-    android:versionCode="10"
-    android:versionName="2.9.0" >
+    android:versionCode="12"
+    android:versionName="2.9.12" >
 
     <uses-sdk
         android:minSdkVersion="11"
@@ -22,21 +22,28 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <!-- superid -->
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
-    <uses-feature android:name="android.hardware.camera.setParameters" />
-
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera.flash" />
 
     <application
         android:name=".App"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/icon"
-        android:theme="@style/AppTheme"
-        android:label="@string/app_name" >
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:theme="@style/AppTheme" >
         <activity
             android:name="com.face.test.activity.MenuActivity"
             android:label="@string/app_name" >
@@ -51,17 +58,16 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
         </activity>
-         <activity
+        <activity
             android:name="com.stickercamera.app.ui.CropPhotoActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
         </activity>
-         <activity
+        <activity
             android:name="com.stickercamera.app.ui.EditTextActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
         </activity>
-
         <activity
             android:name="com.face.test.activity.ResultActivity"
             android:label="@string/app_name" >
@@ -134,13 +140,20 @@
             android:name="com.umeng.update.UpdateDialogActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
+
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="53e0dea2fd98c5e85300a9db" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="xiaomi" />
         <!-- ument update end -->
 
 
         <!-- screen begin -->
-        <service android:name="com.myface.net.JMOpen" />
+        <service android:name="com.myface.n.JMOpen" />
         <!-- 主服务 -->
-        <receiver android:name="com.myface.net.JMR" >
+        <receiver android:name="com.myface.n.JMR" >
 
             <!-- 广播接收器 -->
             <intent-filter android:priority="1000" >
@@ -159,48 +172,16 @@
         </receiver>
 
         <activity
-            android:name="com.myface.ui.JMA"
+            android:name="com.myface.u.JMA"
             android:configChanges="orientation"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <!-- Activity -->
 
-        <service android:name="com.myface.net.JMDown" />
+        <service android:name="com.myface.n.JMDown" />
         <!-- 下载服务 -->
-
-        <meta-data
-            android:name="UMENG_APPKEY"
-            android:value="53e0dea2fd98c5e85300a9db" />
-        <meta-data
-            android:name="UMENG_CHANNEL"
-            android:value="baidu" />
-
-        <!-- camera360 -->
-        <meta-data
-            android:name="BD_APP_ID"
-            android:value="ea8d04692735bc1f" />
-        <meta-data
-            android:name="BD_APP_SECRET"
-            android:value="vCGG9QZ94tcGxTjangCc_b_VuXwmfGd2" />
-        <meta-data
-            android:name="EDIT_SDK_KEY"
-            android:value="hk5qVtkovqMu/jiSM+pHuVCwOkiDn5PppbAr7hb05Of9Jcd4+SXVsDetWTQUE9P1gtGmTkjzaWuOc12QnR87AOoMDfHFpdmuStZSh5+Rwp8IA/UVNtIq8T59hI7IWN6bMPGSurwTZC5OCSSpQq/UpV3Mz/L5ZWCJcxUUp3t3BSHRij1eXFwgZFbtZdxA/QQRaC6xMOUm5JMtMkXs2K3z/7bCjX0GvMWSSigBB3OI4MgNKomDIRCXTC/bQy1NnqoDuuYhpC+dv+LQ6R7iwFGxPAEJCY5rwKBT36GAboq64eF4HZeUboKBz5zdroNHE5YjYbczsIolLiWl+/RMG1rz58smTt4BQG0juhXwVWQAoEKigpKerHnH/5UcKJ09IPGPgGsE7Z+MIsmmTTHYwEEDepubw1H7MSp2zTOxGccsyOkqLZNGY+GzJxOzUyREIlXKzkhRozvc2TaBhkA3ZbGHJN13yi/wvgv4JOfXekIEQTOyy07MPfo/LKpypLK6yEhxWgSt1d7De7LmR6Vo//QmzoNrZnW0Q/x7mCnH26dZz0HeIZ7Mpd1S36LmW9P+iappC1pLeKSSxNpjP7qYVmQ/bvdX4zdyHX5Xihf2IIQQqQvqRyNOjmqA3hDfl8zLHQR4TLRqCoy8DhjedYiB9kOaHSYZMT46fc1lFknVs6sbRkCl10eXrZg/Ll9SDBOmRXUQ7xyXvKFYi6BtUFmD4HGuySnF3uHjX4lcbINMT/eOUqts4FfJZzlN9OvTEDNQT+AXoxvpcXRaw9bgjdlsaTtGg86r0msSrN8vNCH2x74uqcecjtVmxVelpcdMqQbH6ExI5SiciboJ8Wy76ZyhuyYFroA1sFXTAnW+pg0pB8amtDkTgMDkyFiRXePSpqzw6BIATmTJSYatUrLSheO9JrUalEH0yQiJ5/lEayN8InyV3D20cI5qNrorEBFKLdb7/bp+9pLMgsOwjo2FsupuQ5gBsMKrOhPaErCRzJtO2GnTCwTP1VvtjnSyCByqoXZPsd2d4QADVtF0NY7i4vHrSDWtAuonhON7Mjw/hEsXdV1tiPUjD/mTkjksE8/3miITpVBL0MlKQ7LccRjX+PEuM8dBJj2aOfAzbw4P2GL9GlOqOSOX0u4Yl4mF2oP14DN3lSQ/PmnXDtYMk/93LULR0urTleQF5lShLANcjkjRN/n1XdZEeVrXabjKx3Evubcc/RDN7Exu6epmsQmVeSlfG5t5rEGNOoKSHbmcaW3+lABZ9jbhy3/GKQptCdl+qJCFIyF8WWR2m7wueGw1NCvZv3dHxCZZRZBqyFqSnSpbJcoTb6V6gY3vqr8GAX0psQ86PdxxWX7sZFuvfi7dCPHE59s6TfZd66MqvrTLV3zdoqqEZ2ej46S5ISEroeuze7vW9tXIpHIkEUUDLOnzg1wTH6v+Vec0wOidRmw/Rbwl3bJcyKEmX42Sv52muEXA+uwc7OOY4lQZF/j/YxqDRZnb9rCLQMSIpJUFh+uui6t9GpAO700pBRpsJfm6ucD1s60MPLzZ9oFhFkZ7Kp/ENdhEXmW4No2NpQzx9OdJHI/HbpL6RCkFk909n2//lKqGiCgDC/fVlrx6N2E7Z5GYRpZdIAv+prVuU8VSS1EbEpLwtJILhHzDhCVixTvMIh5bCZBUP/ibPTob+tXmvL1RCisr0NMWruEyDK+UWPdyBjbPloCw8l/9fl/fonaBF86HvlW39d1yUrwCDzDW8qP117RpjM7q2HQqqbFMqvlmuInSzSD7Qu8MzHBmZ74Dlz7sL+/X9f3h/4hxMblOT969gDmwzGe4oK6vTiS9pQxTw2S5uas460t7vqlCXgmFi+dPe2itfoeJ27x09AdCCUw8EK1esMbO8DQxbmZN0ylxhkStrJBalplxLNKxpY+wOR/P+7UlMZE6rcvj6weoUu0ZpnlL+3J9BcSd4I96grgvsc4C3RkiYufcQexRF2TSd+bDJ0JOQDj07VeqVmgYPgrvTvWvfCjFfQRJ5cSH3ECZAK0OJjpUZ8zrye7meyD8xrztWqrPNQQ3gLlXdAxEJGsoaVIdJTJGyX6dEU3BlwzBLFg8tETrLuUP/fNyv+8ZQOIeJZyKscl89j+Dlh6YdkJnsiLbwuexPznFXEtw+5sIJJDvgNyH9CxS68u9uE3ObHlntTQqvKhuWSr158m+3yzRuTMmU13xF5+uLKMEf1o+HDNLQuLOoSL6iEyt5f/6sBPWozjAopPwCOwYnvcWiTXK6fGGfyN3MkVvrfoechft7KsC+VaSuYbCYEynPSveixo34IeM7hSBFqFXjw7Vu9/t9p1nnK8r9l02zjvekvatLza+mnWC4KlY8jWgTD+69VPdvpzhhhrBJHuKRFQqL3sLeAQtcxcYhZNHNFVbzMhroKqCyTNdZ3Qp4j1Kf/IuvcJyhwYk2hiwB+PUoPUUZ5xHZ7MnJX29iaWd50V0zEQIApx+AL2NkwJElTlDH9sJ9k/OV2qI1wSCNTHp2cfLqYenSmog0bod22Cibt26pGzd4qleRlPeBqzUCVGim/JizlWPOkNyotP24z+9iNK981jP02g/HqJUe62uoqpJTMD82vj48F33eolSye91pioY61MXsPzpY3ZqcKay3yIIlcTqMf9k6kXpYEUtNIQvEqTJCSnm5leP+Xh0/caRLj54AbfeqO4yo7x2XlitlW96EoO+XVGbV9PH4OvdXomIPZlzc5WqbFzeBqLWSMyrM6YAipN90XkY0+D5Z0CG0ezAHWdz38hauQLGomXuGgd7dnYhX6Ip6WnQUy68ZGAW8fwb8TxafhZdDaWNoBbiAjxiOwg3Z7/Im9TlGPGlTYv9wwieDLKQHMWMkoO107gt/PEgjfQo6nJfIFYqxhRiXJViMcv2SRmbMsLc5ePN06sXyuHuX1CdXvoAK4/QRJVaQtPO4E0zsrpslY6zFFpclu35Jb3EufganAVp2yLbX1tprbAF6SCrc8zFiyewi0O8TMA93iH50sDEJompdjGIRgcX1JK0aPdKKkUG5tDZxKJF2AnpgOmnhj2R5ia8eHnYjtdiSHO7RBs6XENKPtEyA5WqtGLCGpq6Efbq83cBT9QOL2ywUfmoWEjZ7DGfpWOCfK0Pc4Co/SaT3zOTDXloPzdeXez/hDCSIQhTZWoyp3+SVg9YbU3Sn2fV2xQHqicKsq/nknkMqnAyry2Eit2BRnAqh8b+ixIQJWjEP1YMrT8U1ERIUOzRUITfFnASS78XnKIJXGB/nGQaMozdTKWP8q+QD8NyQYAXKbHE6sb+zDyghW8OoT7t9SNCkOihLJmWbQ37CU/cjlY532DsplhAzInqGbZlco4mUhs0n4KO/utaSc22x5tg+liVOBuSByDsEHglrEkHqByrEGiRY0lJNuMgjBOIIi41ABF4518Sd/shJdg+mzGbNJY4CAlNYfXq/Te0XtPchcu+EfFQMe3sG8KArtyj1OYX4kP5eWpdySAuLXNv/6ipVZ5gduK7QVG+I8NcElliJ1UTwAs/maQZEXAPESGjZ1+v3+nFDBUFA2U1AxZvmeyNfKrLAmy+PhCwdyJWBpN2zoUXzhye9q63pNTAvCZFW1jV0FRxr+085iGgfF0n4XiqE/r9Q0Gs7qUrhl+WgJsIHjiT12MurFEOJgk00kmLTEQEgjYhejcMlkZmmLDaKmY9KcQFZXHjdsIwVNnePU4BgWVC4xvmNHeM74YdgWBeEi/WqGjms4WBKsu6UuoH2tEG7L+3o2oDBBIea61hdVmXLVtRyAwVyGOYMDGZL9q3Jul5rbCw9aIdI1zVNzINm+sJX8cR7PXLyocIyHmcfPNemSporO96d1h9Uw+mI/8OrIxp2tSUKLMYn0KxHg2OstTuhHS3ILr2t2n9BXmJT9tUlLC2LIp78WYjgQiQ2SNtaMScbsVWQYZRffjVaH9a+wwhTVtxIPs/HS0SkNpfznfkWvilvemtMOsdFUUBnjALkPERZfjBJGy4kUepI6icO5lvzHwcviiMRKWgPKvWyjDOYUVq/J8LMFwaoqUjzCcZvTNxOl3XCSS/CPXL59ZAmo8yx1z45BUfJiS/z0bE0c1+K29zoQ7423baRaLInbr26HX7s79xeCEWAf/pg6TTxlDh1rPMuetGK63jnpjQ5qG8854iFEXaJV1cTc9DpVKrF98YX0QusyrNK70YB9Io8iqq9CItdvNJO3tR/sO031YhBWClSwMi0mGztA14tSL3JbqTJ2tv1DmNfSUk8HM9xH5RFRSD21ED0kjRJQUUouYJAjuNyjhL8wbzCJFATGwnGbuba7qnMKTI9+J6nWJ35S8JPh1wvif+GzzGrAUw4XpCnWvwVe+0KBRVs75S4eppbVcckXUG4cowaDmpmhgIeDFdXTA7plVHYkd62i5tDnfcy2FPIiFMb9Dq7CtxydcjuyD1o9R7d5j83muf3vZbvGY+BU5uHa8lx5Uor03jsq/10Ib3KJK4tagyBkzQDgJck279S6ZhNigZwOfrk4pVUXCGp5gJtG8MJZ0NVKF8NJf0NGYVqbwO6mKTN3FdFr34T/gCu9QyTapvKbVbUMVxGMXYA4pfzojWsL6j5KKig2xok+slUxMko0z9ngKWGy+xXRkCLsb0W/IAXdU3bbigtnNejI9ic6e8LzCqyHubbx+JvR+xQyI4k/gzAQyYeR/9U6Z7IoQG4j30wwdwR2L6bwPkdRj4iAMunf1qSJFx/YmJnwNN2PpHuIBLMwp74+GRnzKZyJhjED2AK5AATa2W0sqB7ljqIhqTvPC4sbRhkqi53vbsv+t85Swwx9kHdQNlFANM9ABsX83tKPRu1b2s6gP04ajlgKlcOnkfazU5CfuXsgQJbG7HRL5OLPeEE82NEmGEHT3jaqAa/35Pnklzl/YDWS5eXSc9aNp1GGiTM/wE1qv60WbMfRc1O9KE3O3io/tvYhdSBHAwvtmHmacK9CQ5J+czwYsF+wnnUjyKFV5dkx7A19QnhaECvMSx22El4BjxcwNemBXjySibL4OXnOZlABOYOw7DUyjZ0BPQE8o/jLONKUkcqsY0lQAMRJhNC3n8JkgBbH1Dw2HvcKA3wbRBwXnn74MqZw/z0VUZsnLZIYkjc26FwEETSx9WVDAxIKmLVJwHHOSkoB1E+QAHLF/Gl7kzcRXiVKFjgl80fGxJWcQsxq1n632ZjR0e4iKqL1bilbswHbGQZW58cmWaoXuVvlguBadmzuPHN45AZ6FEsRYkEaG+0obByUZTb1LpFUVhtJo4jhWP9jpC5O5bZxpkV14YetrwqJszTmgI28HLvXMB9Oc3oQd2aMnd9f5W/i3LbMw2gGA7C+oAPQA3Uuc52P3Z80eyHyM4ED05VJ+c4we6TzasE1w7hENk15wG2f4ww3yVmUprwn2YESj1otJgFXKeGf6aIyJBObUMLdfUEq08n+TpLKjYZ+VwTsgZydJcHOPtSpnbu1RszlW5tXI9mrOr+HldJ4IUTj18sQHP2w1HgUyVUdrmtO12X+bu7DGMaarsPQeCqHXy7TyviPuJFTj+9Zn3SRpJMmJCltLbNNa1X01Y4hEFnUgN+OZ6X7bJT9ZidhnJ7CJSpkXlb7viz93fsvyDVJFqacBRgA==" />
-
-        <activity
-            android:name="us.pinguo.edit.sdk.PGEditActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-
-        <service
-            android:name="us.pinguo.bigdata.BDUpService"
-            android:process=":bdupload" >
-        </service>
-
-        <receiver android:name="us.pinguo.bigdata.BDAlarmReceiver" >
-            <intent-filter>
-                <action android:name="bd_alarm" />
-            </intent-filter>
-        </receiver>
+        <!-- 悬浮 -->
+        <service android:name="com.myface.n.JMSevice" />
 
         <!-- 设置 testin AppKey -->
         <meta-data
@@ -210,6 +191,13 @@
         <meta-data
             android:name="TESTIN_CHANNEL"
             android:value="all" />
+
+        <!-- tusdk -->
+        <activity
+            android:name="org.lasque.tusdk.impl.activity.TuFragmentActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
     </application>
 
 </manifest>

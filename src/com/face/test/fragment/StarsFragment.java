@@ -18,7 +18,7 @@ import com.face.test.Utils.DialogUtil;
 import com.face.test.activity.StarsResultActivity;
 import com.face.test.bean.Bitchs;
 import com.face.test.bean.FaceInfos;
-import com.face.test.bean.Person;
+import com.face.test.bean.Person2;
 import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;

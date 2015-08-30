@@ -32,5 +32,7 @@
     <string name="dialog_cancel">Cancel</string>
     <string name="LOADING">Loading...</string>
     <string name="default_progressbar">Default Progressbar:</string>
+    
+     <string name="simple_CameraComponent">相机组件</string>
 
 </resources>
