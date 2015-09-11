@@ -298,6 +298,19 @@ public class FileUtils {
         }
 
     }
+    public  boolean Move(String srcFile, String destPath)
+    {
+           // File (or directory) to be moved
+           File file = new File(srcFile);
+          
+           // Destination directory
+           File dir = new File(destPath);
+          
+           // Move file to new directory
+           boolean success = file.renameTo(new File(dir, file.getName()));
+          
+           return success;
+       }
 
     public File getCacheDir() {
         return App.getApp().getCacheDir();

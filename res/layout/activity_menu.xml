@@ -53,9 +53,9 @@
             android:layout_height="60.0dip"
             android:layout_marginTop="10.0dip"
             android:background="@drawable/btn_selector"
-            android:visibility="gone"
-            android:text="今日桃花运" />
-
+           
+            android:text="魔幻相机" />
+        
         <Button
             android:id="@+id/btn_ranklist"
             android:layout_width="200.0dip"

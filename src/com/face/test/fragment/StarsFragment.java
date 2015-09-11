@@ -177,14 +177,17 @@ public class StarsFragment extends Fragment implements OnClickListener {
 			break;
 		case R.id.rl_camera:
 			mpopupWindow.dismiss();
-			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			intent.addCategory(Intent.CATEGORY_DEFAULT);
-			File file = new File(sdcard_temp);
-			if (file.exists()) {
-				file.delete();
-			}
-			intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-			startActivityForResult(intent, 1002);
+			
+			App.OpenCamera(getActivity(), iv_imageview);
+			
+//			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//			intent.addCategory(Intent.CATEGORY_DEFAULT);
+//			File file = new File(sdcard_temp);
+//			if (file.exists()) {
+//				file.delete();
+//			}
+//			intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+//			startActivityForResult(intent, 1002);
 			break;
 		case R.id.rl_tuku:
 			mpopupWindow.dismiss();

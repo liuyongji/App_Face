@@ -5,31 +5,39 @@ import java.io.File;
 //import us.pinguo.edit.sdk.PGEditActivity;
 //import us.pinguo.edit.sdk.base.PGEditSDK;
 
-
-
-
-
-
-
-
-
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import org.lasque.tusdk.core.TuSdk;
 import org.lasque.tusdk.core.TuSdkContext;
+import org.lasque.tusdk.core.TuSdkResult;
 import org.lasque.tusdk.core.gpuimage.extend.FilterManager;
 import org.lasque.tusdk.core.gpuimage.extend.FilterManager.FilterManagerDelegate;
+import org.lasque.tusdk.core.utils.TLog;
+import org.lasque.tusdk.core.utils.hardware.CameraHelper;
+import org.lasque.tusdk.impl.activity.TuFragment;
+import org.lasque.tusdk.impl.components.TuEditMultipleComponent;
+import org.lasque.tusdk.impl.components.base.TuSdkHelperComponent;
+import org.lasque.tusdk.impl.components.base.TuSdkComponent.TuSdkComponentDelegate;
+import org.lasque.tusdk.impl.components.camera.TuCameraFragment;
+import org.lasque.tusdk.impl.components.camera.TuCameraFragment.TuCameraFragmentDelegate;
+import org.lasque.tusdk.impl.components.camera.TuCameraOption;
 import org.lasque.tusdk.impl.view.widget.TuProgressHub;
 
+import com.common.util.FileUtils;
 import com.face.test.App;
 import com.face.test.R;
+import com.face.test.TuSdkDelegate;
 import com.face.test.Utils.AppUtils;
 import com.stickercamera.app.ui.CropPhotoActivity;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -114,16 +122,20 @@ public class MenuActivity extends Activity implements OnClickListener {
 			break;
 
 		case R.id.btn_taohua:
-			intent.putExtra("key", 5);
-			break;
+			App.OpenCamera(this, null);
+			return;
+			
+//			intent.putExtra("key", 5);
+//			break;
 		case R.id.btn_edit:
+
 			if (AppUtils.IsCanUseSdCard()) {
 				intent = new Intent(Intent.ACTION_PICK,
 						MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 				startActivityForResult(intent, REQUEST_CODE_PICK_PICTURE);
-			}else
+			} else
 				Toast.makeText(this, "该功能需要sd卡支持", Toast.LENGTH_LONG).show();
-			
+
 			return;
 
 		case R.id.btn_histroy:
@@ -140,10 +152,10 @@ public class MenuActivity extends Activity implements OnClickListener {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == REQUEST_CODE_PICK_PICTURE
-				) {
+		if (requestCode == REQUEST_CODE_PICK_PICTURE) {
 
 			Uri selectedImage = data.getData();
+			ContentResolver resolver = getContentResolver();
 			String[] filePathColumns = new String[] { MediaStore.Images.Media.DATA };
 			Cursor c = this.getContentResolver().query(selectedImage,
 					filePathColumns, null, null, null);
@@ -151,23 +163,51 @@ public class MenuActivity extends Activity implements OnClickListener {
 			int columnIndex = c.getColumnIndex(filePathColumns[0]);
 			String mPicturePath = c.getString(columnIndex);
 			c.close();
-//			String folderPath = Environment.getExternalStorageDirectory()
-//					+ File.separator + "facetest" + File.separator;
-//			File file = new File(folderPath);
-//			if (!file.exists()) {
-//				file.mkdir();
-//			}
-//			String outFilePath = folderPath + System.currentTimeMillis()
-//					+ ".jpg";
+
 			Uri imageUri = Uri.fromFile(new File(mPicturePath));
-			Intent intent = new Intent(MenuActivity.this, CropPhotoActivity.class);
-			intent.setData(imageUri);
-			startActivity(intent);
+
+			try {
+				Bitmap photo = MediaStore.Images.Media.getBitmap(resolver,
+						imageUri);
+				TuEditMultipleComponent component = TuSdk
+						.editMultipleCommponent(this, delegate);
+				component.setImage(photo)
+						
+						// 在组件执行完成后自动关闭组件
+						.setAutoDismissWhenCompleted(true)
+						// 开启组件
+						.showComponent();
+
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// Intent intent = new Intent(MenuActivity.this,
+			// CropPhotoActivity.class);
+			// intent.setData(imageUri);
+			// startActivity(intent);
 		}
 
-
-		
 	}
+
+	TuSdkComponentDelegate delegate = new TuSdkComponentDelegate() {
+		@Override
+		public void onComponentFinished(TuSdkResult result, Error error,
+				TuFragment lastFragment) {
+			
+			
+//			Toast.makeText(MenuActivity.this, result.imageSqlInfo.path, Toast.LENGTH_LONG).show();
+			FileUtils.getInst().Move(
+					result.imageSqlInfo.path,
+					Environment.getExternalStorageDirectory().getPath()
+							+ "/facetest/");
+			
+			TLog.d("onEditMultipleComponentReaded: %s | %s", result, error);
+		}
+	};
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -198,15 +238,13 @@ public class MenuActivity extends Activity implements OnClickListener {
 			finish();
 		}
 	}
-	
-	private FilterManagerDelegate mFilterManagerDelegate = new FilterManagerDelegate()
-	{
-	    @Override
-	    public void onFilterManagerInited(FilterManager manager)
-	    {
-	        TuProgressHub.showSuccess(MenuActivity.this,
-	                TuSdkContext.getString("lsq_inited"));
-	    }
+
+	private FilterManagerDelegate mFilterManagerDelegate = new FilterManagerDelegate() {
+		@Override
+		public void onFilterManagerInited(FilterManager manager) {
+			// TuProgressHub.showSuccess(MenuActivity.this,
+			// TuSdkContext.getString("lsq_inited"));
+		}
 	};
 
 }

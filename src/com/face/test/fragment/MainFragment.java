@@ -12,6 +12,14 @@ import java.util.TimerTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.lasque.tusdk.core.TuSdkResult;
+import org.lasque.tusdk.core.utils.TLog;
+import org.lasque.tusdk.core.utils.hardware.CameraHelper;
+import org.lasque.tusdk.impl.activity.TuFragment;
+import org.lasque.tusdk.impl.components.base.TuSdkHelperComponent;
+import org.lasque.tusdk.impl.components.camera.TuCameraFragment;
+import org.lasque.tusdk.impl.components.camera.TuCameraOption;
+import org.lasque.tusdk.impl.components.camera.TuCameraFragment.TuCameraFragmentDelegate;
 import org.lasque.tusdkdemo.simple.CameraComponentSimple;
 
 import cn.bmob.v3.datatype.BmobFile;
@@ -21,6 +29,7 @@ import com.andexert.library.ViewPagerIndicator;
 import com.face.test.Const;
 import com.face.test.App;
 import com.face.test.R;
+import com.face.test.TuSdkDelegate;
 import com.face.test.Utils.BitmapUtil;
 import com.face.test.Utils.DialogUtil;
 import com.face.test.Utils.Util;
@@ -105,7 +114,7 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void handleMessage(Message msg) {
-			
+
 			resultcode = msg.what;
 			switch (msg.what) {
 
@@ -118,7 +127,6 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 				textView.setVisibility(View.VISIBLE);
 				textView.setText((String) msg.obj);
 
-				
 				new Timer().schedule(new TimerTask() {
 
 					@Override
@@ -307,19 +315,22 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 			mpopupWindow.dismiss();
 			break;
 		case R.id.rl_camera:
-			
-			
+
 			mpopupWindow.dismiss();
-			
-			new CameraComponentSimple().showSimple(getActivity());
-//			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//			intent.addCategory(Intent.CATEGORY_DEFAULT);
-//			File file = new File(this.sdcard_temp);
-//			if (file.exists()) {
-//				file.delete();
-//			}
-//			intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-//			startActivityForResult(intent, 1002);
+
+			App.OpenCamera(
+					getActivity(),
+					(ImageView) mViewPager.findViewWithTag(
+							mViewPager.getCurrentItem()).findViewById(
+							R.id.mainfragment_imageview));
+			// Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			// intent.addCategory(Intent.CATEGORY_DEFAULT);
+			// File file = new File(this.sdcard_temp);
+			// if (file.exists()) {
+			// file.delete();
+			// }
+			// intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+			// startActivityForResult(intent, 1002);
 			break;
 		case R.id.rl_tuku:
 			mpopupWindow.dismiss();
@@ -531,5 +542,4 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 		bitmaps.add(null);
 		bitmaps.add(null);
 	}
-
 }
