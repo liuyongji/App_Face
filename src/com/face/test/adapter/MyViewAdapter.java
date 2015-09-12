@@ -38,6 +38,11 @@ public class MyViewAdapter extends PagerAdapter {
 
 		return 2;
 	}
+	@Override
+	public int getItemPosition(Object object) {
+		// TODO Auto-generated method stub
+		return super.getItemPosition(object);
+	}
 
 	@Override
 	public boolean isViewFromObject(View arg0, Object arg1) {

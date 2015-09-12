@@ -1,7 +1,7 @@
 package com.face.test.fragment;
 
+
 import java.io.File;
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,24 +12,15 @@ import java.util.TimerTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.lasque.tusdk.core.TuSdkResult;
-import org.lasque.tusdk.core.utils.TLog;
-import org.lasque.tusdk.core.utils.hardware.CameraHelper;
-import org.lasque.tusdk.impl.activity.TuFragment;
-import org.lasque.tusdk.impl.components.base.TuSdkHelperComponent;
-import org.lasque.tusdk.impl.components.camera.TuCameraFragment;
-import org.lasque.tusdk.impl.components.camera.TuCameraOption;
-import org.lasque.tusdk.impl.components.camera.TuCameraFragment.TuCameraFragmentDelegate;
-import org.lasque.tusdkdemo.simple.CameraComponentSimple;
 
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
 
 import com.andexert.library.ViewPagerIndicator;
+import com.common.util.FileUtils;
 import com.face.test.Const;
 import com.face.test.App;
 import com.face.test.R;
-import com.face.test.TuSdkDelegate;
 import com.face.test.Utils.BitmapUtil;
 import com.face.test.Utils.DialogUtil;
 import com.face.test.Utils.Util;
@@ -45,9 +36,11 @@ import com.google.gson.Gson;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,7 +48,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -94,14 +86,11 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 
 	private int resultcode = -1;
 
-	// private Timer timer;
-
 	private Person2 person;
 
 	private BmobFile bmobFile;
-
-	private String sdcard_temp = Environment.getExternalStorageDirectory()
-			+ File.separator + "test.jpg";
+	
+	private MyReceive myReceive;
 
 	@SuppressLint("SimpleDateFormat")
 	private SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");// 设置日期格式
@@ -234,6 +223,10 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 		View view = inflater.inflate(R.layout.main4, container, false);
 		request = App.getApp().getRequests();
 		initview(view);
+		
+		 myReceive=new MyReceive();
+		IntentFilter intentFilter = new IntentFilter("com.android.face");
+		getActivity().registerReceiver(myReceive, intentFilter);
 
 		detectHandler = new Myhandler();
 		return view;
@@ -265,22 +258,26 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 			}
 			break;
 		}
-		case 1002:
-			if (resultCode == Activity.RESULT_CANCELED) {
-				break;
-			}
-			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-			bitmapOptions.inSampleSize = 8;
-
-			bitmap = BitmapFactory.decodeFile(sdcard_temp, bitmapOptions);
-
-			setBitmap(bitmap);
-			break;
 
 		default:
 			break;
 		}
 
+	}
+	
+	private class MyReceive extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// TODO Auto-generated method stub
+			String url=intent.getStringExtra("url");
+			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+			bitmapOptions.inSampleSize = 8;
+//
+			Bitmap bitmap = BitmapFactory.decodeFile(url, bitmapOptions);
+			setBitmap(bitmap);
+			FileUtils.getInst().delete(new File(url));
+		}
 	}
 
 	private void setBitmap(Bitmap bitmap) {
@@ -402,6 +399,12 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 
 		}
 	}
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		getActivity().unregisterReceiver(myReceive);  
+		super.onDestroy();
+	}
 
 	private class DectorThread extends Thread {
 		@Override
@@ -498,9 +501,7 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 		@Override
 		public void onSuccess() {
 			// TODO 自动生成的方法存根
-			if (faceInfos.getFace().size() == 0) {
-				return;
-			}
+			
 			person = new Person2();
 			person.setUser(App.getImei());
 			person.setFile(bmobFile);

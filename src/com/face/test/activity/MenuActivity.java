@@ -9,27 +9,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.lasque.tusdk.core.TuSdk;
-import org.lasque.tusdk.core.TuSdkContext;
 import org.lasque.tusdk.core.TuSdkResult;
 import org.lasque.tusdk.core.gpuimage.extend.FilterManager;
 import org.lasque.tusdk.core.gpuimage.extend.FilterManager.FilterManagerDelegate;
 import org.lasque.tusdk.core.utils.TLog;
-import org.lasque.tusdk.core.utils.hardware.CameraHelper;
 import org.lasque.tusdk.impl.activity.TuFragment;
 import org.lasque.tusdk.impl.components.TuEditMultipleComponent;
-import org.lasque.tusdk.impl.components.base.TuSdkHelperComponent;
 import org.lasque.tusdk.impl.components.base.TuSdkComponent.TuSdkComponentDelegate;
-import org.lasque.tusdk.impl.components.camera.TuCameraFragment;
-import org.lasque.tusdk.impl.components.camera.TuCameraFragment.TuCameraFragmentDelegate;
-import org.lasque.tusdk.impl.components.camera.TuCameraOption;
-import org.lasque.tusdk.impl.view.widget.TuProgressHub;
-
 import com.common.util.FileUtils;
 import com.face.test.App;
 import com.face.test.R;
-import com.face.test.TuSdkDelegate;
 import com.face.test.Utils.AppUtils;
-import com.stickercamera.app.ui.CropPhotoActivity;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
 
@@ -44,7 +34,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -152,7 +141,7 @@ public class MenuActivity extends Activity implements OnClickListener {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == REQUEST_CODE_PICK_PICTURE) {
+		if (requestCode == REQUEST_CODE_PICK_PICTURE&&resultCode==RESULT_OK) {
 
 			Uri selectedImage = data.getData();
 			ContentResolver resolver = getContentResolver();
@@ -205,7 +194,6 @@ public class MenuActivity extends Activity implements OnClickListener {
 					Environment.getExternalStorageDirectory().getPath()
 							+ "/facetest/");
 			
-			TLog.d("onEditMultipleComponentReaded: %s | %s", result, error);
 		}
 	};
 

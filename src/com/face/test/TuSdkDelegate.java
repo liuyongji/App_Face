@@ -11,6 +11,7 @@ import org.lasque.tusdk.impl.components.camera.TuCameraFragment.TuCameraFragment
 import com.common.util.FileUtils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.ImageView;
@@ -44,19 +45,22 @@ public class TuSdkDelegate implements TuCameraFragmentDelegate{
 		fragment.hubDismissRightNow();
 		fragment.dismissActivityWithAnim();
 		
-		File tempFile =new File(result.imageSqlInfo.path);
-		String fileName = tempFile.getName(); 
+//		File tempFile =new File(result.imageSqlInfo.path);
+//		String fileName = tempFile.getName(); 
 		
-		FileUtils.getInst().Move(
-				result.imageSqlInfo.path,
-				Environment.getExternalStorageDirectory().getPath()
-						+ "/facetest/");
-		
+//		FileUtils.getInst().Move(
+//				result.imageSqlInfo.path,
+//				Environment.getExternalStorageDirectory().getPath()
+//						+ "/facetest/");
+//		
 		if (imageView!=null) {
-			App.displayImage("file:///"+Environment.getExternalStorageDirectory().getPath()+ "/facetest/"+fileName, imageView);
+			App.displayImage("file:///"+result.imageSqlInfo.path, imageView);
 		}
 		
-		TLog.d(Environment.getExternalStorageDirectory().getPath()+ "/facetest/"+fileName);
+		Intent i = new Intent("com.android.face");
+		i.putExtra("url", result.imageSqlInfo.path); 
+		context.sendBroadcast(i);
+		
 	}
 
 	/**

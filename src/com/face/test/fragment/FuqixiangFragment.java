@@ -3,12 +3,15 @@ package com.face.test.fragment;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
 
+import com.common.util.FileUtils;
 import com.face.test.App;
 import com.face.test.R;
 import com.face.test.Utils.BitmapUtil;
@@ -22,14 +25,17 @@ import com.facepp.http.PostParameters;
 import com.google.gson.Gson;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -49,26 +55,26 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class FuqixiangFragment extends Fragment implements OnClickListener {
 	private PopupWindow mpopupWindow;
 	private Button btn_selete;
 	private ImageView iv_imageview;
-//	private TextView tv_result;
 	private ProgressDialog progressBar;
-//	private Timer timer;
 	private Bitmap bitmap;
 	private Handler detectHandler = null;
 	private HttpRequests request = null;// 在线api
 	private FaceInfos faceInfos;
 	private BmobFile bmobFile;
+	private MyReceive myReceive;
+	private TextView tv;
+	
 	
 	@SuppressLint("SimpleDateFormat")
 	private SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 
-	private String sdcard_temp = Environment.getExternalStorageDirectory()
-			+ File.separator + "tmps.jpg";
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,6 +82,9 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 		request = App.getApp().getRequests();
 		View view = inflater.inflate(R.layout.main_fuqixiang, container, false);
 		initView(view);
+		myReceive = new MyReceive();
+		IntentFilter intentFilter = new IntentFilter("com.android.face");
+		getActivity().registerReceiver(myReceive, intentFilter);
 		detectHandler = new Handler() {
 			public void handleMessage(Message msg) {
 				
@@ -86,16 +95,16 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 				switch (msg.what) {
 				case 7002:
 					String result;
-//					tv_result.setVisibility(View.VISIBLE);
+					tv.setVisibility(View.VISIBLE);
 					if (faceInfos.getFace().get(0).getAttribute().getGender().getValue().equals(faceInfos.getFace().get(1).getAttribute().getGender().getValue())) {
 						result=(String)msg.obj+"   "+getResources().getString(R.string.tongxinlian);
 					}else {
 						result=(String)msg.obj;
 						
 					}
-//					tv_result.setText(result);
-					bitmap=BitmapUtil.watermarkBitmap(bitmap, result);
-					iv_imageview.setImageBitmap(bitmap);
+					tv.setText(result);
+//					bitmap=BitmapUtil.watermarkBitmap(bitmap, result);
+//					iv_imageview.setImageBitmap(bitmap);
 					File f = BitmapUtil.saveBitmap(
 							bitmap, df.format(new Date()));
 					bmobFile = new BmobFile(f);
@@ -111,6 +120,7 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 					Toast.makeText(getActivity(),
 							getResources().getString(R.string.tupiangeshi),
 							Toast.LENGTH_LONG).show();
+					break;
 				case 1202:
 					Toast.makeText(getActivity(),
 							getResources().getString(R.string.serverbusy),
@@ -131,8 +141,16 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 		};
 		return view;
 	}
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		getActivity().unregisterReceiver(myReceive);  
+		super.onDestroy();
+	}
 
 	private void initView(View view) {
+		tv=(TextView)view.findViewById(R.id.fuqifragment_textView);
+		tv.setVisibility(View.GONE);
 		btn_selete = (Button) view.findViewById(R.id.fuqi_pick);
 		btn_selete.setOnClickListener(this);
 		iv_imageview = (ImageView) view.findViewById(R.id.fuqi_imageview);
@@ -174,6 +192,8 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
+		
+		tv.setVisibility(View.GONE);
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.fuqi_pick:
@@ -188,14 +208,6 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 			
 			App.OpenCamera(getActivity(), iv_imageview);
 			
-//			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//			intent.addCategory(Intent.CATEGORY_DEFAULT);
-//			File file = new File(sdcard_temp);
-//			if (file.exists()) {
-//				file.delete();
-//			}
-//			intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-//			startActivityForResult(intent, 1002);
 			break;
 		case R.id.rl_tuku:
 			mpopupWindow.dismiss();
@@ -212,18 +224,6 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 		this.bitmap = bitmap;
 		iv_imageview.setImageBitmap(bitmap);
 		progressBar = DialogUtil.getProgressDialog(getActivity());
-
-//		timer = new Timer();
-//		timer.schedule(new TimerTask() {
-//
-//			@Override
-//			public void run() {
-//				Message message = new Message();
-//				message.what = 1;
-//				detectHandler.sendMessage(message);
-//				this.cancel();
-//			}
-//		}, 20000);
 		new Thread(dector).start();
 	}
 
@@ -306,16 +306,6 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 			}
 			break;
 		}
-		case 1002:
-			if (resultCode == Activity.RESULT_CANCELED) {
-				break;
-			}
-			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-			bitmapOptions.inSampleSize = 8;
-
-			bitmap = BitmapFactory.decodeFile(sdcard_temp, bitmapOptions);
-			setbitmap(bitmap);
-			break;
 		default:
 			break;
 		}
@@ -327,11 +317,16 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 		public void onSuccess() {
 			// TODO 自动生成的方法存根
 			Person2 person = new Person2();
-			person.setUser("user");
+			person = new Person2();
+			person.setUser(App.getImei());
 			person.setFile(bmobFile);
 			person.setDoubles(true);
+			
+			person.setSex(faceInfos.getFace().get(0).getAttribute().getGender()
+					.getValue());
 			person.setVerson(App.getVersion());
 			person.setChannel(App.getChannel());
+			person.setModel(Build.MODEL);
 			person.save(getActivity());
 		}
 
@@ -347,5 +342,19 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 
 		}
 	};
+	
+	private class MyReceive extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// TODO Auto-generated method stub
+			String url=intent.getStringExtra("url");
+			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+			bitmapOptions.inSampleSize = 8;
+			Bitmap bitmap = BitmapFactory.decodeFile(url, bitmapOptions);
+			setbitmap(bitmap);
+//			FileUtils.getInst().delete(new File(url));
+		}
+	}
 
 }

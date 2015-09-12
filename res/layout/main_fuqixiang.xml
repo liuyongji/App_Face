@@ -17,6 +17,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/fuqix" />
+        <TextView
+        android:id="@+id/fuqifragment_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        
+        android:layout_alignBottom="@+id/fuqi_imageview"
+        android:background="#AA363636"
+        android:padding="10dp"
+        android:text="test"
+        android:textSize="15sp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/white" />
 
     </RelativeLayout>
 

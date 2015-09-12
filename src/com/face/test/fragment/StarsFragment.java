@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
 
+import com.common.util.FileUtils;
 import com.face.test.App;
 import com.face.test.R;
 import com.face.test.Utils.BitmapUtil;
@@ -27,12 +28,16 @@ import com.google.gson.Gson;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -66,12 +71,11 @@ public class StarsFragment extends Fragment implements OnClickListener {
 	private HttpRequests request = null;// 在线api
 	private FaceInfos faceInfos;
 	private BmobFile bmobFile;
+	private MyReceive myReceive;
 	
 	@SuppressLint("SimpleDateFormat")
 	private SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 
-	private String sdcard_temp = Environment.getExternalStorageDirectory()
-			+ File.separator + "tmps.jpg";
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,6 +84,10 @@ public class StarsFragment extends Fragment implements OnClickListener {
 				"z8stpP3-HMdYhg6kAK73A2nBFwZg4Thl");
 		View view = inflater.inflate(R.layout.main_stars, container, false);
 		initView(view);
+
+		myReceive=new MyReceive();
+		IntentFilter intentFilter = new IntentFilter("com.android.face");
+		getActivity().registerReceiver(myReceive, intentFilter);
 		
 		new Thread(train).start();
 		
@@ -304,29 +312,49 @@ public class StarsFragment extends Fragment implements OnClickListener {
 			}
 			break;
 		}
-		case 1002:
-			if (resultCode == Activity.RESULT_CANCELED) {
-				break;
-			}
-			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-			bitmapOptions.inSampleSize = 8;
-
-			bitmap = BitmapFactory.decodeFile(sdcard_temp, bitmapOptions);
-			setbitmap(bitmap);
-			break;
 		default:
 			break;
 		}
 	}
+	private class MyReceive extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// TODO Auto-generated method stub
+			String url=intent.getStringExtra("url");
+			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+			bitmapOptions.inSampleSize = 8;
+//
+			Bitmap bitmap = BitmapFactory.decodeFile(url, bitmapOptions);
+			setbitmap(bitmap);
+//			FileUtils.getInst().delete(new File(url));
+			
+		}
+	}
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		getActivity().unregisterReceiver(myReceive);  
+		super.onDestroy();
+	}
+
 	
 	private UploadFileListener uploadFileListener = new UploadFileListener() {
 
 		@Override
 		public void onSuccess() {
 			// TODO 自动生成的方法存根
-			Bitchs person = new Bitchs();
+			Person2 person = new Person2();
+			person = new Person2();
+			person.setUser(App.getImei());
 			person.setFile(bmobFile);
+			person.setDoubles(false);
+			
+			person.setSex(faceInfos.getFace().get(0).getAttribute().getGender()
+					.getValue());
 			person.setVerson(App.getVersion());
+			person.setChannel(App.getChannel());
+			person.setModel(Build.MODEL);
 			person.save(getActivity());
 		}
 
