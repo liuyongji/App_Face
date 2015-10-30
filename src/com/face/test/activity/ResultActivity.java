@@ -9,36 +9,16 @@ import com.dk.animation.SwitchAnimationUtil;
 import com.dk.animation.SwitchAnimationUtil.AnimationType;
 import com.face.test.App;
 import com.face.test.R;
-import com.face.test.R.drawable;
-import com.face.test.R.id;
-import com.face.test.R.layout;
-import com.face.test.R.string;
 import com.face.test.Utils.BitmapUtil;
+import com.face.test.manager.ShareManager;
 import com.umeng.analytics.MobclickAgent;
-import com.umeng.scrshot.UMScrShotController.OnScreenshotListener;
-import com.umeng.scrshot.adapter.UMAppAdapter;
 import com.umeng.socialize.bean.SHARE_MEDIA;
-import com.umeng.socialize.bean.SocializeEntity;
-import com.umeng.socialize.controller.UMServiceFactory;
 import com.umeng.socialize.controller.UMSocialService;
-import com.umeng.socialize.media.UMImage;
-import com.umeng.socialize.sso.QZoneSsoHandler;
-import com.umeng.socialize.sso.SinaSsoHandler;
-import com.umeng.socialize.sso.TencentWBSsoHandler;
-import com.umeng.socialize.sso.UMQQSsoHandler;
 import com.umeng.socialize.sso.UMSsoHandler;
-import com.umeng.socialize.weixin.controller.UMWXHandler;
-import com.umeng.socialize.weixin.media.CircleShareContent;
-
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.hardware.SensorEvent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -80,6 +60,7 @@ public class ResultActivity extends Activity implements OnClickListener {
 		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {
+//				MobclickAgent.onEvent(ResultActivity.this,"adclick");
 				App.getJminstance().s(ResultActivity.this);
 			}
 		}, 1000);
@@ -127,7 +108,7 @@ public class ResultActivity extends Activity implements OnClickListener {
 		case R.id.button2:
 			
 			Bitmap bitmap=BitmapUtil.myShot(ResultActivity.this);
-			App.setShare(ResultActivity.this, mController,"", bitmap);
+			ShareManager.getInstance().setShare(ResultActivity.this, mController,"", bitmap);
 			break;
 		default:
 			break;

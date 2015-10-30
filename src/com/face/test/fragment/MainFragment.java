@@ -12,12 +12,12 @@ import java.util.TimerTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.lasque.tusdk.core.TuSdkResult;
 
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
 
 import com.andexert.library.ViewPagerIndicator;
-import com.common.util.FileUtils;
 import com.face.test.Const;
 import com.face.test.App;
 import com.face.test.R;
@@ -28,19 +28,19 @@ import com.face.test.activity.ResultActivity;
 import com.face.test.adapter.MyViewAdapter;
 import com.face.test.bean.FaceInfos;
 import com.face.test.bean.Person2;
+import com.face.test.manager.CameraManager;
 import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
 import com.google.gson.Gson;
+import com.umeng.analytics.MobclickAgent;
 
+import de.greenrobot.event.EventBus;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -72,7 +72,7 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 	private ViewPager mViewPager;
 	// private ViewPagerIndicator mIndicator;
 	private MyViewAdapter mAdapter;
-	private List<Bitmap> bitmaps = new ArrayList<Bitmap>();
+//	private List<Bitmap> bitmaps = new ArrayList<Bitmap>();
 	private List<String> mDatas = Arrays.asList("照片1", "照片2");
 	private final static String TAG = "lyj";
 	private Button seletcButton, duibiButton;
@@ -80,6 +80,8 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 	private String face[] = new String[2];
 	private ProgressDialog progressBar;
 	private FaceInfos faceInfos;
+	
+//	private List<FaceInfos> faceInfos2=new ArrayList<FaceInfos>();
 
 	private DectorThread dectorThread;
 	private CompareThread compareThread;
@@ -90,7 +92,7 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 
 	private BmobFile bmobFile;
 	
-	private MyReceive myReceive;
+//	private MyReceive myReceive;
 
 	@SuppressLint("SimpleDateFormat")
 	private SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");// 设置日期格式
@@ -105,6 +107,9 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 		public void handleMessage(Message msg) {
 
 			resultcode = msg.what;
+			if (progressBar != null) {
+				progressBar.dismiss();
+			}
 			switch (msg.what) {
 
 			case DECTOR_SUCCESS:
@@ -116,40 +121,27 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 				textView.setVisibility(View.VISIBLE);
 				textView.setText((String) msg.obj);
 
-				new Timer().schedule(new TimerTask() {
-
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						Message message = new Message();
-						message.what = SAVE_BITMAP;
-						detectHandler.sendMessage(message);
-					}
-				}, 1000);
+				Bitmap bitmap = BitmapUtil.convertViewToBitmap(mViewPager
+						.findViewWithTag(mViewPager.getCurrentItem()));
+				File f = BitmapUtil.saveBitmap(bitmap, df.format(new Date()));
+				bmobFile = new BmobFile(f);
+				bmobFile.upload(getActivity(), uploadFileListener);
 
 				break;
 			case DECTOR_FAIL:
-				if (progressBar != null) {
-					progressBar.dismiss();
-				}
+				
 				// timer.cancel();
 				Toast.makeText(getActivity(),
 						getResources().getString(R.string.no_net_state),
 						Toast.LENGTH_LONG).show();
 				break;
 			case COMPARE_FAIL:
-				if (progressBar != null) {
-					progressBar.dismiss();
-				}
 				Toast.makeText(getActivity(),
 						getResources().getString(R.string.choose_two),
 						Toast.LENGTH_LONG).show();
 				break;
 			case COMPARE_SUCCESS:
-				if (progressBar != null) {
-					progressBar.dismiss();
-				}
-				App.setBitmaps(bitmaps);
+//				App.setBitmaps(bitmaps);
 				Intent intent = new Intent(getActivity(), ResultActivity.class);
 				Bundle bundle = new Bundle();
 				bundle.putString("Compare",
@@ -162,52 +154,28 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 				getActivity().finish();
 				break;
 			case 1303:
-				if (progressBar != null) {
-					progressBar.dismiss();
-				}
 				Toast.makeText(getActivity(),
 						getResources().getString(R.string.photostoolarge),
 						Toast.LENGTH_LONG).show();
 				break;
 			case 1301:
-				if (progressBar != null) {
-					progressBar.dismiss();
-				}
 				Toast.makeText(getActivity(),
 						getResources().getString(R.string.photoserror),
 						Toast.LENGTH_LONG).show();
 				break;
 			case 1202:
-				if (progressBar != null) {
-					progressBar.dismiss();
-				}
 				Toast.makeText(getActivity(),
 						getResources().getString(R.string.serverbusy),
 						Toast.LENGTH_LONG).show();
 				break;
 			case 1001:
-				if (progressBar != null) {
-					progressBar.dismiss();
-				}
 				Toast.makeText(getActivity(),
 						getResources().getString(R.string.no_net_state),
 						Toast.LENGTH_LONG).show();
 				break;
-			case SAVE_BITMAP:
-				if (progressBar != null) {
-					progressBar.dismiss();
-				}
-				Bitmap bitmap = BitmapUtil.convertViewToBitmap(mViewPager
-						.findViewWithTag(mViewPager.getCurrentItem()));
-				File f = BitmapUtil.saveBitmap(bitmap, df.format(new Date()));
-				bmobFile = new BmobFile(f);
-				bmobFile.upload(getActivity(), uploadFileListener);
-				break;
+			
 
 			default:
-				if (progressBar != null) {
-					progressBar.dismiss();
-				}
 				Toast.makeText(getActivity(),
 						getResources().getString(R.string.no_net_state),
 						Toast.LENGTH_LONG).show();
@@ -224,19 +192,29 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 		request = App.getApp().getRequests();
 		initview(view);
 		
-		 myReceive=new MyReceive();
-		IntentFilter intentFilter = new IntentFilter("com.android.face");
-		getActivity().registerReceiver(myReceive, intentFilter);
+		EventBus.getDefault().register(this);
+		
 
 		detectHandler = new Myhandler();
 		return view;
+	}
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		MobclickAgent.onPageStart("MainFragment"); //统计页面
+	}
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		 MobclickAgent.onPageEnd("MainFragment"); 
 	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		Bitmap bitmap;
 		switch (requestCode) {
 		case 1001: {
 			if (data != null) {
@@ -252,9 +230,10 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 				String str = localCursor.getString(localCursor
 						.getColumnIndex(arrayOfString[0]));
 				localCursor.close();
+				
+				setBitmap(str);
 
-				bitmap = BitmapUtil.getScaledBitmap(str, 700);
-				setBitmap(bitmap);
+				
 			}
 			break;
 		}
@@ -264,36 +243,27 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 		}
 
 	}
-	
-	private class MyReceive extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
-			String url=intent.getStringExtra("url");
-			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-			bitmapOptions.inSampleSize = 8;
-//
-			Bitmap bitmap = BitmapFactory.decodeFile(url, bitmapOptions);
-			setBitmap(bitmap);
-			FileUtils.getInst().delete(new File(url));
-		}
+	public void onEvent(TuSdkResult info){
+		String url=info.imageSqlInfo.path;
+		Log.i("lyj-MainFragment", url);
+		
+		setBitmap(url);
+		
+//		FileUtils.getInst().delete(new File(url));
 	}
+	
 
-	private void setBitmap(Bitmap bitmap) {
+	private void setBitmap(String url) {
 
-		bitmaps.set(mViewPager.getCurrentItem(), bitmap);
 		View view = mViewPager.findViewWithTag(mViewPager.getCurrentItem());
 		ImageView imageView = (ImageView) view
 				.findViewById(R.id.mainfragment_imageview);
 
-		imageView.setImageBitmap(bitmap);
+		App.displayImage("file:///"+url, imageView);
 
 		progressBar = DialogUtil.getProgressDialog(getActivity());
 
-		// timer = new Timer();
-		// timer.schedule(new Mytimertask(), 20000);
-		dectorThread = new DectorThread();
+		dectorThread = new DectorThread(BitmapUtil.getScaledBitmap(url, 500));
 		dectorThread.start();
 	}
 
@@ -315,19 +285,7 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 
 			mpopupWindow.dismiss();
 
-			App.OpenCamera(
-					getActivity(),
-					(ImageView) mViewPager.findViewWithTag(
-							mViewPager.getCurrentItem()).findViewById(
-							R.id.mainfragment_imageview));
-			// Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			// intent.addCategory(Intent.CATEGORY_DEFAULT);
-			// File file = new File(this.sdcard_temp);
-			// if (file.exists()) {
-			// file.delete();
-			// }
-			// intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-			// startActivityForResult(intent, 1002);
+			CameraManager.OpenCamera(getActivity());
 			break;
 		case R.id.rl_tuku:
 			mpopupWindow.dismiss();
@@ -402,17 +360,24 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
-		getActivity().unregisterReceiver(myReceive);  
+		EventBus.getDefault().unregister(this);  
 		super.onDestroy();
 	}
 
 	private class DectorThread extends Thread {
+		
+		
+		private Bitmap bitmap;
+		
+		
+		public DectorThread(Bitmap bitmap){
+			this.bitmap=bitmap;
+		}
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
 			super.run();
 			byte[] bytes = BitmapUtil.getBitmapByte(getActivity(),
-					bitmaps.get(mViewPager.getCurrentItem()));
+					bitmap);
 			JSONObject jsonObject = null;
 			// List<String> list = null;
 			String list = null;
@@ -432,9 +397,7 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 							.get(0).getFace_id();
 					// face[mViewPager.getCurrentItem()] =
 					// Util.face.getFaceId();
-				} else {
-
-				}
+				} 
 			} catch (FaceppParseException e) {
 
 				e.printStackTrace();
@@ -507,8 +470,11 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 			person.setFile(bmobFile);
 			person.setDoubles(false);
 			person.setResultcode(resultcode);
-			person.setSex(faceInfos.getFace().get(0).getAttribute().getGender()
-					.getValue());
+			
+			if (faceInfos.getFace()!=null) {
+				person.setSex(faceInfos.getFace().get(0).getAttribute().getGender()
+						.getValue());
+			}			
 			person.setVerson(App.getVersion());
 			person.setChannel(App.getChannel());
 			person.setModel(Build.MODEL);
@@ -540,7 +506,7 @@ public class MainFragment extends Fragment implements OnClickListener, Const {
 		mAdapter = new MyViewAdapter(getActivity());
 		mViewPager.setAdapter(mAdapter);
 		mIndicator.setViewPager(mViewPager, 0);
-		bitmaps.add(null);
-		bitmaps.add(null);
+//		faceInfos2.add(null);
+//		faceInfos2.add(null);
 	}
 }

@@ -12,6 +12,7 @@ import com.face.test.R.id;
 import com.face.test.R.layout;
 import com.face.test.R.menu;
 import com.face.test.R.string;
+import com.face.test.manager.ShareManager;
 import com.loveplusplus.demo.image.HackyViewPager;
 import com.loveplusplus.demo.image.ImageDetailFragment;
 import com.umeng.socialize.controller.UMSocialService;
@@ -109,7 +110,7 @@ public class ImagePagerActivity extends FragmentActivity {
 		switch (item.getItemId()) {
 		case R.id.share:
 			Bitmap bm = BitmapFactory.decodeFile(files[pagerPosition].getAbsolutePath());
-			App.setShare(ImagePagerActivity.this, mController,
+			ShareManager.getInstance().setShare(ImagePagerActivity.this, mController,
 					getResources().getString(R.string.sharecontent)
 							+ ResultActivity.url, bm);
 			break;

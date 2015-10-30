@@ -56,23 +56,18 @@
         android:textSize="30.0sp"
         android:textStyle="bold" />
 
-    <RelativeLayout
-        android:id="@+id/screen_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_above="@id/image_score"
-        android:background="@drawable/all_bg"
-        android:gravity="center" >
+   
 
         <LinearLayout
+            android:layout_above="@id/image_score"
             android:id="@+id/photo_layout"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:gravity="center" >
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:gravity="center"
                 android:orientation="vertical" >
@@ -85,15 +80,16 @@
                     android:src="@drawable/loading" />
 
                 <TextView
+                    android:layout_below="@id/local_photo"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="我" />
-            </LinearLayout>
+            </RelativeLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:gravity="center"
                 android:orientation="vertical" >
@@ -106,13 +102,14 @@
                     android:src="@drawable/loading" />
 
                 <TextView
+                    android:layout_below="@id/result_photo"
                     android:id="@+id/stars_tv_name"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="TextView" />
-            </LinearLayout>
+            </RelativeLayout>
         </LinearLayout>
-    </RelativeLayout>
+
 
 </RelativeLayout>

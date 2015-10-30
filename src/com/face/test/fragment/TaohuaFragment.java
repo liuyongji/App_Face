@@ -22,6 +22,7 @@ import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
 import com.google.gson.Gson;
+import com.umeng.analytics.MobclickAgent;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -121,6 +122,7 @@ public class TaohuaFragment extends Fragment implements OnClickListener {
 		};
 		return view;
 	}
+	
 
 	private void initView(View view) {
 		btn_selete = (Button) view.findViewById(R.id.fuqi_pick);

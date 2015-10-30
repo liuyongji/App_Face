@@ -1,7 +1,5 @@
 package com.face.test;
 
-import java.io.File;
-
 import org.lasque.tusdk.core.TuSdkResult;
 import org.lasque.tusdk.core.utils.TLog;
 import org.lasque.tusdk.impl.activity.TuFragment;
@@ -10,24 +8,16 @@ import org.lasque.tusdk.impl.components.camera.TuCameraFragment.TuCameraFragment
 
 import com.common.util.FileUtils;
 
+import de.greenrobot.event.EventBus;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Environment;
-import android.util.Log;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 public class TuSdkDelegate implements TuCameraFragmentDelegate{
-	private Context context;
-	private ImageView imageView;
-	
 	public TuSdkDelegate(Context context){
-		this.context=context;
 	}
 	
 	public TuSdkDelegate(Context context,ImageView imageView){
-		this.context=context;
-		this.imageView=imageView;
 	}
 	/**
 	 * 获取一个拍摄结果
@@ -53,13 +43,17 @@ public class TuSdkDelegate implements TuCameraFragmentDelegate{
 //				Environment.getExternalStorageDirectory().getPath()
 //						+ "/facetest/");
 //		
-		if (imageView!=null) {
-			App.displayImage("file:///"+result.imageSqlInfo.path, imageView);
-		}
+//		if (imageView!=null) {
+//			App.displayImage("file:///"+result.imageSqlInfo.path, imageView);
+//		}
 		
-		Intent i = new Intent("com.android.face");
-		i.putExtra("url", result.imageSqlInfo.path); 
-		context.sendBroadcast(i);
+		EventBus.getDefault().post(result); 
+		
+		
+		
+//		Intent i = new Intent("com.android.face");
+//		i.putExtra("url", result.imageSqlInfo.path); 
+//		context.sendBroadcast(i);
 		
 	}
 

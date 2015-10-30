@@ -17,10 +17,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.Bitmap.Config;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.text.TextPaint;
 import android.util.Base64;
@@ -68,6 +71,63 @@ public class BitmapUtil {
 		}
 		return null;
 	}
+	
+	public static Bitmap resizeImage(Bitmap bitmap, int screenWidth) {
+
+	     int width = bitmap.getWidth();
+
+	     int height = bitmap.getHeight();
+
+	     int newWidth = screenWidth;
+
+	     int newHeight = screenWidth*height/width; // 根据屏幕的宽度，计算按比较缩放后的高度
+
+	     
+
+//	     Log.i("lyj","width图片原始宽度：" + String.valueOf(width));
+//
+//	     Log.i("lyj","height图片原始高度：" + String.valueOf(height));   
+
+	     
+
+
+
+	     // calculate the scale
+
+	     float scaleWidth = ((float) newWidth) / width;
+
+	     float scaleHeight = ((float) newHeight) / height;
+
+
+
+	     // create a matrix for the manipulation
+
+	     Matrix matrix = new Matrix();
+
+	     // resize the Bitmap
+
+	     matrix.postScale(scaleWidth, scaleHeight);
+
+	     // if you want to rotate the Bitmap
+
+	     // matrix.postRotate(45);
+
+
+	     // recreate the new Bitmap
+
+	     Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+
+//	     Log.i("lyj","width图片缩放后宽度：" + resizedBitmap.getWidth());
+//
+//	     Log.i("lyj","height图片缩放后高度：" + resizedBitmap.getHeight());
+
+	     // make a Drawable from Bitmap to allow to set the Bitmap
+
+	     // to the ImageView, ImageButton or what ever
+
+	     return resizedBitmap;
+
+	} 
 	
 	//获取屏幕截图
 	public static Bitmap myShot(Activity activity) {

@@ -12,28 +12,33 @@ import org.lasque.tusdk.core.TuSdk;
 import org.lasque.tusdk.core.TuSdkResult;
 import org.lasque.tusdk.core.gpuimage.extend.FilterManager;
 import org.lasque.tusdk.core.gpuimage.extend.FilterManager.FilterManagerDelegate;
-import org.lasque.tusdk.core.utils.TLog;
 import org.lasque.tusdk.impl.activity.TuFragment;
 import org.lasque.tusdk.impl.components.TuEditMultipleComponent;
 import org.lasque.tusdk.impl.components.base.TuSdkComponent.TuSdkComponentDelegate;
+
 import com.common.util.FileUtils;
 import com.face.test.App;
 import com.face.test.R;
 import com.face.test.Utils.AppUtils;
+import com.face.test.manager.CameraManager;
+import com.face.test.manager.LogManager;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.FeedbackAgent;
 
+import de.greenrobot.event.EventBus;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -52,17 +57,22 @@ public class MenuActivity extends Activity implements OnClickListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_menu);
 		agent = new FeedbackAgent(MenuActivity.this);
+		MobclickAgent.openActivityDurationTrack(false); // 统计
 		TuSdk.checkFilterManager(mFilterManagerDelegate);
 		initView();
+
+		EventBus.getDefault().register(this);
+
+//		LogManager.click(this);
+//		LogManager.total(this);
 	}
 
 	private void initView() {
 		tvversion = (TextView) findViewById(R.id.tv_app_info);
-		tvversion.setText("版本:" + App.getVersion() + "，作者：@liu_yj");
+		tvversion.setText("版本:" + App.getVersion() + "，Developed by @liu_yj");
 		btnstart = (Button) findViewById(R.id.main_btnstart);
 		btnanswers = (Button) findViewById(R.id.btn_answers);
 		btnfeeback = (Button) findViewById(R.id.btn_feeback);
@@ -81,16 +91,32 @@ public class MenuActivity extends Activity implements OnClickListener {
 
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 		MobclickAgent.onResume(this);
 	}
 
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
+		EventBus.getDefault().unregister(this);
 		MobclickAgent.onPause(this);
+	}
+
+	public void onEventMainThread(TuSdkResult info) {
+		
+		String url = info.imageSqlInfo.path;
+		Log.i("lyj-MenuActivity", url);
+		FileUtils.getInst().Move(
+				url,
+				Environment.getExternalStorageDirectory().getPath()
+						+ "/facetest/");
+	}
+	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		
 	}
 
 	@Override
@@ -111,11 +137,12 @@ public class MenuActivity extends Activity implements OnClickListener {
 			break;
 
 		case R.id.btn_taohua:
-			App.OpenCamera(this, null);
+			MobclickAgent.onEvent(this, "opencamera");
+			CameraManager.OpenCamera(this);
 			return;
-			
-//			intent.putExtra("key", 5);
-//			break;
+
+			// intent.putExtra("key", 5);
+			// break;
 		case R.id.btn_edit:
 
 			if (AppUtils.IsCanUseSdCard()) {
@@ -139,9 +166,8 @@ public class MenuActivity extends Activity implements OnClickListener {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == REQUEST_CODE_PICK_PICTURE&&resultCode==RESULT_OK) {
+		if (requestCode == REQUEST_CODE_PICK_PICTURE && resultCode == RESULT_OK) {
 
 			Uri selectedImage = data.getData();
 			ContentResolver resolver = getContentResolver();
@@ -156,22 +182,21 @@ public class MenuActivity extends Activity implements OnClickListener {
 			Uri imageUri = Uri.fromFile(new File(mPicturePath));
 
 			try {
+				MobclickAgent.onEvent(this, "photoedit");
 				Bitmap photo = MediaStore.Images.Media.getBitmap(resolver,
 						imageUri);
 				TuEditMultipleComponent component = TuSdk
 						.editMultipleCommponent(this, delegate);
 				component.setImage(photo)
-						
-						// 在组件执行完成后自动关闭组件
+
+				// 在组件执行完成后自动关闭组件
 						.setAutoDismissWhenCompleted(true)
 						// 开启组件
 						.showComponent();
 
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			// Intent intent = new Intent(MenuActivity.this,
@@ -186,14 +211,15 @@ public class MenuActivity extends Activity implements OnClickListener {
 		@Override
 		public void onComponentFinished(TuSdkResult result, Error error,
 				TuFragment lastFragment) {
-			
-			
-//			Toast.makeText(MenuActivity.this, result.imageSqlInfo.path, Toast.LENGTH_LONG).show();
-			FileUtils.getInst().Move(
-					result.imageSqlInfo.path,
-					Environment.getExternalStorageDirectory().getPath()
-							+ "/facetest/");
-			
+
+			Log.i("onComponentFinished", result.imageSqlInfo.path);
+			// Toast.makeText(MenuActivity.this, result.imageSqlInfo.path,
+			// Toast.LENGTH_LONG).show();
+//			FileUtils.getInst().Move(
+//					result.imageSqlInfo.path,
+//					Environment.getExternalStorageDirectory().getPath()
+//							+ "/facetest/");
+
 		}
 	};
 

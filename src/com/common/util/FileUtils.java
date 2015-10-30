@@ -148,18 +148,6 @@ public class FileUtils {
     }
 
 
-    private FileUtils() {
-        String sdcardState = Environment.getExternalStorageState();
-        //如果没SD卡则放缓存
-        if (Environment.MEDIA_MOUNTED.equals(sdcardState)) {
-            BASE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()
-                        + "/stickercamera/";
-        } else {
-            BASE_PATH = App.getApp().getCacheDirPath();
-        }
-
-        STICKER_BASE_PATH = BASE_PATH + "/stickers/";
-    }
 
     public boolean createFile(File file) {
         try {

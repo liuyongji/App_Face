@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">人脸检测</string>
+     <string name="app_name_label">人脸检测魔幻相机版</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="pg_sdk_edit_sample_edit">编辑</string>

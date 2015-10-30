@@ -21,14 +21,14 @@
         <Button
             android:id="@+id/main_btnstart"
             android:layout_width="200.0dip"
-            android:layout_height="60.0dip"
+            android:layout_height="50.0dip"
              android:background="@drawable/btn_selector"
             android:text="人脸检测" />
 
         <Button
             android:id="@+id/btn_answers"
             android:layout_width="200.0dip"
-            android:layout_height="60.0dip"
+            android:layout_height="50.0dip"
             android:layout_marginTop="10.0dip"
             android:background="@drawable/btn_selector"
             android:text="情侣指数" />
@@ -36,21 +36,21 @@
         <Button
             android:id="@+id/btn_feeback"
             android:layout_width="200.0dip"
-            android:layout_height="60.0dip"
+            android:layout_height="50.0dip"
             android:layout_marginTop="10.0dip"
             android:background="@drawable/btn_selector"
             android:text="明星脸" />
         <Button
             android:id="@+id/btn_edit"
             android:layout_width="200.0dip"
-            android:layout_height="60.0dip"
+            android:layout_height="50.0dip"
             android:layout_marginTop="10.0dip"
             android:background="@drawable/btn_selector"
             android:text="图片美化" />
         <Button
             android:id="@+id/btn_taohua"
             android:layout_width="200.0dip"
-            android:layout_height="60.0dip"
+            android:layout_height="50.0dip"
             android:layout_marginTop="10.0dip"
             android:background="@drawable/btn_selector"
            
@@ -59,7 +59,7 @@
         <Button
             android:id="@+id/btn_ranklist"
             android:layout_width="200.0dip"
-            android:layout_height="60.0dip"
+            android:layout_height="50.0dip"
             android:layout_marginTop="10.0dip"
              android:background="@drawable/btn_selector"
             android:text="历史相册" />
@@ -67,7 +67,7 @@
         <Button
             android:id="@+id/btn_histroy"
             android:layout_width="200.0dip"
-            android:layout_height="60.0dip"
+            android:layout_height="50.0dip"
             android:layout_marginTop="10.0dip"
             android:background="@drawable/btn_selector"
             android:text="反馈" />

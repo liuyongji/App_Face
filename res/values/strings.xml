@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">人脸检测</string>
+    <string name="app_name_label">人脸检测魔幻相机版</string>
     <!--
     <string name="app_name2">人脸检测</string>
     <string name="action_settings">人脸检测</string>

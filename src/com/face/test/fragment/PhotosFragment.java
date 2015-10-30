@@ -11,6 +11,8 @@ import com.face.test.R;
 import com.face.test.activity.ImagePagerActivity;
 import com.face.test.activity.ResultActivity;
 import com.face.test.adapter.ImageAdapter;
+import com.face.test.manager.ShareManager;
+import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.controller.UMSocialService;
 
 import android.content.Intent;
@@ -100,7 +102,7 @@ public class PhotosFragment extends Fragment {
 								.findViewById(R.id.imageView1);
 						Bitmap bitmap = ((BitmapDrawable) (imageView
 								.getDrawable())).getBitmap();
-						App.setShare(
+						ShareManager.getInstance().setShare(
 								getActivity(),
 								mController,
 								getActivity().getResources().getString(
@@ -135,6 +137,13 @@ public class PhotosFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		initData();
+		MobclickAgent.onPageStart("PhotoFragment"); //统计页面
+	}
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		 MobclickAgent.onPageEnd("PhotoFragment"); 
 	}
 
 	private void imageBrower(int position, List<String> list) {

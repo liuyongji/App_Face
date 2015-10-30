@@ -12,6 +12,7 @@ import com.umeng.update.UmengUpdateAgent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
 
 public class MainActivity extends FragmentActivity {
 	private Fragment fragment;
@@ -47,6 +48,14 @@ public class MainActivity extends FragmentActivity {
 		// getSupportFragmentManager().beginTransaction().addToBackStack(null);
 		getSupportFragmentManager().beginTransaction()
 				.add(R.id.drawer_content, fragment).commit();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		
+		menu.add(1, 1, 1, "设置");
+		return false;
 	}
 
 	@Override

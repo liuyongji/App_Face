@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.lasque.tusdk.core.TuSdkResult;
 import org.w3c.dom.Text;
 
 import cn.bmob.v3.datatype.BmobFile;
@@ -19,11 +20,14 @@ import com.face.test.Utils.DialogUtil;
 import com.face.test.Utils.Util;
 import com.face.test.bean.FaceInfos;
 import com.face.test.bean.Person2;
+import com.face.test.manager.CameraManager;
 import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
 import com.google.gson.Gson;
+import com.umeng.analytics.MobclickAgent;
 
+import de.greenrobot.event.EventBus;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -68,7 +72,6 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 	private HttpRequests request = null;// 在线api
 	private FaceInfos faceInfos;
 	private BmobFile bmobFile;
-	private MyReceive myReceive;
 	private TextView tv;
 	
 	
@@ -80,11 +83,11 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		request = App.getApp().getRequests();
+		
+		EventBus.getDefault().register(this);
+		
 		View view = inflater.inflate(R.layout.main_fuqixiang, container, false);
 		initView(view);
-		myReceive = new MyReceive();
-		IntentFilter intentFilter = new IntentFilter("com.android.face");
-		getActivity().registerReceiver(myReceive, intentFilter);
 		detectHandler = new Handler() {
 			public void handleMessage(Message msg) {
 				
@@ -141,11 +144,33 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 		};
 		return view;
 	}
+	public void onEventMainThread(TuSdkResult info){
+		String url=info.imageSqlInfo.path;
+		Log.i("lyj-FuqixiangFragment", url);
+		BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+		bitmapOptions.inSampleSize = 8;
+//
+		Bitmap bitmap = BitmapFactory.decodeFile(url, bitmapOptions);
+		setbitmap(bitmap);
+//		FileUtils.getInst().delete(new File(url));
+	}
 	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
-		getActivity().unregisterReceiver(myReceive);  
+		EventBus.getDefault().unregister(this);
 		super.onDestroy();
+	}
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		MobclickAgent.onPageStart("FuqiFragment"); //统计页面
+	}
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		 MobclickAgent.onPageEnd("FuqiFragment");
 	}
 
 	private void initView(View view) {
@@ -206,7 +231,7 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 		case R.id.rl_camera:
 			mpopupWindow.dismiss();
 			
-			App.OpenCamera(getActivity(), iv_imageview);
+			CameraManager.OpenCamera(getActivity());
 			
 			break;
 		case R.id.rl_tuku:
@@ -343,18 +368,5 @@ public class FuqixiangFragment extends Fragment implements OnClickListener {
 		}
 	};
 	
-	private class MyReceive extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
-			String url=intent.getStringExtra("url");
-			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-			bitmapOptions.inSampleSize = 8;
-			Bitmap bitmap = BitmapFactory.decodeFile(url, bitmapOptions);
-			setbitmap(bitmap);
-//			FileUtils.getInst().delete(new File(url));
-		}
-	}
 
 }

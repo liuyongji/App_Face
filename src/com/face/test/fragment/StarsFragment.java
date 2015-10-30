@@ -7,6 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.json.JSONObject;
+import org.lasque.tusdk.core.TuSdkResult;
 
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.UploadFileListener;
@@ -17,21 +18,19 @@ import com.face.test.R;
 import com.face.test.Utils.BitmapUtil;
 import com.face.test.Utils.DialogUtil;
 import com.face.test.activity.StarsResultActivity;
-import com.face.test.bean.Bitchs;
 import com.face.test.bean.FaceInfos;
 import com.face.test.bean.Person2;
+import com.face.test.manager.CameraManager;
 import com.facepp.error.FaceppParseException;
 import com.facepp.http.HttpRequests;
 import com.facepp.http.PostParameters;
 import com.google.gson.Gson;
+import com.umeng.analytics.MobclickAgent;
 
+import de.greenrobot.event.EventBus;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,7 +38,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -71,7 +69,6 @@ public class StarsFragment extends Fragment implements OnClickListener {
 	private HttpRequests request = null;// 在线api
 	private FaceInfos faceInfos;
 	private BmobFile bmobFile;
-	private MyReceive myReceive;
 	
 	@SuppressLint("SimpleDateFormat")
 	private SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -84,10 +81,9 @@ public class StarsFragment extends Fragment implements OnClickListener {
 				"z8stpP3-HMdYhg6kAK73A2nBFwZg4Thl");
 		View view = inflater.inflate(R.layout.main_stars, container, false);
 		initView(view);
+		
+		EventBus.getDefault().register(this);
 
-		myReceive=new MyReceive();
-		IntentFilter intentFilter = new IntentFilter("com.android.face");
-		getActivity().registerReceiver(myReceive, intentFilter);
 		
 		new Thread(train).start();
 		
@@ -132,11 +128,34 @@ public class StarsFragment extends Fragment implements OnClickListener {
 		};
 		return view;
 	}
+	
+	
+	public void onEventMainThread(TuSdkResult info){
+		String url=info.imageSqlInfo.path;
+		Log.i("lyj-StarsFragment", url);
+		BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+		bitmapOptions.inSampleSize = 8;
+		Bitmap bitmap = BitmapFactory.decodeFile(url, bitmapOptions);
+		setbitmap(bitmap);
+		FileUtils.getInst().delete(new File(url));
+	}
 
 	private void initView(View view) {
 		btn_selete = (Button) view.findViewById(R.id.fuqi_pick);
 		btn_selete.setOnClickListener(this);
 		iv_imageview = (ImageView) view.findViewById(R.id.fuqi_imageview);
+	}
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		MobclickAgent.onPageStart("StarFragment"); //统计页面
+	}
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		 MobclickAgent.onPageEnd("StarFragment"); 
 	}
 
 	private void showPopMenu() {
@@ -186,7 +205,7 @@ public class StarsFragment extends Fragment implements OnClickListener {
 		case R.id.rl_camera:
 			mpopupWindow.dismiss();
 			
-			App.OpenCamera(getActivity(), iv_imageview);
+			CameraManager.OpenCamera(getActivity());
 			
 //			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 //			intent.addCategory(Intent.CATEGORY_DEFAULT);
@@ -316,25 +335,10 @@ public class StarsFragment extends Fragment implements OnClickListener {
 			break;
 		}
 	}
-	private class MyReceive extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
-			String url=intent.getStringExtra("url");
-			BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-			bitmapOptions.inSampleSize = 8;
-//
-			Bitmap bitmap = BitmapFactory.decodeFile(url, bitmapOptions);
-			setbitmap(bitmap);
-//			FileUtils.getInst().delete(new File(url));
-			
-		}
-	}
 	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
-		getActivity().unregisterReceiver(myReceive);  
+		EventBus.getDefault().unregister(this);
 		super.onDestroy();
 	}
 
